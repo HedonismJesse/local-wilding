@@ -164,5 +164,39 @@ class TestSphereFitness(unittest.TestCase):
             self.assertTrue(filled["feedback_cites_source"])
 
 
+class TestRenderAudit(unittest.TestCase):
+    """Regression: the signatures the 2026-11-10 session calibrated
+    against its replay corpus must keep discriminating — v2's fin ear
+    fires streak, v3 doesn't; a060 oversized; f030 occludes the title;
+    dense ASCII frames illegible, sparse ones not."""
+
+    @staticmethod
+    def _flags(rel):
+        import render_audit as ra
+        return ra.audit_frame(Path(__file__).parent / rel)["flags"]
+
+    def test_v2_fin_ear_streaks_v3_clean(self):
+        self.assertIn("streak_component", self._flags("pig_v2.png"))
+        self.assertNotIn("streak_component", self._flags("pig_v3.png"))
+
+    def test_giant_pig_frame_oversized(self):
+        self.assertIn("subject_oversized",
+                      self._flags("anim_frames/a060.png"))
+        self.assertNotIn("subject_oversized",
+                         self._flags("anim_frames/a000.png"))
+
+    def test_ascii_on_title_occludes(self):
+        self.assertIn("occludes_text",
+                      self._flags("fly_frames/f030.png"))
+        self.assertNotIn("occludes_text",
+                         self._flags("anim_frames/a000.png"))
+
+    def test_dense_ascii_illegible_sparse_not(self):
+        self.assertIn("illegible_at_scale",
+                      self._flags("fly_frames/f034.png"))
+        self.assertNotIn("illegible_at_scale",
+                         self._flags("fly_frames/f000.png"))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
