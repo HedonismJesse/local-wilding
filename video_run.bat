@@ -1,10 +1,11 @@
 @echo off
-mode con: cols=118 lines=38
+mode con: cols=118 lines=50
 title LW-DEMO
 set /p OTARI_API_KEY=<C:\Users\jesse\Documents\Otari.txt
 set LOCAL_BASE_URL=http://127.0.0.1:8080/v1
 set LOCAL_MODEL=Llama-3.2-1B-Instruct-Q6_K.gguf
 set DEMO_TOOLS=code
+set DEMO_SEED=0
 set DEMO_VIDEO=1
 cd /d C:\Users\jesse\Documents\PythonDev\local-wilding
 
@@ -26,12 +27,13 @@ python probe_tools.py
 echo.
 ping -n 14 127.0.0.1 >nul
 
-echo   ==== BEATS 1-3: the demo ====
+echo   ==== BEATS 1-4: the demo, as a dashboard ====
 echo.
-python demo.py
+ping -n 4 127.0.0.1 >nul
+python demo_viz.py
 
 echo.
-echo   ============  BEAT 4: the receipts  ============
+echo   ============  the receipts, raw  ============
 echo.
 ping -n 4 127.0.0.1 >nul
 echo  -- evidence/ raw files --
@@ -43,21 +45,12 @@ echo.
 type evidence\02_step1_openai_gpt-oss-120b.json
 echo.
 ping -n 14 127.0.0.1 >nul
-echo  -- receipts.jsonl (every call: who served, why, how much) --
-echo.
-type evidence\receipts.jsonl
-echo.
-ping -n 12 127.0.0.1 >nul
 echo  -- the ledger (reserve, settle, refuse) --
 echo.
 type evidence\spend_ledger.jsonl
 echo.
 ping -n 12 127.0.0.1 >nul
-echo  -- self-score: certificates only - unexercised claims score 0 --
-echo.
-python sphere_fitness.py
-echo.
-ping -n 6 127.0.0.1 >nul
 echo   ==== done - every claim above is backed by a file in evidence/ ====
 echo.
 ping -n 10 127.0.0.1 >nul
+pause

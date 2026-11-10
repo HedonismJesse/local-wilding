@@ -16,3 +16,13 @@
 {"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794296832.66, "spent_usd": 0.0, "reserved_usd": 0.0}
 {"event": "open", "cap_usd": 0.01, "ts": 1794297287.269, "spent_usd": 0.0, "reserved_usd": 0.0}
 {"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794297287.269, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.01, "ts": 1794298745.301, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794298745.301, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.01, "ts": 1794298982.607, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794298982.607, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.01, "ts": 1794299083.07, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794299083.07, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.01, "ts": 1794299809.214, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794299809.214, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.01, "ts": 1794300107.402, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794300107.402, "spent_usd": 0.0, "reserved_usd": 0.0}

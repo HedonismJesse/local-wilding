@@ -35,3 +35,31 @@
 {"event": "open", "cap_usd": 0.25, "ts": 1794297243.449, "spent_usd": 0.0, "reserved_usd": 0.0}
 {"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794297243.45, "spent_usd": 0.0, "reserved_usd": 0.02}
 {"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010206, "note": "served=openai/gpt-oss-120b", "ts": 1794297277.266, "spent_usd": 0.010206, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794298743.134, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794298743.135, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 1, "label": "step1:openai/gpt-oss-120b", "note": "http 403: HTTP Error 403: Forbidden", "ts": 1794298743.5, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 2, "label": "step2:anthropic/claude-fable-5", "estimated_usd": 0.02, "ts": 1794298743.5, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 2, "label": "step2:anthropic/claude-fable-5", "note": "http 403: HTTP Error 403: Forbidden", "ts": 1794298743.859, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 3, "label": "step3:anthropic/claude-fable-5", "estimated_usd": 0.02, "ts": 1794298743.859, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 3, "label": "step3:anthropic/claude-fable-5", "note": "http 403: HTTP Error 403: Forbidden", "ts": 1794298744.214, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 4, "label": "step4:anthropic/claude-fable-5", "estimated_usd": 0.02, "ts": 1794298744.214, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 4, "label": "step4:anthropic/claude-fable-5", "note": "http 403: HTTP Error 403: Forbidden", "ts": 1794298744.583, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 5, "label": "step5:anthropic/claude-fable-5", "estimated_usd": 0.02, "ts": 1794298744.583, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 5, "label": "step5:anthropic/claude-fable-5", "note": "http 403: HTTP Error 403: Forbidden", "ts": 1794298744.946, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 6, "label": "step6:anthropic/claude-fable-5", "estimated_usd": 0.02, "ts": 1794298744.947, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 6, "label": "step6:anthropic/claude-fable-5", "note": "http 403: HTTP Error 403: Forbidden", "ts": 1794298745.301, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794298836.505, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:anthropic/claude-fable-5", "estimated_usd": 0.02, "ts": 1794298836.506, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:anthropic/claude-fable-5", "estimated_usd": 0.02, "cost_usd": 0.15582, "note": "served=anthropic/claude-fable-5", "ts": 1794298871.358, "spent_usd": 0.15582, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794298953.879, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794298953.879, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.000122, "note": "served=openai/gpt-oss-120b", "ts": 1794298982.606, "spent_usd": 0.000122, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794299063.195, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794299063.195, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010083, "note": "served=openai/gpt-oss-120b", "ts": 1794299083.069, "spent_usd": 0.010083, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794299795.472, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794299795.473, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010084, "note": "served=openai/gpt-oss-120b", "ts": 1794299809.214, "spent_usd": 0.010084, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794300090.767, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794300090.767, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010094, "note": "served=openai/gpt-oss-120b", "ts": 1794300107.401, "spent_usd": 0.010094, "reserved_usd": 0.0}

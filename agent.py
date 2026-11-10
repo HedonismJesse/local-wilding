@@ -14,6 +14,7 @@ decision receipt — the three patterns adopted from otari's own machinery.
 from __future__ import annotations
 
 import json
+import os
 from typing import Any, Optional
 
 from decide import Receipt, ReceiptLog, explain, weighted_ordering
@@ -47,10 +48,24 @@ def run_task(
     weights: Optional[dict[str, float]] = None,
     max_steps: int = 6,
     recorder=None,
+    on_event=None,
 ) -> dict[str, Any]:
-    """Run one research task; return {answer, trace, cost_usd, refused}."""
+    """Run one research task; return {answer, trace, cost_usd, refused}.
+
+    on_event(kind, data) fires for live display: step/refused/tool/settled."""
+
+    def emit(ev: str, **data: Any) -> None:
+        if on_event is not None:
+            on_event(ev, data)
+
     pool = candidates or [client.model]
-    rng = random.Random()
+    # DEMO_SEED pins the weighted draw for reproducible takes (video runs);
+    # unset keeps true randomness.
+    rng = (
+        random.Random(int(os.environ["DEMO_SEED"]))
+        if os.environ.get("DEMO_SEED")
+        else random.Random()
+    )
     if weights:
         print("  policy", explain(pool, weights))
         pool = weighted_ordering(pool, weights, rng)
@@ -71,8 +86,10 @@ def run_task(
                 res = ledger.reserve(_est_cost_usd(model), f"step{step}:{model}")
             except BudgetRefused as e:
                 print(f"  REFUSED (pre-dispatch): {e}")
+                emit("refused", msg=str(e))
                 return {"answer": "", "trace": trace, "cost_usd": total_cost, "refused": str(e)}
 
+        emit("step", step=step, model=model)
         result = client.chat(messages, model=model, tools=tools, tags=f"step={step}")
         if recorder is not None:
             recorder.save(f"step{step}_{model.replace('/', '_')}", result)
@@ -100,18 +117,20 @@ def run_task(
         total_cost += result.cost_usd
         if ledger is not None and res is not None:
             ledger.settle(res, result.cost_usd, note=f"served={result.served_model}")
+        emit("settled", cost_usd=result.cost_usd, served=result.served_model)
 
         for tc in result.tool_calls_ran:
             kind = tc.get("type") or tc.get("name", "?")
             trace.append({"tool": kind, "result": str(tc)[:300]})
             print(f"  tool ran server-side: {kind}")
+            emit("tool", kind=kind)
 
         if result.content:
             return {"answer": result.content, "trace": trace, "cost_usd": total_cost, "refused": ""}
         break
 
     return {
-        "answer": result.content or "(no answer — all candidates exhausted)",
+        "answer": result.content or "(no answer - all candidates exhausted)",
         "trace": trace,
         "cost_usd": total_cost,
         "refused": "",

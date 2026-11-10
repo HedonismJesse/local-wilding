@@ -1,0 +1,76 @@
+{
+  "ok": true,
+  "status": 200,
+  "headers": {
+    "date": "Tue, 10 Nov 2026 08:21:11 GMT",
+    "content-type": "application/json",
+    "content-length": "6472",
+    "connection": "close",
+    "server": "envoy",
+    "otari-request-id": "402a2cd5-6c9f-45e2-9915-1e0f62c6f7c2",
+    "otari-provider": "deepinfra",
+    "otari-model": "anthropic/claude-fable-5",
+    "otari-attempt-count": "1",
+    "otari-fallback": "false",
+    "otari-response-duration-ms": "34518",
+    "server-timing": "otari;dur=41.6;desc=\"Otari before the provider\", upstream;dur=34476.8;desc=\"Provider until its answer or first chunk\", total;dur=34518.4;desc=\"Otari and the provider\"",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "cache-control": "private, no-store, no-cache",
+    "vary": "Authorization",
+    "x-envoy-upstream-service-time": "34555"
+  },
+  "body": {
+    "id": "chatcmpl-RxuBwuI6ppMQ4Qdit5Spg7UK",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "content": "## Verdict: **FALSE** \u274c\n\nThe claim that India's population grew more than 15% between 2015 and 2023 is **not supported** by official data. Actual growth was roughly **8.3%** \u2014 barely half the claimed figure.\n\n### The data (World Bank, indicator `SP.POP.TOTL`, fetched live from the API)\n\n| Year | Population |\n|---|---|\n| 2015 | 1,328,024,498 |\n| 2023 | 1,438,069,596 |\n\n### The math (computed in code)\n- **Absolute growth:** +110,045,098 people\n- **Percent growth:** (1,438,069,596 \u2212 1,328,024,498) / 1,328,024,498 = **+8.29%**\n- **Implied annual rate (CAGR):** ~1.00% per year\n- For the claim to be true, India would have needed ~1.527 billion people in 2023 \u2014 about **89 million more** than the actual figure.\n\n### Sources\n- **World Bank Open Data**, \"Population, total\" (SP.POP.TOTL) for India, queried directly from `api.worldbank.org` (data last updated 2026-10-08). The World Bank series is itself derived primarily from the **UN World Population Prospects**, since India has not conducted a census since 2011.\n- Cross-check: UN WPP 2022/2024 revisions give very similar figures (~1.32B in 2015, ~1.43\u20131.44B in 2023), implying growth of roughly **8\u20139%** \u2014 consistent with the above regardless of which revision is used.\n\n### Confidence: **Very high**\nAll major official sources (World Bank, UN) agree within a fraction of a percentage point, and the gap between actual growth (~8.3%) and the claimed threshold (>15%) is enormous. Even accounting for uncertainty in India's post-2011 estimates (no recent census), there is no plausible dataset under which the claim holds. Growth of 15%+ over 8 years would require ~1.8% annual growth \u2014 a rate India last sustained in the 1990s.\n\n**Context:** The claim may stem from confusion with a longer window (e.g., India grew ~15% from roughly 2008 to 2023) or with the milestone of India surpassing China as the world's most populous country in 2023 \u2014 a true fact, but driven by China's decline, not rapid Indian growth.",
+          "role": "assistant",
+          "provider_specific_fields": {
+            "reasoning_content": null,
+            "name": null
+          },
+          "refusal": null
+        },
+        "logprobs": null
+      }
+    ],
+    "created": 1794298871,
+    "model": "anthropic/claude-fable-5",
+    "object": "chat.completion",
+    "service_tier": "default",
+    "usage": {
+      "completion_tokens": 1767,
+      "prompt_tokens": 4747,
+      "total_tokens": 6514,
+      "estimated_cost": 0.06451000000000001,
+      "cost_usd": "0.155820",
+      "pricing_source": "deployment"
+    },
+    "otari_tool_calls": [
+      {
+        "id": "otari_ci_1e91c09c46be48f8a378df9158c9c710",
+        "type": "code_execution",
+        "status": "completed",
+        "code": "\nimport urllib.request\ntry:\n    # World Bank API: India total population (SP.POP.TOTL)\n    url = \"https://api.worldbank.org/v2/country/IND/indicator/SP.POP.TOTL?format=json&date=2015:2023\"\n    with urllib.request.urlopen(url, timeout=10) as r:\n        data = r.read()\n    print(data[:2000])\nexcept Exception as e:\n    print(\"Network access failed:\", repr(e))\n",
+        "stdout": "b'[{\"page\":1,\"pages\":1,\"per_page\":50,\"total\":9,\"sourceid\":\"2\",\"lastupdated\":\"2026-10-08\"},[{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2023\",\"value\":1438069596,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2022\",\"value\":1425423212,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2021\",\"value\":1414203896,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2020\",\"value\":1402617695,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2019\",\"value\":1389030312,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2018\",\"value\":1374659064,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2017\",\"value\":1359657400,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2016\",\"value\":1343944296,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0},{\"indicator\":{\"id\":\"SP.POP.TOTL\",\"value\":\"Population, total\"},\"country\":{\"id\":\"IN\",\"value\":\"India\"},\"countryiso3code\":\"IND\",\"date\":\"2015\",\"value\":1328024498,\"unit\":\"\",\"obs_status\":\"\",\"decimal\":0}]]'\n",
+        "stderr": "",
+        "exit_code": 0
+      },
+      {
+        "id": "otari_ci_bacf19e8f4194ac5a7f15bc9b4757305",
+        "type": "code_execution",
+        "status": "completed",
+        "code": "\npop_2015 = 1_328_024_498\npop_2023 = 1_438_069_596\n\nabs_growth = pop_2023 - pop_2015\npct_growth = abs_growth / pop_2015 * 100\ncagr = ((pop_2023 / pop_2015) ** (1/8) - 1) * 100\n\nprint(f\"Population 2015: {pop_2015:,}\")\nprint(f\"Population 2023: {pop_2023:,}\")\nprint(f\"Absolute growth: {abs_growth:,}\")\nprint(f\"Percent growth 2015->2023: {pct_growth:.2f}%\")\nprint(f\"Implied annual growth rate (CAGR): {cagr:.2f}%/yr\")\nprint(f\"Claim: growth > 15%?  ->  {pct_growth > 15}\")\n\n# What population in 2023 would have been needed for 15% growth?\nneeded = pop_2015 * 1.15\nprint(f\"\\n2023 population needed for 15% growth: {needed:,.0f}\")\nprint(f\"Shortfall vs. 15% threshold: {needed - pop_2023:,.0f} people\")\n",
+        "stdout": "Population 2015: 1,328,024,498\nPopulation 2023: 1,438,069,596\nAbsolute growth: 110,045,098\nPercent growth 2015->2023: 8.29%\nImplied annual growth rate (CAGR): 1.00%/yr\nClaim: growth > 15%?  ->  False\n\n2023 population needed for 15% growth: 1,527,228,173\nShortfall vs. 15% threshold: 89,158,577 people\n",
+        "stderr": "",
+        "exit_code": 0
+      }
+    ]
+  },
+  "error": ""
+}

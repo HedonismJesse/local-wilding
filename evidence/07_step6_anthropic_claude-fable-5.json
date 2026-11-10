@@ -1,0 +1,22 @@
+{
+  "ok": false,
+  "status": 403,
+  "headers": {
+    "date": "Tue, 10 Nov 2026 08:19:05 GMT",
+    "content-type": "application/json",
+    "content-length": "57",
+    "connection": "close",
+    "server": "envoy",
+    "otari-request-id": "14503af2-d04d-4238-8948-4c68743144b3",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "cache-control": "private, no-store, no-cache",
+    "vary": "Authorization",
+    "x-envoy-upstream-service-time": "23"
+  },
+  "body": {
+    "detail": "web search is not enabled for this workspace"
+  },
+  "error": "HTTP Error 403: Forbidden"
+}
