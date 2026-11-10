@@ -48,17 +48,26 @@ def evidence_checks(evidence_dir: str) -> Dict[str, bool]:
     rows = _rows(Path(evidence_dir))
     receipts = [r for r in rows if "label" in r and "outcome" in r]
     events = [r for r in rows if "event" in r]
-    raw = [r for r in rows if "choices" in r]
-    served_ok = [r for r in receipts
-                 if str(r.get("outcome", "")).startswith("ok")
-                 and r.get("served_model")]
+    # Raw responses persist as a CallResult wrapper {ok,status,headers,body};
+    # the provider payload (choices/usage/otari_tool_calls) lives under body.
+    raw = []  # (payload, wrapper_headers)
+    for r in rows:
+        payload = r.get("body") if isinstance(r.get("body"), dict) else r
+        headers = r.get("headers") if isinstance(r.get("headers"), dict) else {}
+        if "choices" in payload:
+            raw.append((payload, headers))
     return {
-        # local arm: served by a model, no otari tool calls anywhere
-        # in its raw response — the beat is "no tools, weights only".
-        "local": any("otari_tool_calls" not in r and "choices" in r
-                     for r in raw) or bool(served_ok),
+        # local arm: a response with NO otari tool calls AND no Otari-*
+        # gateway headers — "no tools, weights only" served by the local
+        # arm. A gateway answer that skipped tools must not satisfy it.
+        "local": any(
+            "choices" in p
+            and not p.get("otari_tool_calls")
+            and not any(k.startswith("otari") for k in h)
+            for p, h in raw
+        ),
         # gateway arm: a raw response with non-empty otari tool calls.
-        "gateway": any(r.get("otari_tool_calls") for r in raw),
+        "gateway": any(p.get("otari_tool_calls") for p, _ in raw),
         # refusal beat: a ledger refuse event.
         "refusal": any(e.get("event") == "refuse" for e in events),
         # evidence beat: at least one raw response persisted.

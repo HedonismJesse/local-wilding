@@ -102,8 +102,9 @@ def run_task(
             ledger.settle(res, result.cost_usd, note=f"served={result.served_model}")
 
         for tc in result.tool_calls_ran:
-            trace.append({"tool": tc.get("name", "?"), "result": str(tc)[:300]})
-            print(f"  tool ran server-side: {tc.get('name', '?')}")
+            kind = tc.get("type") or tc.get("name", "?")
+            trace.append({"tool": kind, "result": str(tc)[:300]})
+            print(f"  tool ran server-side: {kind}")
 
         if result.content:
             return {"answer": result.content, "trace": trace, "cost_usd": total_cost, "refused": ""}

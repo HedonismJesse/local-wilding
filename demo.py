@@ -32,6 +32,14 @@ from ledger import SpendLedger
 from otari_client import OtariClient, SERVER_TOOLS
 from replay import Recorder, replay_transport
 
+# Tool set follows the workspace's switches — DEMO_TOOLS=code narrows to
+# the always-on sandbox while search/fetch are workspace-disabled.
+TOOLS = (
+    [{"type": "otari_code_execution"}]
+    if os.environ.get("DEMO_TOOLS") == "code"
+    else SERVER_TOOLS
+)
+
 DEFAULT_TASK = (
     "Verify this claim: 'The population of India grew more than 15% "
     "between 2015 and 2023.' Find official figures, do the math in code, "
@@ -50,12 +58,13 @@ def main() -> int:
     budget = float(os.environ.get("DEMO_BUDGET_USD", "0.25"))
 
     print("=== beat 1: local arm (no tools, weights only) ===")
-    local_out = local_arm.run(task)
+    recorder = None if replay else Recorder()
+    receipts = ReceiptLog()
+    local_out = local_arm.run(task, recorder=recorder, receipts=receipts)
     if local_out:
         print("LOCAL ANSWER:", local_out["answer"][:500])
 
     print("\n=== beat 2: gateway arm (tools + budget + receipts) ===")
-    recorder = None if replay else Recorder()
     transport = replay_transport() if replay else None
     client = OtariClient(transport=transport)
     if not client.api_key and not replay:
@@ -63,11 +72,10 @@ def main() -> int:
         return 2
 
     ledger = SpendLedger(cap_usd=budget)
-    receipts = ReceiptLog()
     out = run_task(
         client,
         task,
-        tools=SERVER_TOOLS,
+        tools=TOOLS,
         ledger=ledger,
         receipts=receipts,
         candidates=CANDIDATES,
@@ -82,7 +90,7 @@ def main() -> int:
     refuse_out = run_task(
         client,
         "Summarize today's top AI news in one sentence.",
-        tools=SERVER_TOOLS,
+        tools=TOOLS,
         ledger=tiny,
         receipts=receipts,
     )

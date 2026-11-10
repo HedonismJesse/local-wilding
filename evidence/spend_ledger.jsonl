@@ -11,3 +11,12 @@
 {"event": "release", "seq": 5, "label": "step5:anthropic:claude-sonnet-4-6", "note": "http 0: replay exhausted", "ts": 1794249495.795, "spent_usd": 0.0, "reserved_usd": 0.0}
 {"event": "reserve", "seq": 6, "label": "step6:anthropic:claude-sonnet-4-6", "estimated_usd": 0.02, "ts": 1794249495.796, "spent_usd": 0.0, "reserved_usd": 0.02}
 {"event": "release", "seq": 6, "label": "step6:anthropic:claude-sonnet-4-6", "note": "http 0: replay exhausted", "ts": 1794249495.796, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794293724.343, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794293724.344, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010056, "note": "served=openai/gpt-oss-120b", "ts": 1794293733.237, "spent_usd": 0.010056, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794294049.966, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794294049.967, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.020249, "note": "served=openai/gpt-oss-120b", "ts": 1794294086.698, "spent_usd": 0.020249, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794294139.496, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794294139.496, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010134, "note": "served=openai/gpt-oss-120b", "ts": 1794294164.124, "spent_usd": 0.010134, "reserved_usd": 0.0}
