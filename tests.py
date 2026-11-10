@@ -112,5 +112,57 @@ class TestReplay(unittest.TestCase):
             self.assertEqual(result.cost_usd, 0.0031)
 
 
+class TestSphereFitness(unittest.TestCase):
+    """The scorer must discriminate evidence from empty dirs and
+    enforce certificates on claimed beats — never pass prose."""
+
+    def _write(self, d, name, obj):
+        Path(d, name).write_text(
+            obj if isinstance(obj, str) else json.dumps(obj),
+            encoding="utf-8")
+
+    def _evidence_with_receipts(self, d):
+        self._write(d, "receipts.jsonl",
+                    '{"label":"s1","outcome":"ok","cost_usd":0.0031,'
+                    '"served_model":"m","ts":1}\n')
+        self._write(d, "spend_ledger_cap.jsonl",
+                    '{"event":"refuse","seq":1,"reason":"cap"}\n')
+        self._write(d, "step1.json", dict(BODY))  # has otari_tool_calls
+
+    def test_discriminates_evidence_from_empty(self):
+        import sphere_fitness as sf
+        with tempfile.TemporaryDirectory() as d:
+            empty = sf.score(["gateway"], str(Path(d) / "none"), d)
+            self.assertEqual(empty["total"], 0)
+        with tempfile.TemporaryDirectory() as d:
+            ev = Path(d) / "ev"
+            ev.mkdir()
+            self._evidence_with_receipts(str(ev))
+            full = sf.score(["gateway", "refusal"], str(ev), d)
+            self.assertGreater(full["total"], empty["total"])
+
+    def test_certificate_enforcement_on_claimed_beats(self):
+        import sphere_fitness as sf
+        with tempfile.TemporaryDirectory() as d:
+            rep = sf.score(["gateway", "refusal"], str(Path(d) / "none"), d)
+            self.assertEqual(rep["certificate_failures"],
+                             ["gateway", "refusal"])
+            self.assertEqual(rep["beats"], {"gateway": False,
+                                            "refusal": False})
+
+    def test_document_probe_fires_both_ways(self):
+        import sphere_fitness as sf
+        with tempfile.TemporaryDirectory() as d:
+            bare = sf.document_probes(d)
+            self.assertFalse(bare["readme_first_commit"])
+            Path(d, "README.md").write_text(
+                "first Otari commit: /commit/cb6f106 devs-wilding")
+            Path(d, "FEEDBACK.md").write_text(
+                "the reservations machinery in services/budgets …")
+            filled = sf.document_probes(d)
+            self.assertTrue(filled["readme_first_commit"])
+            self.assertTrue(filled["feedback_cites_source"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
