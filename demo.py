@@ -52,6 +52,14 @@ CANDIDATES = ["openai/gpt-oss-120b", "anthropic/claude-fable-5"]
 WEIGHTS = {"openai/gpt-oss-120b": 90, "anthropic:claude-sonnet-4-6": 10}
 
 
+def _pace(seconds: int) -> None:
+    """DEMO_VIDEO=1 adds dwell between beats for screen capture."""
+    if os.environ.get("DEMO_VIDEO"):
+        import time
+
+        time.sleep(seconds)
+
+
 def main() -> int:
     replay = "--replay" in sys.argv
     task = next((a for a in sys.argv[1:] if not a.startswith("--")), DEFAULT_TASK)
@@ -63,6 +71,7 @@ def main() -> int:
     local_out = local_arm.run(task, recorder=recorder, receipts=receipts)
     if local_out:
         print("LOCAL ANSWER:", local_out["answer"][:500])
+    _pace(8)
 
     print("\n=== beat 2: gateway arm (tools + budget + receipts) ===")
     transport = replay_transport() if replay else None
@@ -84,6 +93,7 @@ def main() -> int:
     )
     print("\nGATEWAY ANSWER:", out["answer"][:1200])
     print(f"cost this run: ${out['cost_usd']:.4f}  (cap ${budget:.2f})")
+    _pace(10)
 
     print("\n=== beat 3: the cap refuses ===")
     tiny = SpendLedger(cap_usd=0.01, path="evidence/spend_ledger_cap.jsonl")
@@ -98,6 +108,7 @@ def main() -> int:
         print("enforcement shown: zero spend, typed refusal, ledger row written.")
     else:
         print("(cap did not bind — first call fit under $0.01; lower it and re-run)")
+    _pace(8)
 
     print("\nledger:", ledger.path, " receipts:", receipts.path)
     return 0
