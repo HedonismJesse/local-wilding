@@ -329,7 +329,16 @@ min-height:0;overflow-y:auto}
 @media(max-width:860px){main{grid-template-columns:1fr}}
 .card{background:var(--panel);border:1px solid #1E3A47;border-radius:8px;
 padding:12px}
-h3{margin:0 0 8px;color:var(--amber);font-size:13px;letter-spacing:.5px}
+h3{margin:0;color:var(--amber);font-size:13px;letter-spacing:.5px}
+.step{display:inline-block;background:#123a2e;color:var(--teal);
+border-radius:50%;width:18px;height:18px;text-align:center;
+line-height:18px;font-size:11px;margin-right:6px}
+.secsub{color:var(--dim);font-size:11.5px;font-weight:400}
+.hidden{display:none}
+.expander{color:var(--dim);font-size:11.5px;cursor:pointer;
+padding:4px 6px;text-align:center}
+.expander:hover{color:var(--teal)}
+.rdet .ans{max-height:110px}
 textarea{width:100%;height:90px;background:#0B1620;color:var(--txt);
 border:1px solid #1E3A47;border-radius:6px;padding:8px;font:inherit}
 input,select{background:#0B1620;color:var(--txt);border:1px solid #1E3A47;
@@ -377,19 +386,26 @@ a{color:var(--teal)}
 <button class=ghost style="width:auto;margin:0"
  onclick="demo()">run devs-wilding demo</button></header>
 <main>
-<div class=card><h3>send</h3>
+<div class=card><h3><span class=step>1</span>dispatch
+<span class=secsub>— any prompt, any endpoint</span></h3>
 <textarea id=prompt placeholder="prompt…">Verify this claim: 'The population
 of India grew more than 15% between 2015 and 2023.'</textarea>
 <label>model</label><select id=model></select>
 <label>budget cap (usd) — reserve before dispatch, refuse on breach</label>
 <input id=cap type=number step=0.01 value=0.25>
-<label>server-side tools (live probe)</label><div id=tools>probing…</div>
+<label style="cursor:pointer" onclick="toggleTools()">server-side tools
+<span id=tsum class=secsub>— probing…</span>
+<span id=tcaret style="float:right">▸</span></label>
+<div id=tools class=hidden>probing…</div>
 <label>arm</label><select id=arm><option value=gateway>endpoint (gateway)</option>
 <option value=local>local (free — LOCAL_BASE_URL)</option></select>
 <button id=send onclick="send()">dispatch →</button></div>
-<div class=card><h3>feed</h3><div id=feed class=feed></div>
+<div class=card><h3><span class=step>2</span>live feed
+<span class=secsub>— events stream as they happen</span></h3>
+<div id=feed class=feed></div>
 <div id=answer></div></div>
-<div class=card id=demoPane><h3>demo — same task, two arms</h3>
+<div class=card id=demoPane><h3>demo — same task, two arms
+<span class=secsub>— local 1B (no tools) vs gateway (tools+budget)</span></h3>
 <div class=cols><div><label>local — no tools</label>
 <div id=dl class=feed></div></div>
 <div><label>gateway — tools + budget + receipts</label>
@@ -397,7 +413,8 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <div id=capfeed></div></div>
 <div class=card style="grid-column:1/3;padding:0">
 <div style="display:flex;gap:14px;align-items:center;padding:10px 14px">
-<span style="color:var(--amber)">▤ receipt box</span>
+<span style="color:var(--amber)"><span class=step>3</span>receipt box
+<span class=secsub>— one per dispatch, hash-verifiable</span></span>
 <span id=rcount style="color:var(--dim)"></span>
 <span style="margin-left:auto">
 <a href="/api/receipts?fmt=jsonl" download>export .jsonl</a> ·
@@ -406,7 +423,8 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <div class=card style="grid-column:1/3;padding:0">
 <div id=lbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
  cursor:pointer;user-select:none" onclick="toggleLedger()">
-<span style="color:var(--amber)">◈ ledger</span>
+<span style="color:var(--amber)"><span class=step>4</span>spend ledger
+<span class=secsub>— enforcement record</span></span>
 <span id=lsum style="color:var(--dim)">…</span>
 <span id=lcaret style="margin-left:auto;color:var(--dim)">▸</span></div>
 <div id=ltable style="display:none;padding:0 14px 12px">
@@ -426,26 +444,28 @@ async function boot(){
  $('epbase').value=s.base;
  const tm=await api('/api/models');
  $('model').innerHTML=tm.models.map(m=>`<option>${esc(m)}</option>`).join('');
- const tt=await api('/api/tools');
- $('tools').innerHTML=(tt.tools||[]).map(t=>{
-  const dis=t.available===false;
-  return `<div class="tool${dis?' dis':''}"><input type=checkbox id=tl_${t.id}
-   ${t.available?'checked':''} ${dis?'disabled':''}>
-   <span>${esc(t.id)}</span><span style=color:var(--dim)>${esc(t.reason||'')}</span></div>`}).join('');
+ const tt=await api('/api/tools');renderTools(tt);
  receipts(); ledger();
  setInterval(()=>{receipts();ledger()},8000);
  const m=location.hash.match(/r_\w+/);
  if(m)setTimeout(()=>openReceipt(m[0]),400)}
-async function setEp(){
- await api('/api/config',{base:$('epbase').value,key:$('epkey').value});
- const tm=await api('/api/models');
- $('model').innerHTML=tm.models.map(m=>`<option>${esc(m)}</option>`).join('');
- const tt=await api('/api/tools');
- $('tools').innerHTML=(tt.tools||[]).map(t=>{
+function renderTools(tt){
+ const ts=tt.tools||[];const on=ts.filter(t=>t.available).length;
+ $('tsum').textContent=`— ${on} available`;
+ $('tools').innerHTML=ts.map(t=>{
   const dis=t.available===false;
   return `<div class="tool${dis?' dis':''}"><input type=checkbox id=tl_${t.id}
    ${t.available?'checked':''} ${dis?'disabled':''}>
    <span>${esc(t.id)}</span><span style=color:var(--dim)>${esc(t.reason||'')}</span></div>`}).join('')}
+function toggleTools(){
+ const t=$('tools'),open=!t.classList.contains('hidden');
+ t.classList.toggle('hidden',open);
+ $('tcaret').textContent=open?'▸':'▾'}
+async function setEp(){
+ await api('/api/config',{base:$('epbase').value,key:$('epkey').value});
+ const tm=await api('/api/models');
+ $('model').innerHTML=tm.models.map(m=>`<option>${esc(m)}</option>`).join('');
+ const tt=await api('/api/tools');renderTools(tt)}
 function evHtml(e){
  const d=e.data||{};let txt=e.ev;
  if(e.ev==='step')txt=`step ${d.step} → ${d.model}`;
@@ -463,7 +483,8 @@ async function poll(id,feeds){
   if(e._seen)return;e._seen=1;
   const el=(e.arm==='local'&&feeds.dl)||((e.arm==='gateway'||e.arm==='cap')&&feeds.dg)||feeds.main;
   el.insertAdjacentHTML('beforeend',evHtml(e));
-  el.scrollTop=el.scrollHeight});
+  el.scrollTop=el.scrollHeight;
+  trimFeed(el)});
  if(j.status==='done'){
   clearInterval(job);job=null;$('send').disabled=false;
   const r=j.result||{};
@@ -475,6 +496,16 @@ async function poll(id,feeds){
     <div class="ev refused">cap beat: ${esc(c.refused||'(not refused)')}</div>`}
   else if(r.error)$('answer').innerHTML=`<div class=ans style="color:var(--red)">${esc(r.error)}</div>`;
   receipts();ledger()}}
+function trimFeed(el){
+ const MAX=8,kids=[...el.querySelectorAll('.ev')];
+ if(kids.length<=MAX)return;
+ kids.slice(0,-MAX).forEach(k=>k.classList.add('hidden'));
+ let ex=el.querySelector('.expander');
+ if(!ex){ex=document.createElement('div');ex.className='expander';
+  ex.onclick=()=>{el.querySelectorAll('.ev.hidden').forEach(k=>
+   k.classList.remove('hidden'));ex.remove()};
+  el.prepend(ex)}
+ ex.textContent=`▸ ${kids.length-MAX} earlier events — show`}
 async function send(){
  $('send').disabled=true;$('feed').innerHTML='';$('answer').innerHTML='';
  const tools=[...document.querySelectorAll('#tools input:checked')].map(c=>c.id.slice(3));
@@ -488,7 +519,8 @@ async function demo(){
  job=setInterval(()=>poll(r.job,{main:$('feed'),dl:$('dl'),dg:$('dg')}),800)}
 async function receipts(){
  const l=await api('/api/receipts');
- $('rcount').textContent=(l.rows||[]).length+' receipts';
+ const tot=(l.rows||[]).reduce((a,r)=>a+(r.cost_usd||0),0);
+ $('rcount').textContent=(l.rows||[]).length+` receipts · $${tot.toFixed(4)} settled`;
  $('rbox').innerHTML=(l.rows||[]).slice().reverse().map(r=>`<div class=rcpt id=${r.id}
   onclick="toggleRcpt('${r.id}')">
   <b>${esc(r.id)}</b> <span class=tag>${esc(r.arm)}</span>
