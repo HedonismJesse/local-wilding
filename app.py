@@ -42,7 +42,11 @@ from agent import run_task
 from decide import ReceiptLog
 from ledger import SpendLedger
 from otari_client import OtariClient
-from replay import Recorder
+from replay import Recorder, replay_transport
+
+# Public-deploy mode: sends/demo replay recorded evidence — no API keys
+# are ever fielded by the public instance. LW_REPLAY=1 to enable.
+REPLAY = bool(os.environ.get("LW_REPLAY"))
 
 HOST = os.environ.get("LW_HOST", "127.0.0.1")
 PORT = int(os.environ.get("LW_PORT", "8787"))
@@ -165,6 +169,8 @@ def _finish(jid: str, result) -> None:
 def _send_one(jid: str, arm: str, client: OtariClient, prompt: str,
               tools: list[str], cap: float | None) -> dict:
     """One run_task with recorder + receipt minting."""
+    if REPLAY:
+        client._post = replay_transport()
     rec = Recorder(directory=RAW_DIR)
     ledger = (SpendLedger(cap_usd=cap, path=LEDGER_PATH)
               if cap is not None else None)
@@ -192,12 +198,14 @@ def run_send(jid: str, prompt: str, model: str, cap: float,
             client = local_arm.local_client()
         else:
             client = cfg_client()
-            if not client.api_key:
+            if not client.api_key and not REPLAY:
                 _finish(jid, {"ok": False, "error":
                               "no API key — set OTARI_API_KEY or the "
                               "endpoint bar's key field."})
                 return
             client.model = model or client.model
+            if REPLAY and not client.api_key:
+                client.api_key = "replay"
         out = _send_one(jid, arm, client, prompt, tools,
                         cap if arm != "local" else None)
         _finish(jid, {"ok": True, "arm": arm, **out})
@@ -217,6 +225,8 @@ def run_demo(jid: str, cap: float) -> None:
             _note(jid, "local", "skipped",
                   msg="LOCAL_BASE_URL unset — local arm skipped")
         client = cfg_client()
+        if REPLAY and not client.api_key:
+            client.api_key = "replay"
         if client.api_key:
             _note(jid, "gateway", "beat", label="gateway arm — tools+budget")
             arms["gateway"] = _send_one(jid, "gateway", client, DEMO_TASK,
@@ -301,17 +311,22 @@ PAGE = r"""<!doctype html><html><head><meta charset=utf-8>
 <style>
 :root{--bg:#0D1B26;--panel:#12242F;--teal:#3FD9A8;--amber:#FFCF6B;
 --txt:#DFF4EE;--dim:#7FA8A0;--red:#E8455F}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);
-font:14px/1.5 Consolas,monospace}
+*{box-sizing:border-box}html,body{height:100%;overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--txt);
+font:14px/1.5 Consolas,monospace;display:flex;flex-direction:column}
 header{display:flex;gap:12px;align-items:center;padding:10px 16px;
-background:var(--panel);border-bottom:1px solid #1E3A47;flex-wrap:wrap}
+background:var(--panel);border-bottom:1px solid #1E3A47;flex-wrap:wrap;
+flex:0 0 auto}
 header b{color:var(--teal);font-size:16px}.pill{padding:2px 10px;
 border-radius:10px;font-size:12px}
 .ok{background:#123a2e;color:var(--teal)}.bad{background:#3a1620;color:var(--red)}
 .endpoint{display:flex;gap:6px;align-items:center;flex:1;min-width:280px}
 .endpoint input{font-size:12px;padding:3px 8px}
 .endpoint .b{flex:2}.endpoint .k{flex:1.2}
-main{display:grid;grid-template-columns:380px 1fr;gap:14px;padding:14px}
+main{display:grid;grid-template-columns:minmax(320px,380px) 1fr;
+grid-template-rows:auto 1fr auto;gap:14px;padding:14px;flex:1;
+min-height:0;overflow-y:auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
 .card{background:var(--panel);border:1px solid #1E3A47;border-radius:8px;
 padding:12px}
 h3{margin:0 0 8px;color:var(--amber);font-size:13px;letter-spacing:.5px}
@@ -326,7 +341,7 @@ button:disabled{opacity:.4;cursor:wait}
 label{display:block;margin:8px 0 3px;color:var(--dim);font-size:12px}
 .tool{display:flex;gap:8px;align-items:center;padding:2px 0}
 .tool.dis{opacity:.45}
-.feed{max-height:340px;overflow-y:auto;font-size:12.5px}
+.feed{height:260px;overflow-y:auto;font-size:12.5px}
 .ev{padding:3px 6px;border-left:3px solid #1E3A47;margin:3px 0;
 white-space:pre-wrap;word-break:break-word}
 .ev.local{border-color:#8a7}.ev.gateway{border-color:var(--teal)}
@@ -387,7 +402,7 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <span style="margin-left:auto">
 <a href="/api/receipts?fmt=jsonl" download>export .jsonl</a> ·
 <a href="/api/receipts?fmt=csv" download>export .csv</a></span></div>
-<div id=rbox style="max-height:300px;overflow-y:auto;padding:0 6px"></div></div>
+<div id=rbox style="height:280px;overflow-y:auto;padding:0 6px"></div></div>
 <div class=card style="grid-column:1/3;padding:0">
 <div id=lbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
  cursor:pointer;user-select:none" onclick="toggleLedger()">
@@ -405,7 +420,8 @@ function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>
 async function api(u,o){const r=await fetch(u,o?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(o)}:undefined);return r.json()}
 async function boot(){
  const s=await api('/api/status');
- $('keystat').textContent=s.key_set?'key set':'key unset';
+ $('keystat').textContent=s.replay?'replay mode — evidence, no keys'
+  :(s.key_set?'key set':'key unset');
  $('keystat').className='pill '+(s.key_set?'ok':'bad');
  $('epbase').value=s.base;
  const tm=await api('/api/models');
@@ -539,10 +555,10 @@ class H(BaseHTTPRequestHandler):
             with CFG_LOCK:
                 base, model = CFG["base"], CFG["model"]
             c = cfg_client()
-            self._out(200, {"key_set": bool(c.api_key),
+            self._out(200, {"key_set": bool(c.api_key) or REPLAY,
                             "base": c.base, "model": model,
-                            "local": local_arm.available(),
-                            "custom": bool(base)})
+                            "local": local_arm.available() or REPLAY,
+                            "custom": bool(base), "replay": REPLAY})
         elif path == "/api/tools":
             self._out(200, api_tools())
         elif path == "/api/models":
