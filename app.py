@@ -1,20 +1,32 @@
-"""local-wilding console — a usable Otari control surface, stdlib only.
+"""local-wilding console — a usable agent-harness surface, stdlib only.
 
     python app.py            # http://localhost:8787
 
-Real functions: send a prompt through the gateway with model picker,
-budget cap (pre-dispatch refusal via SpendLedger), live tool probe,
-receipted feed, spend-ledger view. The devs-wilding demo is one button
-inside it — the same two-arm run the video shows, driven from the page.
+Not a demo prop: an endpoint-agnostic console. Point it at Otari
+(default), a local llamafile/LM Studio, or any OpenAI-compatible
+harness — set base + key in the endpoint bar. Nothing proprietary.
+
+The product surface is the RECEIPT BOX: every dispatched call mints a
+receipt — id, endpoint, model, tools declared + ran, prompt, answer,
+cost, served-model, sha256 hashes, and a link to the raw response file
+under evidence/. Receipts are listable, deep-linkable (/?r=<id>),
+exportable (jsonl/csv), and human-verifiable (hash the text yourself).
+
+The spend ledger collapses to a spent/saved/refusals summary bar.
+The devs-wilding demo is one button inside — the same three-beat run
+the video shows, driven from the page.
 
 No framework, no deps — same zero-dependency spirit as otari_client.py.
-Jobs run on threads; the page polls /api/job for the live feed.
 """
 
 from __future__ import annotations
 
+import csv
+import hashlib
+import io
 import json
 import os
+import sys
 import threading
 import time
 import urllib.request
@@ -22,22 +34,29 @@ import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-import sys
-
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(errors="replace")
 
 import local_arm
 from agent import run_task
+from decide import ReceiptLog
 from ledger import SpendLedger
 from otari_client import OtariClient
+from replay import Recorder
 
 HOST = os.environ.get("LW_HOST", "127.0.0.1")
 PORT = int(os.environ.get("LW_PORT", "8787"))
 LEDGER_PATH = "evidence/spend_ledger_console.jsonl"
+RECEIPTS_PATH = "evidence/console_receipts.jsonl"
+RAW_DIR = Path("evidence/console_raw")
 
 JOBS: dict[str, dict] = {}
 JOBS_LOCK = threading.Lock()
+
+# Endpoint config — in-memory only (env is the persistent path; the UI
+# writes here). Point anywhere OpenAI-compatible.
+CFG = {"base": "", "key": "", "model": "openai/gpt-oss-120b"}
+CFG_LOCK = threading.Lock()
 
 ALL_TOOLS = ["otari_web_search", "otari_web_fetch", "otari_code_execution"]
 
@@ -47,6 +66,71 @@ DEMO_TASK = (
     "and give a verdict with sources."
 )
 CAP_TASK = "Summarize today's top AI news in one sentence."
+
+
+def cfg_client() -> OtariClient:
+    """Client from the live endpoint bar — Otari by default, any
+    OpenAI-compatible base if the operator points elsewhere."""
+    with CFG_LOCK:
+        base, key, model = CFG["base"], CFG["key"], CFG["model"]
+    c = OtariClient(api_key=key or None, base=base or None)
+    c.model = model
+    return c
+
+
+# --------------------------------------------------------------- receipts ---
+
+def mint_receipt(arm: str, endpoint: str, model_req: str, prompt: str,
+                 out: dict, tools_decl: list[str], job: str,
+                 raw: str = "") -> dict:
+    r = {
+        "id": "r_" + uuid.uuid4().hex[:8],
+        "ts": round(time.time(), 3),
+        "endpoint": endpoint,
+        "arm": arm,
+        "model_requested": model_req,
+        "model_served": "",
+        "tools_declared": tools_decl,
+        "tools_ran": [t["tool"] for t in (out.get("trace") or [])],
+        "prompt": prompt,
+        "prompt_sha": hashlib.sha256(prompt.encode()).hexdigest()[:16],
+        "answer": out.get("answer", ""),
+        "answer_sha": hashlib.sha256(
+            (out.get("answer") or "").encode()).hexdigest()[:16],
+        "cost_usd": round(out.get("cost_usd") or 0.0, 6),
+        "refused": out.get("refused") or "",
+        "job": job,
+        "raw": raw,
+    }
+    Path(RECEIPTS_PATH).parent.mkdir(parents=True, exist_ok=True)
+    with open(RECEIPTS_PATH, "a", encoding="utf-8") as f:
+        f.write(json.dumps(r) + "\n")
+    return r
+
+
+def read_receipts() -> list[dict]:
+    p = Path(RECEIPTS_PATH)
+    if not p.exists():
+        return []
+    rows = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            pass
+    return rows
+
+
+def receipts_csv(rows: list[dict]) -> str:
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["id", "ts", "endpoint", "arm", "model_served",
+                "cost_usd", "refused", "prompt_sha", "answer_sha"])
+    for r in rows:
+        w.writerow([r.get(k, "") for k in
+                    ["id", "ts", "endpoint", "arm", "model_served",
+                     "cost_usd", "refused", "prompt_sha", "answer_sha"]])
+    return buf.getvalue()
 
 
 # ---------------------------------------------------------------- jobs ------
@@ -78,6 +162,24 @@ def _finish(jid: str, result) -> None:
         JOBS[jid]["result"] = result
 
 
+def _send_one(jid: str, arm: str, client: OtariClient, prompt: str,
+              tools: list[str], cap: float | None) -> dict:
+    """One run_task with recorder + receipt minting."""
+    rec = Recorder(directory=RAW_DIR)
+    ledger = (SpendLedger(cap_usd=cap, path=LEDGER_PATH)
+              if cap is not None else None)
+    decl = [{"type": t} for t in tools] or None
+    out = run_task(client, prompt, tools=decl, ledger=ledger,
+                   on_event=_emit(jid, arm), recorder=rec)
+    raw = ""
+    if rec.seq:
+        raw = str(RAW_DIR / f"{rec.seq:02d}_*.json")
+    r = mint_receipt(arm, client.base, client.model, prompt, out,
+                     tools, jid, raw)
+    _note(jid, arm, "receipt", id=r["id"])
+    return {"receipt": r, **out}
+
+
 def run_send(jid: str, prompt: str, model: str, cap: float,
              tools: list[str], arm: str) -> None:
     try:
@@ -88,19 +190,16 @@ def run_send(jid: str, prompt: str, model: str, cap: float,
                               "Studio and set it for the free local arm."})
                 return
             client = local_arm.local_client()
-            ledger = None
-            decl_tools = None
         else:
-            client = OtariClient()
+            client = cfg_client()
             if not client.api_key:
                 _finish(jid, {"ok": False, "error":
-                              "OTARI_API_KEY unset — the gateway arm needs it."})
+                              "no API key — set OTARI_API_KEY or the "
+                              "endpoint bar's key field."})
                 return
-            client.model = model
-            ledger = SpendLedger(cap_usd=cap, path=LEDGER_PATH)
-            decl_tools = [{"type": t} for t in tools] or None
-        out = run_task(client, prompt, tools=decl_tools, ledger=ledger,
-                       on_event=_emit(jid, arm))
+            client.model = model or client.model
+        out = _send_one(jid, arm, client, prompt, tools,
+                        cap if arm != "local" else None)
         _finish(jid, {"ok": True, "arm": arm, **out})
     except Exception as e:
         _finish(jid, {"ok": False, "error": str(e)})
@@ -108,31 +207,25 @@ def run_send(jid: str, prompt: str, model: str, cap: float,
 
 def run_demo(jid: str, cap: float) -> None:
     try:
-        arms: dict = {"local": None, "gateway": None}
+        arms: dict = {"local": None, "gateway": None, "cap": None}
         if local_arm.available():
             _note(jid, "local", "beat", label="local arm — no tools")
-            arms["local"] = run_task(local_arm.local_client(), DEMO_TASK,
-                                     on_event=_emit(jid, "local"))
+            arms["local"] = _send_one(jid, "local",
+                                      local_arm.local_client(),
+                                      DEMO_TASK, [], None)
         else:
             _note(jid, "local", "skipped",
                   msg="LOCAL_BASE_URL unset — local arm skipped")
-        client = OtariClient()
+        client = cfg_client()
         if client.api_key:
             _note(jid, "gateway", "beat", label="gateway arm — tools+budget")
-            arms["gateway"] = run_task(
-                client, DEMO_TASK,
-                tools=[{"type": "otari_code_execution"}],
-                ledger=SpendLedger(cap_usd=cap, path=LEDGER_PATH),
-                on_event=_emit(jid, "gateway"))
+            arms["gateway"] = _send_one(jid, "gateway", client, DEMO_TASK,
+                                        ["otari_code_execution"], cap)
             _note(jid, "cap", "beat", label="cap beat — $0.01 refuses")
-            arms["cap"] = run_task(
-                client, CAP_TASK,
-                tools=[{"type": "otari_code_execution"}],
-                ledger=SpendLedger(cap_usd=0.01,
-                                   path="evidence/spend_ledger_cap.jsonl"),
-                on_event=_emit(jid, "cap"))
+            arms["cap"] = _send_one(jid, "cap", client, CAP_TASK,
+                                    ["otari_code_execution"], 0.01)
         else:
-            _note(jid, "gateway", "skipped", msg="OTARI_API_KEY unset")
+            _note(jid, "gateway", "skipped", msg="no API key")
         _finish(jid, {"ok": True, "demo": True, "arms": arms})
     except Exception as e:
         _finish(jid, {"ok": False, "error": str(e)})
@@ -141,9 +234,9 @@ def run_demo(jid: str, cap: float) -> None:
 # ------------------------------------------------------------- api bits -----
 
 def api_tools() -> dict:
-    client = OtariClient()
+    client = cfg_client()
     if not client.api_key:
-        return {"ok": False, "error": "OTARI_API_KEY unset",
+        return {"ok": False, "error": "no API key",
                 "tools": [{"id": t, "available": None, "reason": "unknown"}
                           for t in ALL_TOOLS]}
     try:
@@ -159,7 +252,7 @@ def api_tools() -> dict:
 
 
 def api_models() -> dict:
-    client = OtariClient()
+    client = cfg_client()
     if not client.api_key:
         return {"ok": False, "models": ["openai/gpt-oss-120b"],
                 "note": "key unset — default list"}
@@ -203,18 +296,21 @@ def api_ledger() -> dict:
 
 # ---------------------------------------------------------------- page ------
 
-PAGE = """<!doctype html><html><head><meta charset=utf-8>
-<title>local-wilding — otari console</title>
+PAGE = r"""<!doctype html><html><head><meta charset=utf-8>
+<title>local-wilding — harness console</title>
 <style>
 :root{--bg:#0D1B26;--panel:#12242F;--teal:#3FD9A8;--amber:#FFCF6B;
 --txt:#DFF4EE;--dim:#7FA8A0;--red:#E8455F}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);
 font:14px/1.5 Consolas,monospace}
 header{display:flex;gap:12px;align-items:center;padding:10px 16px;
-background:var(--panel);border-bottom:1px solid #1E3A47}
+background:var(--panel);border-bottom:1px solid #1E3A47;flex-wrap:wrap}
 header b{color:var(--teal);font-size:16px}.pill{padding:2px 10px;
 border-radius:10px;font-size:12px}
 .ok{background:#123a2e;color:var(--teal)}.bad{background:#3a1620;color:var(--red)}
+.endpoint{display:flex;gap:6px;align-items:center;flex:1;min-width:280px}
+.endpoint input{font-size:12px;padding:3px 8px}
+.endpoint .b{flex:2}.endpoint .k{flex:1.2}
 main{display:grid;grid-template-columns:380px 1fr;gap:14px;padding:14px}
 .card{background:var(--panel);border:1px solid #1E3A47;border-radius:8px;
 padding:12px}
@@ -224,7 +320,7 @@ border:1px solid #1E3A47;border-radius:6px;padding:8px;font:inherit}
 input,select{background:#0B1620;color:var(--txt);border:1px solid #1E3A47;
 border-radius:5px;padding:4px 6px;font:inherit;width:100%}
 button{background:var(--teal);color:#04160f;border:0;border-radius:6px;
-padding:8px 14px;font:700 13px Consolas;cursor:pointer;width:100%;margin-top:8px}
+padding:8px 14px;font:700 13px Consolas;cursor:pointer;margin-top:8px}
 button.ghost{background:#123a2e;color:var(--teal)}
 button:disabled{opacity:.4;cursor:wait}
 label{display:block;margin:8px 0 3px;color:var(--dim);font-size:12px}
@@ -244,12 +340,26 @@ td,th{padding:3px 8px;text-align:left;border-bottom:1px solid #1E3A47}
 th{color:var(--dim);font-weight:400}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .cost{color:var(--amber)}
+.rcpt{padding:5px 8px;border-bottom:1px solid #1E3A47;cursor:pointer}
+.rcpt:hover{background:#16303d}
+.rcpt .meta{color:var(--dim);font-size:11.5px}
+.rdet{padding:10px;background:#0B1620;border-radius:6px;margin-top:6px;
+font-size:12px;display:none}
+.rdet.open{display:block}
+.rdet .k{color:var(--dim)} .rdet .hash{color:var(--teal);font-size:11px}
+.tag{display:inline-block;background:#123a2e;color:var(--teal);
+border-radius:4px;padding:0 6px;font-size:11px;margin-right:4px}
 #demoPane{grid-column:1/3;display:none}
+a{color:var(--teal)}
 </style></head><body>
-<header><b>local-wilding</b><span>otari console</span>
+<header><b>local-wilding</b><span>harness console</span>
 <span id=keystat class="pill bad">key …</span>
-<span id=ep class=pill style=color:var(--dim)></span>
-<button class=ghost style="width:auto;margin:0 0 0 auto"
+<div class=endpoint>
+<input class=b id=epbase placeholder="base url (any OpenAI-compatible)">
+<input class=k id=epkey type=password placeholder="api key (memory only)">
+<button class=ghost style="width:auto;margin:0" onclick="setEp()">point →</button>
+</div>
+<button class=ghost style="width:auto;margin:0"
  onclick="demo()">run devs-wilding demo</button></header>
 <main>
 <div class=card><h3>send</h3>
@@ -259,7 +369,7 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <label>budget cap (usd) — reserve before dispatch, refuse on breach</label>
 <input id=cap type=number step=0.01 value=0.25>
 <label>server-side tools (live probe)</label><div id=tools>probing…</div>
-<label>arm</label><select id=arm><option value=gateway>gateway (Otari)</option>
+<label>arm</label><select id=arm><option value=gateway>endpoint (gateway)</option>
 <option value=local>local (free — LOCAL_BASE_URL)</option></select>
 <button id=send onclick="send()">dispatch →</button></div>
 <div class=card><h3>feed</h3><div id=feed class=feed></div>
@@ -270,6 +380,14 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <div><label>gateway — tools + budget + receipts</label>
 <div id=dg class=feed></div></div></div>
 <div id=capfeed></div></div>
+<div class=card style="grid-column:1/3;padding:0">
+<div style="display:flex;gap:14px;align-items:center;padding:10px 14px">
+<span style="color:var(--amber)">▤ receipt box</span>
+<span id=rcount style="color:var(--dim)"></span>
+<span style="margin-left:auto">
+<a href="/api/receipts?fmt=jsonl" download>export .jsonl</a> ·
+<a href="/api/receipts?fmt=csv" download>export .csv</a></span></div>
+<div id=rbox style="max-height:300px;overflow-y:auto;padding:0 6px"></div></div>
 <div class=card style="grid-column:1/3;padding:0">
 <div id=lbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
  cursor:pointer;user-select:none" onclick="toggleLedger()">
@@ -289,7 +407,7 @@ async function boot(){
  const s=await api('/api/status');
  $('keystat').textContent=s.key_set?'key set':'key unset';
  $('keystat').className='pill '+(s.key_set?'ok':'bad');
- $('ep').textContent=s.base;
+ $('epbase').value=s.base;
  const tm=await api('/api/models');
  $('model').innerHTML=tm.models.map(m=>`<option>${esc(m)}</option>`).join('');
  const tt=await api('/api/tools');
@@ -298,7 +416,20 @@ async function boot(){
   return `<div class="tool${dis?' dis':''}"><input type=checkbox id=tl_${t.id}
    ${t.available?'checked':''} ${dis?'disabled':''}>
    <span>${esc(t.id)}</span><span style=color:var(--dim)>${esc(t.reason||'')}</span></div>`}).join('');
- ledger(); setInterval(ledger,8000)}
+ receipts(); ledger();
+ setInterval(()=>{receipts();ledger()},8000);
+ const m=location.hash.match(/r_\w+/);
+ if(m)setTimeout(()=>openReceipt(m[0]),400)}
+async function setEp(){
+ await api('/api/config',{base:$('epbase').value,key:$('epkey').value});
+ const tm=await api('/api/models');
+ $('model').innerHTML=tm.models.map(m=>`<option>${esc(m)}</option>`).join('');
+ const tt=await api('/api/tools');
+ $('tools').innerHTML=(tt.tools||[]).map(t=>{
+  const dis=t.available===false;
+  return `<div class="tool${dis?' dis':''}"><input type=checkbox id=tl_${t.id}
+   ${t.available?'checked':''} ${dis?'disabled':''}>
+   <span>${esc(t.id)}</span><span style=color:var(--dim)>${esc(t.reason||'')}</span></div>`}).join('')}
 function evHtml(e){
  const d=e.data||{};let txt=e.ev;
  if(e.ev==='step')txt=`step ${d.step} → ${d.model}`;
@@ -307,11 +438,12 @@ function evHtml(e){
  if(e.ev==='refused')txt=`REFUSED ${d.msg}`;
  if(e.ev==='beat')txt=`▸ ${d.label}`;
  if(e.ev==='skipped')txt=`skipped — ${d.msg}`;
+ if(e.ev==='receipt')txt=`receipt minted: ${d.id}`;
  return `<div class="ev ${e.arm} ${e.ev}"><span class=t>${e.t}s</span>
   <span class=arm>${e.arm||''}</span> ${esc(txt)}</div>`}
 async function poll(id,feeds){
  const j=await api('/api/job?id='+id);
- (j.events||[]).forEach((e,i)=>{
+ (j.events||[]).forEach(e=>{
   if(e._seen)return;e._seen=1;
   const el=(e.arm==='local'&&feeds.dl)||((e.arm==='gateway'||e.arm==='cap')&&feeds.dg)||feeds.main;
   el.insertAdjacentHTML('beforeend',evHtml(e));
@@ -322,11 +454,11 @@ async function poll(id,feeds){
   if(r.answer)$('answer').innerHTML=`<div class=ans>${esc(r.answer)}</div>
    <div class=cost>cost $${(r.cost_usd||0).toFixed(4)}${r.refused?' — refused: '+esc(r.refused):''}</div>`;
   else if(r.arms){const g=r.arms.gateway||{},c=r.arms.cap||{};
-   $('capfeed').innerHTML=`<div class=ans>local: ${esc(((r.arms.local||{}).answer||'(skipped)').slice(0,400))}</div>
+   $('capfeed').innerHTML=`<div class=ans>local: ${esc((((r.arms||{}).local)||{}).answer||'(skipped)')}</div>
     <div class=ans>gateway: ${esc((g.answer||'').slice(0,900))} <span class=cost>$${(g.cost_usd||0).toFixed(4)}</span></div>
     <div class="ev refused">cap beat: ${esc(c.refused||'(not refused)')}</div>`}
   else if(r.error)$('answer').innerHTML=`<div class=ans style="color:var(--red)">${esc(r.error)}</div>`;
-  ledger()}}
+  receipts();ledger()}}
 async function send(){
  $('send').disabled=true;$('feed').innerHTML='';$('answer').innerHTML='';
  const tools=[...document.querySelectorAll('#tools input:checked')].map(c=>c.id.slice(3));
@@ -338,6 +470,29 @@ async function demo(){
  $('capfeed').innerHTML='';
  const r=await api('/api/demo',{cap:parseFloat($('cap').value||0.25)});
  job=setInterval(()=>poll(r.job,{main:$('feed'),dl:$('dl'),dg:$('dg')}),800)}
+async function receipts(){
+ const l=await api('/api/receipts');
+ $('rcount').textContent=(l.rows||[]).length+' receipts';
+ $('rbox').innerHTML=(l.rows||[]).slice().reverse().map(r=>`<div class=rcpt id=${r.id}
+  onclick="toggleRcpt('${r.id}')">
+  <b>${esc(r.id)}</b> <span class=tag>${esc(r.arm)}</span>
+  <span class=cost>$${(r.cost_usd||0).toFixed(4)}</span>
+  <span class=meta>${esc((r.model_served||r.model_requested||'')+' · '+r.endpoint+' · '+new Date(r.ts*1000).toLocaleTimeString())}</span>
+  <div class=meta>${esc(r.prompt.slice(0,90))}</div>
+  <div class=rdet id=d_${r.id}>
+   <div><span class=k>status:</span> ${r.refused?'<span style="color:var(--red)">refused</span>':'ok'} <span class=k>cost:</span> $${(r.cost_usd||0).toFixed(6)}</div>
+   <div><span class=k>tools declared:</span> ${esc((r.tools_declared||[]).join(', ')||'none')}</div>
+   <div><span class=k>tools ran:</span> ${esc((r.tools_ran||[]).join(', ')||'none')}</div>
+   <div><span class=k>prompt_sha:</span> <span class=hash>${r.prompt_sha}</span> <span class=k>answer_sha:</span> <span class=hash>${r.answer_sha}</span></div>
+   <div><span class=k>raw:</span> ${esc(r.raw||'—')} <span class=k>job:</span> ${esc(r.job)}</div>
+   <div><span class=k>prompt:</span><div class=ans>${esc(r.prompt)}</div></div>
+   <div><span class=k>answer:</span><div class=ans>${esc(r.answer||'')}</div></div>
+  </div></div>`).join('')}
+function toggleRcpt(id){
+ const d=$('d_'+id);d.classList.toggle('open');
+ if(d.classList.contains('open'))location.hash=id}
+function openReceipt(id){
+ const el=$(id);if(el){el.scrollIntoView();const d=$('d_'+id);if(d)d.classList.add('open')}}
 async function ledger(){
  const l=await api('/api/ledger');
  const s=l.summary||{};
@@ -358,13 +513,17 @@ boot();
 
 
 class H(BaseHTTPRequestHandler):
-    def _out(self, code: int, body, ctype="application/json") -> None:
+    def _out(self, code: int, body, ctype="application/json",
+             fname: str = "") -> None:
         b = body if isinstance(body, bytes) else (
             body.encode() if isinstance(body, str)
             else json.dumps(body).encode())
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(b)))
+        if fname:
+            self.send_header("Content-Disposition",
+                             f'attachment; filename="{fname}"')
         self.end_headers()
         self.wfile.write(b)
 
@@ -372,21 +531,43 @@ class H(BaseHTTPRequestHandler):
         pass
 
     def do_GET(self) -> None:
-        u = self.path.split("?")[0]
-        if u == "/":
+        path, _, qs = self.path.partition("?")
+        q = dict(p.split("=", 1) for p in qs.split("&") if "=" in p)
+        if path == "/":
             self._out(200, PAGE, "text/html; charset=utf-8")
-        elif u == "/api/status":
-            self._out(200, {"key_set": bool(OtariClient().api_key),
-                            "base": OtariClient().base,
-                            "local": local_arm.available()})
-        elif u == "/api/tools":
+        elif path == "/api/status":
+            with CFG_LOCK:
+                base, model = CFG["base"], CFG["model"]
+            c = cfg_client()
+            self._out(200, {"key_set": bool(c.api_key),
+                            "base": c.base, "model": model,
+                            "local": local_arm.available(),
+                            "custom": bool(base)})
+        elif path == "/api/tools":
             self._out(200, api_tools())
-        elif u == "/api/models":
+        elif path == "/api/models":
             self._out(200, api_models())
-        elif u == "/api/ledger":
+        elif path == "/api/ledger":
             self._out(200, api_ledger())
-        elif u == "/api/job":
-            jid = self.path.split("id=")[-1]
+        elif path == "/api/receipts":
+            rows = read_receipts()
+            fmt = q.get("fmt")
+            if fmt == "jsonl":
+                body = "".join(json.dumps(r) + "\n" for r in rows)
+                self._out(200, body, "application/x-ndjson",
+                          "receipts.jsonl")
+            elif fmt == "csv":
+                self._out(200, receipts_csv(rows), "text/csv",
+                          "receipts.csv")
+            else:
+                self._out(200, {"rows": rows})
+        elif path == "/api/receipt":
+            rid = q.get("id", "")
+            hit = next((r for r in read_receipts()
+                        if r.get("id") == rid), None)
+            self._out(200 if hit else 404, hit or {"error": "not found"})
+        elif path == "/api/job":
+            jid = q.get("id", "")
             with JOBS_LOCK:
                 self._out(200, JOBS.get(jid) or {"status": "unknown"})
         else:
@@ -398,7 +579,17 @@ class H(BaseHTTPRequestHandler):
                 int(self.headers.get("Content-Length", 0)) or b"{}"))
         except Exception:
             body = {}
-        if self.path == "/api/send":
+        if self.path == "/api/config":
+            with CFG_LOCK:
+                if "base" in body:
+                    CFG["base"] = str(body["base"]).rstrip("/")
+                if "key" in body:
+                    CFG["key"] = str(body["key"])
+                if "model" in body:
+                    CFG["model"] = str(body["model"])
+            self._out(200, {"ok": True, "base": CFG["base"],
+                            "key_set": bool(CFG["key"])})
+        elif self.path == "/api/send":
             jid = _job()
             threading.Thread(
                 target=run_send, daemon=True,
@@ -416,7 +607,7 @@ class H(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    print(f"local-wilding console → http://{HOST}:{PORT}")
-    print("gateway key:", "set" if OtariClient().api_key else "UNSET",
+    print(f"local-wilding console -> http://{HOST}:{PORT}")
+    print("endpoint key:", "set" if cfg_client().api_key else "UNSET",
           "| local arm:", "set" if local_arm.available() else "unset")
     ThreadingHTTPServer((HOST, PORT), H).serve_forever()
