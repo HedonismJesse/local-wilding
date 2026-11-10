@@ -3,15 +3,7 @@ drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='BEAT 0 · what can this k
 drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='BEATS 1-4 · the live dashboard - arms - receipts - cap refusal - self-score':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='between(t,30,70)',
 drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='BEAT 5 · the raw receipts - every claim backed by a file':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='gte(t,70)',
 drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='local-wilding | devs-wilding':x=w-tw-20:y=11:fontsize=18:fontcolor=0x5b7284[main];
-[1:v]drawtext=fontfile=C\\:/Windows/Fonts/consolab.ttf:text='local-wilding':x=(w-tw)/2-140:y=h/2-160:fontsize=72:fontcolor=0x7de8c3,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:textfile=pig.txt:x=w/2+180:y=h/2-150:fontsize=40:fontcolor=0xf4b860,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='a 1B local model with no tools does real research':x=(w-tw)/2:y=h/2-30:fontsize=30:fontcolor=white,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='Otari lends it server-side tools - a budget ledger - decision receipts':x=(w-tw)/2:y=h/2+20:fontsize=22:fontcolor=0x9fb3bf,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='pigs fly when a gateway lends them wings':x=(w-tw)/2:y=h/2+80:fontsize=18:fontcolor=0xf4b860,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='devs-wilding submission':x=(w-tw)/2:y=h/2+120:fontsize=18:fontcolor=0x5b7284[card0];
-[3:v]drawtext=fontfile=C\\:/Windows/Fonts/consolab.ttf:text='github.com/HedonismJesse/local-wilding':x=(w-tw)/2:y=h/2-80:fontsize=36:fontcolor=0x7de8c3,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:textfile=pig.txt:x=(w-tw)/2:y=h/2-10:fontsize=34:fontcolor=0xf4b860,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='branch devs-wilding - first Otari commit cb6f106':x=(w-tw)/2:y=h/2+110:fontsize=24:fontcolor=white,
-drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='every claim backed by a file in evidence/ - self-score 9/9':x=(w-tw)/2:y=h/2+150:fontsize=22:fontcolor=0x9fb3bf[card1];
+[1:v]setsar=1[card0];
 [2:v]scale=1298:1246:force_original_aspect_ratio=decrease,pad=1298:1246:(ow-iw)/2:(oh-ih)/2:color=0x0d1b26,setsar=1[card2];
+[3:v]setsar=1[card1];
 [card0][main][card2][card1]concat=n=4:v=1:a=0[out]
