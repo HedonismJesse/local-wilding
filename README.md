@@ -44,9 +44,35 @@ We read the gateway's source and rebuilt three of its mechanisms thin:
 | `services/routing/weighted.py` — draw w/o replacement, drain ≠ delete | `decide.weighted_ordering` |
 | `RoutingDecision` rationale/confidence + `explain` dry-run | `decide.Receipt` + `decide.explain` |
 
+## The console (the kit)
+
+`app.py` is a **zero-dependency browser harness** — the product surface:
+
+- **Receipt box** — every dispatched call mints a receipt: id, endpoint,
+  model requested *vs served*, tools declared vs **ran**, prompt, answer,
+  settled cost, sha256. Rows expand, `#r_<id>` deep-links, export as
+  JSONL/CSV, raw response linked under `evidence/console_raw/`.
+- **Endpoint-agnostic** — point the bar at Otari, a local llamafile, or
+  any OpenAI-compatible base+key (memory only; env stays canonical).
+- **Spend ledger** — collapsed `spent / saved / refusals / cap` summary
+  bar; table opens on click. "Saved" = spend enforcement prevented.
+- **Demo button** — the devs-wilding three-beat run, as a canned caller.
+
+```bash
+python app.py        # → http://127.0.0.1:8787
+LW_REPLAY=1 python app.py   # public-demo mode: sends replay evidence/,
+                            # no keys fielded — safe to host
+```
+
+Drop-in primitives for your own loop: `OtariClient` (stdlib client),
+`SpendLedger` (pre-dispatch refusal), `probe_tools()`, `decide.Receipt`,
+`replay_transport` (offline replay of any recorded run).
+
 ## Run it
 
 ```bash
+pip install -r requirements.txt   # matplotlib+numpy+rich — video/cards only;
+                                  # app.py, otari_client, ledger, replay = stdlib
 export OTARI_API_KEY=...           # hosted otari.ai key
 
 # local arm — any llamafile/llama.cpp server; ours:
