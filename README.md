@@ -57,6 +57,16 @@ python tests.py                                  # zero-network smoke
 `evidence/` holds every raw response, the spend ledger, and the receipt
 log — audit any claim by file, or replay the whole run with no key.
 
+## Submission details
+
+- **Branch:** `devs-wilding` — first commit where Otari came in:
+  `cb6f106` (gateway wiring; scaffold lives on `main`).
+- **Self-score:** `python sphere_fitness.py` — certificate checks that
+  every claimed beat's receipt exists in `evidence/`; unexercised
+  claims score zero.
+- **Video:** `VIDEO.md` is the 4-beat shot list (terminal capture,
+  banner captions, no voiceover, no face).
+
 ## Honest limits
 
 - Local arm skips loudly when `LOCAL_BASE_URL` is unset — marked, never claimed.
