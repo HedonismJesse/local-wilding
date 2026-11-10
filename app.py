@@ -398,8 +398,7 @@ a{color:var(--teal)}
 <div class=colL>
 <div class=card><h3><span class=step>1</span>dispatch
 <span class=secsub>— any prompt, any endpoint</span></h3>
-<textarea id=prompt placeholder="prompt…">Verify this claim: 'The population
-of India grew more than 15% between 2015 and 2023.'</textarea>
+<textarea id=prompt placeholder="prompt…"></textarea>
 <label>model</label><select id=model></select>
 <label>budget cap (usd) — reserve before dispatch, refuse on breach</label>
 <input id=cap type=number step=0.01 value=0.25>
@@ -443,8 +442,8 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <span style="margin-left:auto" onclick="event.stopPropagation()">
 <a href="/api/receipts?fmt=jsonl" download>export .jsonl</a> ·
 <a href="/api/receipts?fmt=csv" download>export .csv</a></span>
-<span id=rcaret2 style="color:var(--dim)">▾</span></div>
-<div id=rbox></div></div>
+<span id=rcaret2 style="color:var(--dim)">▸</span></div>
+<div id=rbox style="display:none"></div></div>
 </div>
 </main><script>
 let job=null;
