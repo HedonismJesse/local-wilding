@@ -173,16 +173,32 @@ def api_models() -> dict:
 
 def api_ledger() -> dict:
     rows = []
+    spent = saved = 0.0
+    refusals = 0
+    cap = None
     for p in [LEDGER_PATH, "evidence/spend_ledger.jsonl",
               "evidence/spend_ledger_cap.jsonl"]:
         fp = Path(p)
         if fp.exists():
             for line in fp.read_text(encoding="utf-8").splitlines()[-40:]:
                 try:
-                    rows.append({**json.loads(line), "file": fp.name})
+                    r = {**json.loads(line), "file": fp.name}
+                    rows.append(r)
+                    ev = r.get("event")
+                    if ev == "settle":
+                        spent += float(r.get("cost_usd") or 0)
+                    elif ev == "refuse":
+                        saved += float(r.get("estimated_usd") or 0)
+                        refusals += 1
+                    elif ev == "release":
+                        saved += float(r.get("estimated_usd") or 0)
+                    elif ev == "open":
+                        cap = r.get("cap_usd")
                 except json.JSONDecodeError:
                     pass
-    return {"rows": rows[-40:]}
+    return {"rows": rows[-40:],
+            "summary": {"spent": round(spent, 6), "saved": round(saved, 6),
+                        "refusals": refusals, "cap": cap}}
 
 
 # ---------------------------------------------------------------- page ------
@@ -254,10 +270,16 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <div><label>gateway — tools + budget + receipts</label>
 <div id=dg class=feed></div></div></div>
 <div id=capfeed></div></div>
-<div class=card style="grid-column:1/3"><h3>spend ledger</h3>
+<div class=card style="grid-column:1/3;padding:0">
+<div id=lbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
+ cursor:pointer;user-select:none" onclick="toggleLedger()">
+<span style="color:var(--amber)">◈ ledger</span>
+<span id=lsum style="color:var(--dim)">…</span>
+<span id=lcaret style="margin-left:auto;color:var(--dim)">▸</span></div>
+<div id=ltable style="display:none;padding:0 14px 12px">
 <table><tr><th>ts</th><th>event</th><th>label</th><th>est</th>
 <th>cost</th><th>spent</th><th>file</th></tr>
-<tbody id=ledger></tbody></table></div>
+<tbody id=ledger></tbody></table></div></div>
 </main><script>
 let job=null;
 const $=i=>document.getElementById(i);
@@ -318,11 +340,19 @@ async function demo(){
  job=setInterval(()=>poll(r.job,{main:$('feed'),dl:$('dl'),dg:$('dg')}),800)}
 async function ledger(){
  const l=await api('/api/ledger');
+ const s=l.summary||{};
+ $('lsum').innerHTML=`spent <span class=cost>$${(s.spent||0).toFixed(4)}</span>
+  · saved <span style="color:var(--teal)">$${(s.saved||0).toFixed(4)}</span>
+  · refusals ${s.refusals||0}${s.cap!=null?` · cap $${s.cap}`:''}`;
  $('ledger').innerHTML=(l.rows||[]).map(r=>`<tr><td>${(r.ts||0)%1000|0}</td>
   <td>${esc(r.event)}</td><td>${esc(r.label||'')}</td>
   <td>${r.estimated_usd!=null?'$'+r.estimated_usd:''}</td>
   <td>${r.cost_usd!=null?'$'+r.cost_usd:''}</td>
   <td>$${r.spent_usd||0}</td><td style=color:var(--dim)>${esc(r.file||'')}</td></tr>`).join('')}
+function toggleLedger(){
+ const t=$('ltable'),open=t.style.display!=='none';
+ t.style.display=open?'none':'block';
+ $('lcaret').textContent=open?'▸':'▾'}
 boot();
 </script></body></html>"""
 
