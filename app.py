@@ -360,6 +360,8 @@ white-space:pre-wrap;word-break:break-word}
 .ev.cap{border-color:var(--red)}
 .ev .t{color:var(--dim)} .ev .arm{color:var(--amber)}
 .ev.refused{color:var(--red);border-color:var(--red)}
+.ev.hl{border-color:var(--amber);background:#1a2b21;color:var(--amber);
+font-weight:700}
 .ans{white-space:pre-wrap;word-break:break-word;background:#0B1620;
 border-radius:6px;padding:10px;margin-top:8px;max-height:260px;overflow:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
@@ -368,6 +370,7 @@ th{color:var(--dim);font-weight:400}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .cost{color:var(--amber)}
 .rcpt{padding:5px 8px;border-bottom:1px solid #1E3A47;cursor:pointer}
+.rcaret{color:var(--dim);display:inline-block;width:14px}
 .rcpt:hover{background:#16303d}
 .rcpt .meta{color:var(--dim);font-size:11.5px}
 .rdet{padding:10px;background:#0B1620;border-radius:6px;margin-top:6px;
@@ -432,13 +435,15 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <div id=capfeed></div></div>
 <div id=answer></div></div>
 <div class="card rboxcard" style="padding:0">
-<div style="display:flex;gap:14px;align-items:center;padding:10px 14px">
+<div id=rbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
+ cursor:pointer;user-select:none" onclick="toggleRbox()">
 <span style="color:var(--amber)"><span class=step>3</span>receipt box
 <span class=secsub>— one per dispatch, hash-verifiable</span></span>
 <span id=rcount style="color:var(--dim)"></span>
-<span style="margin-left:auto">
+<span style="margin-left:auto" onclick="event.stopPropagation()">
 <a href="/api/receipts?fmt=jsonl" download>export .jsonl</a> ·
-<a href="/api/receipts?fmt=csv" download>export .csv</a></span></div>
+<a href="/api/receipts?fmt=csv" download>export .csv</a></span>
+<span id=rcaret2 style="color:var(--dim)">▾</span></div>
 <div id=rbox></div></div>
 </div>
 </main><script>
@@ -498,6 +503,14 @@ async function poll(id,feeds){
  if(j.status==='done'){
   clearInterval(job);job=null;$('send').disabled=false;
   const r=j.result||{};
+  const rc=r.receipt||{};
+  const el=(feeds.dg&&(r.arm==='gateway'))?feeds.dg
+        :((feeds.dl&&(r.arm==='local'))?feeds.dl:feeds.main);
+  if(el&&r.ok!==false&&rc.id)el.insertAdjacentHTML('beforeend',
+   `<div class="ev hl">✦ served ${esc(rc.model_served||r.model||'')}
+    · tools ${esc((rc.tools_ran||[]).join('+')||'none')}
+    · $${(+((rc.cost_usd??r.cost_usd)||0)).toFixed(4)}
+    · receipt <a href="#${rc.id}">${rc.id}</a></div>`);
   if(r.answer)$('answer').innerHTML=`<div class=ans>${esc(r.answer)}</div>
    <div class=cost>cost $${(r.cost_usd||0).toFixed(4)}${r.refused?' — refused: '+esc(r.refused):''}</div>`;
   else if(r.arms){const g=r.arms.gateway||{},c=r.arms.cap||{};
@@ -533,6 +546,7 @@ async function receipts(){
  $('rcount').textContent=(l.rows||[]).length+` receipts · $${tot.toFixed(4)} settled`;
  $('rbox').innerHTML=(l.rows||[]).slice().reverse().map(r=>`<div class=rcpt id=${r.id}
   onclick="toggleRcpt('${r.id}')">
+  <span class=rcaret id=c_${r.id}>▸</span>
   <b>${esc(r.id)}</b> <span class=tag>${esc(r.arm)}</span>
   <span class=cost>$${(r.cost_usd||0).toFixed(4)}</span>
   <span class=meta>${esc((r.model_served||r.model_requested||'')+' · '+r.endpoint+' · '+new Date(r.ts*1000).toLocaleTimeString())}</span>
@@ -548,7 +562,12 @@ async function receipts(){
   </div></div>`).join('')}
 function toggleRcpt(id){
  const d=$('d_'+id);d.classList.toggle('open');
+ const c=$('c_'+id);if(c)c.textContent=d.classList.contains('open')?'▾':'▸';
  if(d.classList.contains('open'))location.hash=id}
+function toggleRbox(){
+ const b=$('rbox'),open=b.style.display!=='none';
+ b.style.display=open?'none':'block';
+ $('rcaret2').textContent=open?'▸':'▾'}
 function openReceipt(id){
  const el=$(id);if(el){el.scrollIntoView();const d=$('d_'+id);if(d)d.classList.add('open')}}
 async function ledger(){
