@@ -1,0 +1,2 @@
+{"event": "open", "cap_usd": 0.01, "ts": 1794249495.797, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794249495.797, "spent_usd": 0.0, "reserved_usd": 0.0}

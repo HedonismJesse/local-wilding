@@ -1,0 +1,13 @@
+{"event": "open", "cap_usd": 0.25, "ts": 1794249495.79, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794249495.791, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 1, "label": "step1:openai/gpt-oss-120b", "note": "http 0: replay exhausted", "ts": 1794249495.792, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 2, "label": "step2:anthropic:claude-sonnet-4-6", "estimated_usd": 0.02, "ts": 1794249495.792, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 2, "label": "step2:anthropic:claude-sonnet-4-6", "note": "http 0: replay exhausted", "ts": 1794249495.793, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 3, "label": "step3:anthropic:claude-sonnet-4-6", "estimated_usd": 0.02, "ts": 1794249495.793, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 3, "label": "step3:anthropic:claude-sonnet-4-6", "note": "http 0: replay exhausted", "ts": 1794249495.794, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 4, "label": "step4:anthropic:claude-sonnet-4-6", "estimated_usd": 0.02, "ts": 1794249495.794, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 4, "label": "step4:anthropic:claude-sonnet-4-6", "note": "http 0: replay exhausted", "ts": 1794249495.795, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 5, "label": "step5:anthropic:claude-sonnet-4-6", "estimated_usd": 0.02, "ts": 1794249495.795, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 5, "label": "step5:anthropic:claude-sonnet-4-6", "note": "http 0: replay exhausted", "ts": 1794249495.795, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 6, "label": "step6:anthropic:claude-sonnet-4-6", "estimated_usd": 0.02, "ts": 1794249495.796, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "release", "seq": 6, "label": "step6:anthropic:claude-sonnet-4-6", "note": "http 0: replay exhausted", "ts": 1794249495.796, "spent_usd": 0.0, "reserved_usd": 0.0}
