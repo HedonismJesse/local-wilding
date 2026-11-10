@@ -383,6 +383,65 @@ def _downsample_survival(img, mask):
             "survival": round(shrunk / max(full, 1), 3)}
 
 
+def _spec_checks(mask, regions, groups, spec):
+    """Canon-spec relative checks (art:construction-canon row). Regions
+    are fractions of the SUBJECT bbox so they survive scale changes.
+    The blob lesson: a merged pig is not fewer mask components — it is
+    fewer interior features, so spec checks look at color-key diversity
+    and named-region solidity, not raw component counts."""
+    from skimage import measure
+    ys, xs = np.where(mask)
+    if not len(ys):
+        return {}, []
+    sb = (ys.min(), xs.min(), ys.max(), xs.max())
+    sh, sw = sb[2] - sb[0], sb[3] - sb[1]
+    # dominant body key = key of the largest group — interior-feature
+    # checks count keys OTHER than body fill
+    dom_key = max(groups, key=lambda kr: kr[1].area)[0] if groups else None
+    detail, flags = {}, []
+    for name, rs in spec.get("regions", {}).items():
+        f = rs["bbox_frac"]
+        z0, z1 = sb[0] + int(f[0] * sh), sb[0] + int(f[2] * sh)
+        c0, c1 = sb[1] + int(f[1] * sw), sb[1] + int(f[3] * sw)
+        zone = [r for k, r in groups
+                if z0 <= (r.bbox[0] + r.bbox[2]) / 2 < z1 and
+                c0 <= (r.bbox[1] + r.bbox[3]) / 2 < c1]
+        keys = {k for k, r in groups
+                if k != dom_key and
+                rs.get("min_key_area_px", 0) <= r.area <=
+                rs.get("max_key_area_px", 8000)
+                and z0 <= (r.bbox[0] + r.bbox[2]) / 2 < z1 and
+                c0 <= (r.bbox[1] + r.bbox[3]) / 2 < c1}
+        # mid-tone = non-body key with all channels >=3 AND hue-
+        # distinct from body fill — dark dots (nostril specks) and
+        # one-channel-off body shades don't count as features
+        nd = rs.get("exclude_near_dom_dist", 3)
+        midtone = {k for k in keys if min(k) >= 3 and dom_key and
+                   sum(abs(k[i] - dom_key[i]) for i in range(3)) > nd}
+        zmask = mask[z0:z1, c0:c1]
+        sol = max((r.solidity for r in measure.regionprops(
+                      measure.label(zmask))), default=1.0) \
+            if zmask.size else 1.0
+        failure = rs.get("named_failure", name)
+        rec = {"zone": [int(z0), int(c0), int(z1), int(c1)],
+               "components": len(zone),
+               "distinct_keys": len(keys), "midtone_keys": len(midtone),
+               "solidity": round(float(sol), 3)}
+        if "min_components" in rs and \
+                len(zone) < rs["min_components"]:
+            flags.append(f"{failure}_vs_spec")
+        if "min_distinct_color_keys" in rs and \
+                len(keys) < rs["min_distinct_color_keys"]:
+            flags.append(f"{failure}_vs_spec")
+        if "min_midtone_keys" in rs and \
+                len(midtone) < rs["min_midtone_keys"]:
+            flags.append(f"{failure}_vs_spec")
+        if "min_solidity" in rs and sol < rs["min_solidity"]:
+            flags.append(f"{failure}_vs_spec")
+        detail[name] = rec
+    return detail, flags
+
+
 # ---------------------------------------------------------------- audit
 
 def audit_frame(path: Path, spec: dict | None = None,
@@ -422,6 +481,8 @@ def audit_frame(path: Path, spec: dict | None = None,
         text_any |= _region_mask(ids, groups, mask.shape)
     detail = _detail_density(regions, mask, text_any, frame_area)
     scale = _downsample_survival(img, mask & ~text_any)
+    spec_detail, spec_flags = ({}, []) if not spec else \
+        _spec_checks(mask, regions, groups, spec)
 
     flags = []
     if not is_asset and bbox_frac > cfg["coverage_max"]:
@@ -447,10 +508,12 @@ def audit_frame(path: Path, spec: dict | None = None,
     if spec and spec.get("min_components") and \
             len(regions) < spec["min_components"]:
         flags.append("merged_blob_vs_spec")
+    flags.extend(spec_flags)
 
     return {"file": str(path), "metrics": metrics, "flags": flags,
             "streaks": streaks, "spiky": spiky,
-            "occlusions": occl, "detail": detail, "scale": scale}
+            "occlusions": occl, "detail": detail, "scale": scale,
+            "spec": spec_detail}
 
 
 def main() -> int:

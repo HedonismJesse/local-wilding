@@ -1,0 +1,24 @@
+{
+  "subject": "pig (local-wilding mascot)",
+  "frame_role": "asset",
+  "notes": "typed construction spec for render_audit --spec. Regions are fractions of the SUBJECT bbox [y0,x0,y1,x1] so they survive canvas/scale changes. The 2026-11-10 blob lesson: a merged pig is not fewer mask components (v2 had 7, same as v3) - it is fewer INTERIOR features; spec checks therefore look at color-key diversity and named-region solidity, not raw component counts. midtone = non-dominant-body color key with all quantized channels >=3 (nostril dots are dark (1,1,2) and do not count - the snout is a mid-tone oval ring).",
+  "min_components": 4,
+  "regions": {
+    "snout": {
+      "bbox_frac": [0.15, 0.62, 0.70, 1.00],
+      "min_midtone_keys": 1,
+      "min_key_area_px": 800,
+      "named_failure": "missing_snout"
+    },
+    "ear": {
+      "bbox_frac": [0.00, 0.00, 0.30, 1.00],
+      "min_components": 1,
+      "named_failure": "fin_ear"
+    },
+    "wing": {
+      "bbox_frac": [0.00, 0.70, 0.25, 1.00],
+      "min_solidity": 0.55,
+      "named_failure": "pennant_wing"
+    }
+  }
+}

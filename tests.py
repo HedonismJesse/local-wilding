@@ -197,6 +197,20 @@ class TestRenderAudit(unittest.TestCase):
         self.assertNotIn("illegible_at_scale",
                          self._flags("fly_frames/f000.png"))
 
+    @staticmethod
+    def _spec_flags(rel):
+        import json
+        import render_audit as ra
+        spec = json.loads(
+            (Path(__file__).parent / "canon" / "pig.json").read_text())
+        return ra.audit_frame(Path(__file__).parent / rel, spec)["flags"]
+
+    def test_spec_catches_v2_missing_snout(self):
+        self.assertIn("missing_snout_vs_spec",
+                      self._spec_flags("pig_v2.png"))
+        self.assertNotIn("missing_snout_vs_spec",
+                         self._spec_flags("pig_v3.png"))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
