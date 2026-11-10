@@ -20,3 +20,15 @@
 {"event": "open", "cap_usd": 0.25, "ts": 1794294139.496, "spent_usd": 0.0, "reserved_usd": 0.0}
 {"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794294139.496, "spent_usd": 0.0, "reserved_usd": 0.02}
 {"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010134, "note": "served=openai/gpt-oss-120b", "ts": 1794294164.124, "spent_usd": 0.010134, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794296289.104, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794296289.105, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010223, "note": "served=openai/gpt-oss-120b", "ts": 1794296335.826, "spent_usd": 0.010223, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794296398.872, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794296398.872, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010225, "note": "served=openai/gpt-oss-120b", "ts": 1794296435.729, "spent_usd": 0.010225, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794296579.835, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794296579.836, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010233, "note": "served=openai/gpt-oss-120b", "ts": 1794296624.005, "spent_usd": 0.010233, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.25, "ts": 1794296792.348, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794296792.348, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.010195, "note": "served=openai/gpt-oss-120b", "ts": 1794296832.659, "spent_usd": 0.010195, "reserved_usd": 0.0}
