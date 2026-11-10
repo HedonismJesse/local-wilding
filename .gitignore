@@ -4,3 +4,4 @@ __pycache__/
 config.yml
 *.mp4
 take.mkv
+narration/

@@ -1,0 +1,12 @@
+[0:v]drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='the gateway answers for itself - the demo declares only what it can prove':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,11,39)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='one task, two arms - the local model guesses, the gateway proves':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,41,75)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='the allowance holds - a call can be refused before it is dispatched':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,76,111)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='every claim backed by a file - the scorer grades the demo itself':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,112,159)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='the claim said over fifteen percent - the code computed nine - false':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,161,174)'[v];
+[1:a]adelay=1000|1000[a0];
+[2:a]adelay=13000|13000[a1];
+[3:a]adelay=42000|42000[a2];
+[4:a]adelay=76000|76000[a3];
+[5:a]adelay=162000|162000[a4];
+[6:a]adelay=177000|177000[a5];
+[a0][a1][a2][a3][a4][a5]amix=inputs=6:normalize=0,apad,atrim=end=190[a]
