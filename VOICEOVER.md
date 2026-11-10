@@ -1,37 +1,48 @@
-# Voiceover script — local-wilding demo (v6/v7 timeline)
+# Voiceover — console cut (~95s, 8 beats)
 
-Record in ONE take, ~2s pause between lines. I'll split on silence and
-align each line to its beat. Total talk time ≈ 90s over a 3:17 video.
-Speak naturally — timing is mine to fix, yours to ignore.
+Read it once through, one take, natural pace (~2s pause between
+blocks — that's where the cut splits). Speak like you're showing
+someone a tool, not pitching it.
 
-## LINE 0 — cold open (~4s)
-"It invented its sources. Here is what a gateway does about that."
+---
 
-## LINE 1 — title (~7s)
-"A one-billion-parameter model on a laptop does real research —
-because a gateway lends it tools, a budget, and receipts."
+**[0–8s — cold open]** — flat, matter of fact
+"A one-billion-parameter model answered with sources. None of them
+exist. This is the console that proves it."
 
-## LINE 2 — tools probe (~11s)
-"First question: what can this key actually do? The gateway answers
-for itself. Web search and fetch are disabled on this workspace.
-Code execution is live. The demo declares only what it can prove."
+**[8–16s — console reveal]** — light
+"One harness, any OpenAI-compatible endpoint — Otari, a llamafile,
+or your own gateway."
 
-## LINE 3 — two arms (~17s)
-"Two arms, one task. On the left, a llamafile one-billion model with
-no tools — it answers from its weights, and fabricates a source. On
-the right, the same loop through hosted Otari: code execution runs
+**[16–41s — real function]** — the core block, steady
+"Real use first. Dispatch a claim — the feed streams every step:
+the model the endpoint picked, the tools that ran server-side, the
+settled cost. Then a receipt mints — model requested versus served,
+tools declared versus ran, the hash of what was asked and answered,
+linked to the raw response."
+
+**[41–66s — demo / behind the scenes]** — slightly brighter, this is the payoff
+"The demo button is the behind-the-scenes cut. Same task, two arms:
+on the left a one-billion local model with no tools — it fabricates
+a source. On the right, the gateway arm — code execution runs
 server-side, every call receipted, cost settled to six decimals."
 
-## LINE 4 — refusal + receipts (~15s)
-"Then the allowance holds. A one-cent cap refuses the call before it
-is ever dispatched. And every claim on screen is backed by a file —
-raw responses, a spend ledger, a receipt per call, and a scorer
-grading the demo itself. Nine of nine."
+**[66–76s — enforcement]** — firm
+"Set the allowance to a cent and the call refuses before it is ever
+dispatched. The ledger counts what enforcement saved."
 
-## LINE 5 — verdict (~8s)
-"The claim said more than fifteen percent. Server-side code computed
-nine point zero. Off by seventy-eight million people. False."
+**[76–84s — verify]** — back to matter-of-fact
+"Every dispatch, human-verifiable — hashes, raw files, export to
+JSON or CSV."
 
-## LINE 6 — recap (~9s)
-"Local model, zero tools. Hosted tools, real receipts, budget refusal
-before dispatch. Pigs fly when a gateway lends them wings."
+**[84–90s — adoption]** — quick
+"Clone, install three lines, run app dot py, click."
+
+**[90–96s — close]** — settle on the last word
+"Tools, budgets, receipts, a local control arm — and the honest
+limits printed where you can see them."
+
+---
+
+Deliverable: one wav/mp3, any quality — I split on the pauses,
+align to the beats, mix under the gated pad, re-render.
