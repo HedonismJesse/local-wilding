@@ -1,0 +1,476 @@
+{
+ "builder": "pig_sheet:draw_pig",
+ "spec": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\canon\\pig.json",
+ "variants": [
+  {
+   "id": "A",
+   "params": {
+    "pose": 0,
+    "head_ratio": 1.0
+   },
+   "png": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\A.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\A.png",
+    "metrics": {
+     "subject_coverage": 0.1356,
+     "largest_component": 0.1267,
+     "largest_bbox_frac": 0.3544,
+     "components": 6,
+     "bboxes": [
+      [
+       90,
+       172,
+       538,
+       884
+      ],
+      [
+       166,
+       668,
+       263,
+       765
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       224,
+       194,
+       234,
+       343
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ],
+      [
+       257,
+       482,
+       264,
+       490
+      ]
+     ],
+     "squint": 0.1592831015586853,
+     "palette": 0.5360261381436487,
+     "clip_black": 0.0,
+     "clip_white": 0.8612022222222222,
+     "flat_fill": 0.5485533333333333
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 17,
+     "nontext_px": 122000,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 5,
+     "components_target": 4,
+     "survival": 0.8
+    },
+    "spec": {
+     "snout": {
+      "zone": [
+       163,
+       612,
+       432,
+       883
+      ],
+      "components": 9,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.97
+     },
+     "ear": {
+      "zone": [
+       90,
+       171,
+       236,
+       883
+      ],
+      "components": 7,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.995
+     },
+     "wing": {
+      "zone": [
+       90,
+       669,
+       212,
+       883
+      ],
+      "components": 1,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.962
+     }
+    }
+   }
+  },
+  {
+   "id": "B",
+   "params": {
+    "pose": 0,
+    "head_ratio": 1.3
+   },
+   "png": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\B.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\B.png",
+    "metrics": {
+     "subject_coverage": 0.1451,
+     "largest_component": 0.1402,
+     "largest_bbox_frac": 0.3544,
+     "components": 5,
+     "bboxes": [
+      [
+       90,
+       172,
+       538,
+       884
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       224,
+       194,
+       234,
+       343
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ],
+      [
+       257,
+       482,
+       264,
+       490
+      ]
+     ],
+     "squint": 0.1827358603477478,
+     "palette": 0.5096111307289294,
+     "clip_black": 0.0,
+     "clip_white": 0.8518211111111111,
+     "flat_fill": 0.5426488888888888
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 17,
+     "nontext_px": 130577,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 4,
+     "survival": 1.0
+    },
+    "spec": {
+     "snout": {
+      "zone": [
+       163,
+       612,
+       432,
+       883
+      ],
+      "components": 9,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.85
+     },
+     "ear": {
+      "zone": [
+       90,
+       171,
+       236,
+       883
+      ],
+      "components": 7,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.995
+     },
+     "wing": {
+      "zone": [
+       90,
+       669,
+       212,
+       883
+      ],
+      "components": 1,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.962
+     }
+    }
+   }
+  },
+  {
+   "id": "C",
+   "params": {
+    "pose": 12,
+    "head_ratio": 1.0
+   },
+   "png": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\C.png",
+   "flags": [
+    "low_solidity_component",
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\C.png",
+    "metrics": {
+     "subject_coverage": 0.135,
+     "largest_component": 0.1275,
+     "largest_bbox_frac": 0.3628,
+     "components": 5,
+     "bboxes": [
+      [
+       90,
+       157,
+       546,
+       873
+      ],
+      [
+       153,
+       621,
+       240,
+       729
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ],
+      [
+       247,
+       420,
+       286,
+       469
+      ]
+     ],
+     "squint": 0.16622239351272583,
+     "palette": 0.5312421586099914,
+     "clip_black": 0.0,
+     "clip_white": 0.8616033333333334,
+     "flat_fill": 0.5319288888888889
+    },
+    "flags": [
+     "low_solidity_component",
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [
+     {
+      "bbox": [
+       90,
+       157,
+       546,
+       873
+      ],
+      "solidity": 0.548,
+      "area_frac": 0.1275
+     }
+    ],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.002,
+     "detail_px": 277,
+     "nontext_px": 121521,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 5,
+     "components_target": 4,
+     "survival": 0.8
+    },
+    "spec": {
+     "snout": {
+      "zone": [
+       163,
+       600,
+       432,
+       872
+      ],
+      "components": 9,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.974
+     },
+     "ear": {
+      "zone": [
+       90,
+       157,
+       236,
+       872
+      ],
+      "components": 7,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.971
+     },
+     "wing": {
+      "zone": [
+       90,
+       657,
+       212,
+       872
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.982
+     }
+    }
+   }
+  },
+  {
+   "id": "D",
+   "params": {
+    "pose": 12,
+    "head_ratio": 1.3
+   },
+   "png": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\D.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\D.png",
+    "metrics": {
+     "subject_coverage": 0.1446,
+     "largest_component": 0.141,
+     "largest_bbox_frac": 0.3628,
+     "components": 4,
+     "bboxes": [
+      [
+       90,
+       157,
+       546,
+       873
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ],
+      [
+       247,
+       420,
+       286,
+       469
+      ]
+     ],
+     "squint": 0.19799327850341797,
+     "palette": 0.5048471993261964,
+     "clip_black": 0.0,
+     "clip_white": 0.8522411111111111,
+     "flat_fill": 0.5319288888888889
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.002,
+     "detail_px": 277,
+     "nontext_px": 130109,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 4,
+     "survival": 1.0
+    },
+    "spec": {
+     "snout": {
+      "zone": [
+       163,
+       600,
+       432,
+       872
+      ],
+      "components": 9,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.887
+     },
+     "ear": {
+      "zone": [
+       90,
+       157,
+       236,
+       872
+      ],
+      "components": 7,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.722
+     },
+     "wing": {
+      "zone": [
+       90,
+       657,
+       212,
+       872
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.707
+     }
+    }
+   }
+  }
+ ],
+ "sheet": "C:\\Users\\jesse\\Documents\\PythonDev\\local-wilding\\candidates\\anim_v2_pig\\sheet.png"
+}

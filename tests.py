@@ -212,5 +212,36 @@ class TestRenderAudit(unittest.TestCase):
                          self._spec_flags("pig_v3.png"))
 
 
+class TestCandidateSheet(unittest.TestCase):
+    """Pipeline mechanics: the grid produces the cross product and
+    verdict capture writes ledger-shaped rows with audit flags as
+    the named_failure vocabulary."""
+
+    def test_grid_cross_product(self):
+        import candidate_sheet as cs
+        g = cs._grid({"pose": [0, 12], "head_ratio": [1.0, 1.3]})
+        self.assertEqual(len(g), 4)
+        self.assertIn({"pose": 12, "head_ratio": 1.3}, g)
+
+    def test_verdict_rows_carry_audit_flags(self):
+        import candidate_sheet as cs
+        import types
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "manifest.json").write_text(json.dumps({"variants": [
+                {"id": "A", "params": {"pose": 0}, "png": "A.png",
+                 "flags": ["clean"]}]}))
+            ledger = d / "reads.jsonl"
+            ledger.write_text("")
+            args = types.SimpleNamespace(
+                verdict_dir=d, ledger=ledger,
+                verdicts=["A=reject:test-fail"])
+            self.assertEqual(cs.cmd_verdict(args), 0)
+            row = json.loads(ledger.read_text().strip())
+            self.assertEqual(row["verdict"], "reject")
+            self.assertEqual(row["named_failure"], "clean")
+            self.assertEqual(row["variant_params"], {"pose": 0})
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
