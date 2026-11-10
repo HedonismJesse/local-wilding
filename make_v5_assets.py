@@ -67,9 +67,11 @@ y0 = H*0.78
 for i, r in enumerate(rows):
     ax.text(W*0.08, y0 - i*H*0.085, "[x]  " + r, ha="left", va="center",
             color=LIGHT, fontproperties=font("Consolas", 20), zorder=3)
-ax.text(W/2, H*0.20, "github.com/HedonismJesse/local-wilding",
+ax.text(W/2, H*0.22, "github.com/HedonismJesse/local-wilding",
         ha="center", va="center", color=TEAL, fontproperties=F_SM, zorder=3)
-ax.text(W/2, H*0.14, "branch devs-wilding  -  first Otari commit cb6f106",
+ax.text(W/2, H*0.16, "reproduce: python demo.py   verify our claims: python sphere_fitness.py",
+        ha="center", va="center", color=LIGHT, fontproperties=font("Consolas", 21), zorder=3)
+ax.text(W/2, H*0.11, "branch devs-wilding  -  receipts committed in evidence/",
         ha="center", va="center", color=MUTED, fontproperties=F_XS, zorder=3)
 fig.savefig("card_recap.png"); plt.close(fig)
 
