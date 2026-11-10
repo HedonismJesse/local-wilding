@@ -5,3 +5,4 @@ config.yml
 *.mp4
 take.mkv
 narration/
+*.wav

@@ -1,0 +1,29 @@
+[0:v]fps=30,format=yuv420p,setsar=1,scale=1298:1246,trim=duration=12,setpts=PTS-STARTPTS[bgA];
+[1:v]split=2[p1][p2];
+[p1]scale=520:-1[pig];
+[p2]scale=260:-1[pigsm];
+[bgA][pig]overlay=x='if(lt(t,2.2),-560+((W-520)/2+560)*(t/2.2),(W-520)/2)':y='H*0.10+12*sin(2*PI*t/1.6)':eval=frame,fade=t=in:st=0:d=0.7[A];
+[2:v]fps=30,setsar=1,pad=iw:ih+46:0:46:color=0x0d1b26,vignette=PI/7,
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEAT 0 - what can this key do - GET /api/v1/tools':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='between(t,0,30)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEATS 1-4 - the live dashboard - arms - receipts - cap refusal - self-score':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='between(t,30,70)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEAT 5 - the raw receipts - every claim backed by a file':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='gte(t,70)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='local-wilding | devs-wilding':x=w-tw-20:y=11:fontsize=18:fontcolor=0x5b7284,
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='the gateway answers for itself - the demo declares only what it can prove':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,1,29)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='one task, two arms - the local model guesses, the gateway proves':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,30,63)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='the allowance holds - a call can be refused before it is dispatched':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,64,99)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='every claim backed by a file - the scorer grades the demo itself':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,100,147)',
+scale=1298:1246,format=yuv420p[B];
+[3:v]fps=30,format=yuv420p,setsar=1,scale=1298:1246[C];
+[4:v]fps=30,format=yuv420p,setsar=1,scale=1298:1246,trim=duration=15,setpts=PTS-STARTPTS[rc];
+[rc][pigsm]overlay=x=W-330:y='H*0.72+10*sin(2*PI*t/1.8)':eval=frame,fade=t=in:st=0:d=0.5[D];
+[A][B]xfade=transition=fade:duration=0.7:offset=11.3[AB];
+[AB][C]xfade=transition=fade:duration=0.7:offset=160.6[ABC];
+[ABC][D]xfade=transition=fade:duration=0.7:offset=174.9[v];
+[5:a]aresample=44100,aformat=channel_layouts=stereo,adelay=1000|1000[a0];
+[6:a]aresample=44100,aformat=channel_layouts=stereo,adelay=15000|15000[a1];
+[7:a]aresample=44100,aformat=channel_layouts=stereo,adelay=44000|44000[a2];
+[8:a]aresample=44100,aformat=channel_layouts=stereo,adelay=80000|80000[a3];
+[9:a]aresample=44100,aformat=channel_layouts=stereo,adelay=164000|164000[a4];
+[10:a]aresample=44100,aformat=channel_layouts=stereo,adelay=179000|179000[a5];
+[11:a]aresample=44100,aformat=channel_layouts=stereo[padm];
+[a0][a1][a2][a3][a4][a5][padm]amix=inputs=7:normalize=0,apad,atrim=end=189.9,aformat=sample_rates=44100:channel_layouts=stereo[a]
