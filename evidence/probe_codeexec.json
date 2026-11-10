@@ -1,0 +1,11 @@
+{
+  "status": 402,
+  "headers": {
+    "otari-error-code": "insufficient_funds",
+    "otari-request-id": "1f535b42-2915-4038-87cd-262d3a4f9504"
+  },
+  "body": {
+    "detail": "Insufficient funds ($0.00) to serve this request.",
+    "code": "insufficient_funds"
+  }
+}

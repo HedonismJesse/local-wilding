@@ -73,7 +73,7 @@ def run_task(
                 print(f"  REFUSED (pre-dispatch): {e}")
                 return {"answer": "", "trace": trace, "cost_usd": total_cost, "refused": str(e)}
 
-        result = client.chat(messages, model=model, tools=tools, tags=f"step{step}")
+        result = client.chat(messages, model=model, tools=tools, tags=f"step={step}")
         if recorder is not None:
             recorder.save(f"step{step}_{model.replace('/', '_')}", result)
 

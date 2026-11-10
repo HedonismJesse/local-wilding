@@ -1,0 +1,9 @@
+{
+  "status": 403,
+  "headers": {
+    "otari-request-id": "54d1644b-3ae5-41f3-91a8-698fb024b257"
+  },
+  "body": {
+    "detail": "web search is not enabled for this workspace"
+  }
+}

@@ -35,7 +35,7 @@ DEFAULT_TASK = (
 
 # Frontier escalation sits behind the open-weight primary — the weighted
 # policy says the local-preferred split we *intend*; explain shows it.
-CANDIDATES = ["openai/gpt-oss-120b", "anthropic:claude-sonnet-4-6"]
+CANDIDATES = ["openai/gpt-oss-120b", "anthropic/claude-fable-5"]
 WEIGHTS = {"openai/gpt-oss-120b": 90, "anthropic:claude-sonnet-4-6": 10}
 
 
