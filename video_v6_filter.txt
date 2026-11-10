@@ -1,6 +1,7 @@
-[13:v]fps=30,setsar=1,pad=iw:ih+46:0:46:color=0x0d1b26,scale=1298:1246,
-zoompan=z='min(1+0.45*on/240,1.45)':d=1:x='(iw-iw/zoom)*0.32':y='(ih-ih/zoom)*0.22':s=1298x1246,
-eq=brightness=-0.10,
+[13:v]fps=30,setsar=1,pad=iw:ih+46:0:46:color=0x0d1b26,scale=1298:1246,split[cA][cB];
+[cA]crop=625:300:5:95[cs];
+[cB]eq=brightness=-0.18[cd];
+[cd][cs]overlay=5:95,drawbox=5:95:625:300:color=0xFFB84D@0.9:t=4,
 drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='it claims official sources - none of them exist':x=(w-tw)/2:y=h-58:fontsize=26:fontcolor=0xFFB84D:box=1:boxcolor=black@0.6:boxborderw=12:enable='between(t,3,7.6)',
 fade=t=in:st=0:d=0.4,settb=AVTB,fps=30[A0];
 [0:v]fps=30,format=yuv420p,setsar=1,scale=1298:1246,trim=duration=12,setpts=PTS-STARTPTS[bgA];
@@ -10,15 +11,24 @@ fade=t=in:st=0:d=0.4,settb=AVTB,fps=30[A0];
 [bgA][pig]overlay=x='if(lt(t,2.2),-560+((W-520)/2+560)*(t/2.2),(W-520)/2)':y='H*0.10+12*sin(2*PI*t/1.6)':eval=frame,fade=t=in:st=0:d=0.7,settb=AVTB,fps=30[A];
 [2:v]fps=30,setsar=1,pad=iw:ih+46:0:46:color=0x0d1b26,scale=1298:1246,split=6[f0][f1][f2][f3][f4][f5];
 [f0]trim=end=58,setpts=PTS-STARTPTS[b0];
-[f1]trim=start=58:end=64,setpts=PTS-STARTPTS,zoompan=z='min(1+0.30*on/120,1.30)':d=1:x='(iw-iw/zoom)*0.32':y='(ih-ih/zoom)*0.20':s=1298x1246[b1];
-[f2]trim=start=64:end=70,setpts=PTS-STARTPTS,zoompan=z='min(1+0.30*on/120,1.30)':d=1:x='(iw-iw/zoom)*0.40':y='(ih-ih/zoom)*0.62':s=1298x1246[b2];
+[f1]trim=start=58:end=64,setpts=PTS-STARTPTS,split[s1a][s1b];
+[s1a]crop=625:300:5:95[sp1];
+[s1b]eq=brightness=-0.18[dm1];
+[dm1][sp1]overlay=5:95,drawbox=5:95:625:300:color=0x3FD9A8@0.9:t=4[b1];
+[f2]trim=start=64:end=70,setpts=PTS-STARTPTS,split[s2a][s2b];
+[s2a]crop=1290:170:5:680[sp2];
+[s2b]eq=brightness=-0.18[dm2];
+[dm2][sp2]overlay=5:680,drawbox=5:680:1290:170:color=0x3FD9A8@0.9:t=4[b2];
 [f3]trim=start=70:end=78,setpts=PTS-STARTPTS[b3];
-[f4]trim=start=78:end=84,setpts=PTS-STARTPTS,zoompan=z='min(1+0.30*on/120,1.30)':d=1:x='(iw-iw/zoom)*0.45':y='(ih-ih/zoom)*0.60':s=1298x1246[b4];
+[f4]trim=start=78:end=84,setpts=PTS-STARTPTS,split[s4a][s4b];
+[s4a]crop=1290:320:0:620[sp4];
+[s4b]eq=brightness=-0.18[dm4];
+[dm4][sp4]overlay=0:620,drawbox=0:620:1290:320:color=0x3FD9A8@0.9:t=4[b4];
 [f5]trim=start=84,setpts=PTS-STARTPTS[b5];
 [b0][b1][b2][b3][b4][b5]concat=n=6:v=1:a=0,vignette=PI/7,
 drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEAT 0 - what can this key do - GET /api/v1/tools':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='between(t,0,30)',
-drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEATS 1-4 - the live dashboard - arms - receipts - cap refusal - self-score':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='between(t,30,58)+between(t,70,78)',
-drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEAT 5 - the raw receipts - every claim backed by a file':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='gte(t,84)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEATS 1-4 - the live dashboard - arms - receipts - cap refusal - self-score':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='between(t,30,70)',
+drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='BEAT 5 - the raw receipts - every claim backed by a file':x=20:y=11:fontsize=24:fontcolor=0x7de8c3:enable='gte(t,70)',
 drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='local-wilding | devs-wilding':x=w-tw-20:y=11:fontsize=18:fontcolor=0x5b7284,
 drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='the gateway answers for itself - the demo declares only what it can prove':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,1,29)',
 drawtext=fontfile='C\:/Windows/Fonts/consola.ttf':text='one task, two arms - the local model guesses, the gateway proves':x=(w-tw)/2:y=h-42:fontsize=21:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=10:enable='between(t,30,63)',
