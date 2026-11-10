@@ -324,9 +324,11 @@ border-radius:10px;font-size:12px}
 .endpoint input{font-size:12px;padding:3px 8px}
 .endpoint .b{flex:2}.endpoint .k{flex:1.2}
 main{display:grid;grid-template-columns:minmax(320px,380px) 1fr;
-grid-template-rows:auto 1fr auto;gap:14px;padding:14px;flex:1;
-min-height:0;overflow-y:auto}
-@media(max-width:860px){main{grid-template-columns:1fr}}
+gap:14px;padding:14px;flex:1;min-height:0;overflow:hidden}
+.colL,.colR{display:flex;flex-direction:column;gap:14px;min-height:0}
+.feedcard{flex:1;min-height:0;display:flex;flex-direction:column}
+.rboxcard{flex:0 0 300px;min-height:0;display:flex;flex-direction:column}
+@media(max-width:860px){main{grid-template-columns:1fr;overflow-y:auto}}
 .card{background:var(--panel);border:1px solid #1E3A47;border-radius:8px;
 padding:12px}
 h3{margin:0;color:var(--amber);font-size:13px;letter-spacing:.5px}
@@ -350,7 +352,8 @@ button:disabled{opacity:.4;cursor:wait}
 label{display:block;margin:8px 0 3px;color:var(--dim);font-size:12px}
 .tool{display:flex;gap:8px;align-items:center;padding:2px 0}
 .tool.dis{opacity:.45}
-.feed{height:260px;overflow-y:auto;font-size:12.5px}
+.feed{flex:1;min-height:100px;overflow-y:auto;font-size:12.5px}
+#demoPane .feed{min-height:0;max-height:180px}
 .ev{padding:3px 6px;border-left:3px solid #1E3A47;margin:3px 0;
 white-space:pre-wrap;word-break:break-word}
 .ev.local{border-color:#8a7}.ev.gateway{border-color:var(--teal)}
@@ -373,7 +376,10 @@ font-size:12px;display:none}
 .rdet .k{color:var(--dim)} .rdet .hash{color:var(--teal);font-size:11px}
 .tag{display:inline-block;background:#123a2e;color:var(--teal);
 border-radius:4px;padding:0 6px;font-size:11px;margin-right:4px}
-#demoPane{grid-column:1/3;display:none}
+#demoPane{display:none;border-top:1px dashed #1E3A47;margin-top:8px;
+padding-top:6px}
+#ltable{max-height:280px;overflow-y:auto}
+#rbox{flex:1;min-height:0;overflow-y:auto;padding:0 6px}
 a{color:var(--teal)}
 </style></head><body>
 <header><b>local-wilding</b><span>harness console</span>
@@ -386,6 +392,7 @@ a{color:var(--teal)}
 <button class=ghost style="width:auto;margin:0"
  onclick="demo()">run devs-wilding demo</button></header>
 <main>
+<div class=colL>
 <div class=card><h3><span class=step>1</span>dispatch
 <span class=secsub>— any prompt, any endpoint</span></h3>
 <textarea id=prompt placeholder="prompt…">Verify this claim: 'The population
@@ -400,18 +407,31 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <label>arm</label><select id=arm><option value=gateway>endpoint (gateway)</option>
 <option value=local>local (free — LOCAL_BASE_URL)</option></select>
 <button id=send onclick="send()">dispatch →</button></div>
-<div class=card><h3><span class=step>2</span>live feed
+<div class=card style="padding:0">
+<div id=lbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
+ cursor:pointer;user-select:none" onclick="toggleLedger()">
+<span style="color:var(--amber)"><span class=step>4</span>spend ledger
+<span class=secsub>— enforcement record</span></span>
+<span id=lsum style="color:var(--dim);font-size:11.5px">…</span>
+<span id=lcaret style="margin-left:auto;color:var(--dim)">▸</span></div>
+<div id=ltable style="display:none;padding:0 14px 12px">
+<table><tr><th>ts</th><th>event</th><th>label</th><th>est</th>
+<th>cost</th><th>spent</th><th>file</th></tr>
+<tbody id=ledger></tbody></table></div></div>
+</div>
+<div class=colR>
+<div class="card feedcard"><h3><span class=step>2</span>live feed
 <span class=secsub>— events stream as they happen</span></h3>
 <div id=feed class=feed></div>
-<div id=answer></div></div>
-<div class=card id=demoPane><h3>demo — same task, two arms
+<div id=demoPane><h3>demo — same task, two arms
 <span class=secsub>— local 1B (no tools) vs gateway (tools+budget)</span></h3>
 <div class=cols><div><label>local — no tools</label>
 <div id=dl class=feed></div></div>
 <div><label>gateway — tools + budget + receipts</label>
 <div id=dg class=feed></div></div></div>
 <div id=capfeed></div></div>
-<div class=card style="grid-column:1/3;padding:0">
+<div id=answer></div></div>
+<div class="card rboxcard" style="padding:0">
 <div style="display:flex;gap:14px;align-items:center;padding:10px 14px">
 <span style="color:var(--amber)"><span class=step>3</span>receipt box
 <span class=secsub>— one per dispatch, hash-verifiable</span></span>
@@ -419,18 +439,8 @@ of India grew more than 15% between 2015 and 2023.'</textarea>
 <span style="margin-left:auto">
 <a href="/api/receipts?fmt=jsonl" download>export .jsonl</a> ·
 <a href="/api/receipts?fmt=csv" download>export .csv</a></span></div>
-<div id=rbox style="height:280px;overflow-y:auto;padding:0 6px"></div></div>
-<div class=card style="grid-column:1/3;padding:0">
-<div id=lbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
- cursor:pointer;user-select:none" onclick="toggleLedger()">
-<span style="color:var(--amber)"><span class=step>4</span>spend ledger
-<span class=secsub>— enforcement record</span></span>
-<span id=lsum style="color:var(--dim)">…</span>
-<span id=lcaret style="margin-left:auto;color:var(--dim)">▸</span></div>
-<div id=ltable style="display:none;padding:0 14px 12px">
-<table><tr><th>ts</th><th>event</th><th>label</th><th>est</th>
-<th>cost</th><th>spent</th><th>file</th></tr>
-<tbody id=ledger></tbody></table></div></div>
+<div id=rbox></div></div>
+</div>
 </main><script>
 let job=null;
 const $=i=>document.getElementById(i);
