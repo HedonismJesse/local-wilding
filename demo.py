@@ -20,6 +20,11 @@ from __future__ import annotations
 import os
 import sys
 
+# Windows consoles default to cp1252; model output carries UTF-8.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(errors="replace")
+    sys.stderr.reconfigure(errors="replace")
+
 import local_arm
 from agent import run_task
 from decide import ReceiptLog

@@ -10,6 +10,10 @@ Costs cents at most on gpt-oss-120b ($0.037/$0.17 per Mtok).
 """
 
 import json
+import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(errors="replace")
 
 from otari_client import OtariClient, SERVER_TOOLS
 
