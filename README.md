@@ -1,6 +1,6 @@
 # local-wilding
 
-**A 1.5B local model with no tools does real research — the gateway lends it
+**A 1B local model with no tools does real research — the gateway lends it
 search, code execution, a fallback brain, and an allowance.**
 
 Built for MozFest's **Developers Wilding: Online** hackathon
@@ -48,7 +48,12 @@ We read the gateway's source and rebuilt three of its mechanisms thin:
 
 ```bash
 export OTARI_API_KEY=...           # hosted otari.ai key
-export LOCAL_BASE_URL=http://localhost:8080/v1   # optional: llamafile etc.
+
+# local arm — any llamafile/llama.cpp server; ours:
+#   Mozilla/Llama-3.2-1B-Instruct-llamafile --server --port 8080 --gpu disable
+export LOCAL_BASE_URL=http://localhost:8080/v1
+export LOCAL_MODEL=Llama-3.2-1B-Instruct-Q6_K.gguf   # id from GET /v1/models
+
 python demo.py "your claim to verify"            # three beats
 python demo.py --replay                          # offline, serves evidence/
 python tests.py                                  # zero-network smoke
@@ -56,6 +61,13 @@ python tests.py                                  # zero-network smoke
 
 `evidence/` holds every raw response, the spend ledger, and the receipt
 log — audit any claim by file, or replay the whole run with no key.
+
+Live-verified 2026-11-09: llamafile 1B on :8080 (CPU), deepinfra-served
+`openai/gpt-oss-120b`, two `code_execution` calls server-side, total
+run spend **$0.0313**, pre-dispatch refusal on a $0.01 cap. `GET
+/api/v1/tools` reported `otari_code_execution` available and
+search/fetch `workspace_disabled` until enabled in the dashboard —
+`DEMO_TOOLS=code` narrows the toolset when search is off.
 
 ## Submission details
 

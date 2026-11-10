@@ -32,6 +32,24 @@ weights without dispatching. A `Otari-Routing-Explain` response
 header (or `?dry_run=1`) would give every client the same "why this
 provider" answer for free.
 
+**Verified during live debugging (all on camera-reproducible evidence
+in `evidence/`):**
+
+- `GET /api/v1/tools` is genuinely good — per-tool `available` +
+  `reason` + accepted wire spellings + input schemas. It's the
+  discoverability surface every client wants; cite it in docs more.
+- Workspace web-search/web-fetch default OFF is defensible policy,
+  but the 403 carries only `"web search is not enabled for this
+  workspace"` — pointing at the dashboard path (Tools → workspace
+  policy) in the error would save every new user a source dive.
+- `Otari-Tags` rejects bare tags (`each tag must be key=value`) —
+  strict is fine, but the OpenAPI request example should show one
+  `key=value` pair explicitly; we hit the 422 on our first call.
+- `usage.cost_usd` as a six-decimal string + `pricing_source` +
+  `Otari-*` response headers (`otari-provider`, `otari-model`,
+  `otari-attempt-count`, `otari-fallback`) made the receipt layer
+  nearly free to build — the response carries its own provenance.
+
 **Q3 — Would you keep using Otari without the rule?**
 
 For the local-model arm: yes, genuinely — server-side tools on a
