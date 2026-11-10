@@ -1,0 +1,5 @@
+{"event": "open", "cap_usd": 0.25, "ts": 1794348048.57, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "reserve", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "ts": 1794348048.571, "spent_usd": 0.0, "reserved_usd": 0.02}
+{"event": "settle", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "cost_usd": 0.0, "note": "served=Llama-3.2-1B-Instruct-Q6_K.gguf", "ts": 1794348048.58, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "open", "cap_usd": 0.01, "ts": 1794348048.582, "spent_usd": 0.0, "reserved_usd": 0.0}
+{"event": "refuse", "seq": 1, "label": "step1:openai/gpt-oss-120b", "estimated_usd": 0.02, "reason": "estimate would breach cap", "ts": 1794348048.583, "spent_usd": 0.0, "reserved_usd": 0.0}
