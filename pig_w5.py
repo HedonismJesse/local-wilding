@@ -76,15 +76,21 @@ def _wing(img_size: tuple[int, int], span: float) -> Image.Image:
     return layer
 
 
+def pose_spec(pose: str) -> dict:
+    """The derived spec a pose renders from — the oracle inspects
+    this, not just pixels."""
+    ops = POSE_OPS.get(pose, [])
+    return (_spec(POSE_TRACE[pose]) if not ops
+            else pd.derive_checked(CANON / f"{BASE_SPEC}.json", ops))
+
+
 def render_pose(pose: str = "rest", facing: int = 1, tilt: float = 0.0,
                 squash: float = 1.0, wings: int = 0,
                 canvas: tuple[int, int] = (1200, 750),
                 trace_dir: Path | None = None) -> Image.Image:
     """Render a pose from its trace spec. All warps apply to the whole
     composite (sil+linework+fills together) — marks stay consistent."""
-    base = CANON / f"{BASE_SPEC}.json"
-    ops = POSE_OPS.get(pose, [])
-    spec = (_spec(POSE_TRACE[pose]) if not ops else pd.derive(base, ops))
+    spec = pose_spec(pose)
     pig = tl.render(spec)                          # source-res RGBA
     if squash != 1.0:                              # squash = height scale
         pig = pig.resize((pig.width, max(1, int(pig.height * squash))),
@@ -94,14 +100,17 @@ def render_pose(pose: str = "rest", facing: int = 1, tilt: float = 0.0,
     if tilt:
         pig = pig.rotate(tilt, expand=True, resample=Image.BICUBIC)
     out = Image.new("RGBA", canvas, (0, 0, 0, 0))
-    scale = min(canvas[0] * 0.82 / pig.width, canvas[1] * 0.86 / pig.height)
+    headroom = 0.58 if wings else 0.86   # wings occupy the top ~28%
+    scale = min(canvas[0] * 0.82 / pig.width,
+                canvas[1] * headroom / pig.height)
     pig = pig.resize((max(1, int(pig.width * scale)),
                       max(1, int(pig.height * scale))), Image.BICUBIC)
     x = (canvas[0] - pig.width) // 2
     y = canvas[1] - pig.height - int(canvas[1] * 0.06)
     if wings:
         wimg = _wing(pig.size, 0.55)
-        out.alpha_composite(wimg, (x, y - int(pig.height * 0.28)))
+        wy = max(6, y - int(pig.height * 0.28))
+        out.alpha_composite(wimg, (x, wy))
     out.alpha_composite(pig, (x, y))
     return out
 

@@ -46,5 +46,26 @@
       "recolor"
     ],
     "note": "form ops are displacement fields warping sil+fills+stroke together; mark ops edit fill polys or the stroke bitmap"
+  },
+  "state_oracles": {
+    "canon_doc": "art:state-oracles — recognition registry (operator 2026-11-10): every state is a rule over geometry, checked at multiple scales",
+    "instrument": "state_oracle.py",
+    "integrity_rules": [
+      "interior_holes — bg gaps inside silhouette (gashes)",
+      "stroke_bleed — linework outside the body",
+      "self_intersect — contour self-crossing (predicts gashes)",
+      "frame_clip — content touching canvas edge",
+      "fragments — detached components"
+    ],
+    "state_recognizers": [
+      "lying — flat ground-contact underside + low aspect",
+      "running — scissored leg protrusions + spread",
+      "flying — ungrounded + tilt + attachment",
+      "eyes — open dots vs closed arcs (stroke-zone shape)",
+      "is_pig — silhouette IoU vs canonical anchor",
+      "markings — tonal-fill presence"
+    ],
+    "multi_scale_rule": "zoom in AND out are both verifiers — inspect at thumb/strip/full every render; defects hide at exactly one scale (operator 2026-11-10)",
+    "undo_rule": "derive_checked applies ops one at a time; an op that introduces an integrity defect is halved then dropped — 'like any good artist, undo anything that isn't good' (operator 2026-11-10)"
   }
 }

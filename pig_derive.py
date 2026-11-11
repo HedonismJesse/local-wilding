@@ -72,20 +72,20 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
             dy += a * cx * cy
             dx -= a * 0.30 * cx * cy
         elif op["op"] == "squat":
-            a = float(op["a"])        # top squishes down (resting weight)
-            dy -= a * np.clip((0.80 - yy) / 0.80, 0, 1) ** 1.3
+            a = float(op["a"])        # top squishes DOWN (resting weight)
+            dy += a * np.clip((0.80 - yy) / 0.80, 0, 1) ** 1.3
         elif op["op"] == "lean":
             a = float(op["a"])        # forward shear, stronger at top
             dx -= a * np.clip((0.85 - yy) / 0.85, 0, 1)
         elif op["op"] == "lie":
             # lying loaf (sleep-still grammar): legs TUCK — the whole
             # underside pulls up to a flat ground-contact line, top
-            # compresses, body spreads slightly. a~1 = fully down.
+            # compresses DOWN, body spreads slightly. a~1 = fully down.
             a = float(op["a"])
             line = float(op.get("line", 0.80))
             below = np.clip((yy - line) / max(1e-6, 1.0 - line), 0, 1)
             dy -= a * below * (1.0 - line)          # leg zone -> line
-            dy -= a * 0.22 * np.clip((line - yy) / line, 0, 1) ** 1.15
+            dy += a * 0.22 * np.clip((line - yy) / line, 0, 1) ** 1.15
             dx += a * 0.06 * (xx - 0.5) * np.clip((0.9 - yy) / 0.9, 0, 1)
         elif op["op"] == "stride":
             # run grammar (walk still): legs scissor — front leg
@@ -102,10 +102,11 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
                 np.clip((0.55 - yy) / 0.55, 0, 1)
             dy += a * 0.03 * headw                # head dips slightly
         elif op["op"] == "pin_legs":
-            # flying: legs tuck short under the body (no ground)
+            # flying: legs tuck INTO the body — pull everything below
+            # the tuck line fully up to it (no dangling nubs)
             a = float(op["a"])
             below = np.clip((yy - 0.82) / 0.18, 0, 1)
-            dy -= a * 0.55 * below * 0.18
+            dy -= a * below * (1.0 - 0.82)
     return dy, dx
 
 
@@ -131,6 +132,73 @@ def _warp_bitmap(img: np.ndarray, dy, dx) -> np.ndarray:
     shx = map_coordinates(dx, [fy, fx], order=1) * (w - 1)
     coords = [yy - shy, xx - shx]
     return map_coordinates(img.astype(np.float32), coords, order=1)
+
+
+def _retopo(spec: dict, ops: list[dict]) -> None:
+    """Re-topologize the warped silhouette: rasterize -> close gaps ->
+    fill holes -> re-extract ONE simple outer contour. Field warps
+    fold the contour (self-intersection -> even-odd fill leaves white
+    interior gashes, the flee-cheek defect); re-extraction yields a
+    simple loop. `lie` then hard-clamps the underside to the ground
+    line — guaranteed flat, no dangling stubs."""
+    from scipy.ndimage import binary_fill_holes
+    from skimage import measure, morphology
+    allr = [p[0] for p in spec["silhouette"]]
+    allc = [p[1] for p in spec["silhouette"]]
+    y0, y1 = min(allr) - 0.06, max(allr) + 0.06
+    x0, x1 = min(allc) - 0.06, max(allc) + 0.06
+    W = 1400
+    H = max(2, int(W * (y1 - y0) / max(1e-6, x1 - x0)))
+    im = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(im).polygon(
+        [((c - x0) / (x1 - x0) * W, (r - y0) / (y1 - y0) * H)
+         for r, c in spec["silhouette"]], fill=255)
+    m = np.asarray(im) > 0
+    m = morphology.binary_closing(m, morphology.disk(6))
+    m_closed = m.copy()                      # body as warped
+    m = morphology.binary_opening(m, morphology.disk(3))  # shave filaments
+    for f in spec["fills"]:                  # body-attached markings
+        fm = Image.new("L", (W, H), 0)       # (tail curl) are sil
+        ImageDraw.Draw(fm).polygon(          # geometry too — union
+            [((c - x0) / (x1 - x0) * W, (r - y0) / (y1 - y0) * H)
+             for r, c in f["poly"]], fill=255)
+        fa = np.asarray(fm) > 0
+        f["_inside"] = bool(fa.sum() and (fa & m_closed).sum() / fa.sum() > 0.3)
+        if f["_inside"]:
+            m |= fa                          # restores what opening shaved
+    m = binary_fill_holes(m)
+    m = morphology.remove_small_objects(m, 200)
+    lab = measure.label(m)
+    if lab.max() > 1:                        # keep largest component
+        sizes = np.bincount(lab.ravel())
+        sizes[0] = 0
+        m = lab == sizes.argmax()
+    cs = measure.find_contours(np.pad(m, 1).astype(float), 0.5)
+    poly = tl._smooth(max(cs, key=len) - 1)
+    poly = measure.approximate_polygon(poly, tolerance=2.0)
+    spec["silhouette"] = [[round(y0 + r / H * (y1 - y0), 4),
+                           round(x0 + c / W * (x1 - x0), 4)]
+                          for r, c in poly]
+    spec["fills"] = [f for f in spec["fills"] if f.pop("_inside")]
+    for op in ops:                           # post-retopo clamps
+        if op["op"] == "lie":
+            line = float(op.get("line", 0.80))
+            xs = [p[1] for p in spec["silhouette"]]
+            xl, xh = min(xs), max(xs)
+            spec["silhouette"] = [
+                [line + 0.010 * np.sin(
+                    np.pi * np.clip((p[1] - xl) / (xh - xl), 0, 1))
+                 if p[0] > line else p[0], p[1]]
+                for p in spec["silhouette"]]
+
+
+def _clip_strokes(st: np.ndarray, sil: list) -> np.ndarray:
+    """Zero stroke pixels outside the (re-topologized) silhouette —
+    kills smeared marks that the warp dragged beyond the body."""
+    h, w = st.shape
+    im = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(im).polygon([(c * w, r * h) for r, c in sil], fill=255)
+    return st * (np.asarray(im) > 0)
 
 
 def _erase(stroke: np.ndarray, cy: float, cx: float, rad: float) -> None:
@@ -176,6 +244,54 @@ def _eyespot_fills(spec: dict) -> list:
     return out
 
 
+def _integrity_flags(spec: dict) -> list:
+    """Render + structural scan. Returns defect names — these are the
+    'as obvious as a foot turning weird / squares missing' alarms
+    (operator 2026-11-10): they should fire the moment they appear."""
+    import state_oracle as so
+    arr = np.asarray(tl.render(spec))
+    out = [n for n, fn in (("interior_holes", so.interior_holes),
+                           ("stroke_bleed", so.stroke_bleed),
+                           ("frame_clip", so.frame_clip),
+                           ("fragments", so.fragments))
+           if fn(arr)["defect"]]
+    if so.self_intersect(spec)["defect"]:
+        out.append("self_intersect")
+    return out
+
+
+def derive_checked(base_path: Path, ops: list[dict]) -> dict:
+    """The undo rule: apply ops ONE AT A TIME from base; each trial
+    renders through the integrity oracle. A NEW defect blames the op
+    -> halve its 'a' and retry (<=3); still bad -> drop it (undo).
+    Good artists don't ship broken strokes. Dropped/shrunk ops are
+    recorded in spec['ops_dropped'] / ['ops_applied']."""
+    cur_flags = _integrity_flags(json.loads(base_path.read_text()))
+    applied: list[dict] = []
+    dropped: list[dict] = []
+    for op in ops:
+        o = dict(op)
+        for _ in range(4):
+            trial = derive(base_path, applied + [o])
+            new = [f for f in _integrity_flags(trial) if f not in cur_flags]
+            if not new:
+                applied.append(o)
+                cur_flags = _integrity_flags(trial)
+                break
+            if "a" in o and o["a"] > 0.05:
+                o["a"] = round(o["a"] / 2, 3)
+            else:
+                break
+        else:
+            pass
+        if o not in applied:
+            dropped.append({**o, "reason": "integrity defect"})
+    spec = derive(base_path, applied)
+    spec["ops_applied"] = applied
+    spec["ops_dropped"] = dropped
+    return spec
+
+
 def derive(base_path: Path, ops: list[dict]) -> dict:
     spec = json.loads(base_path.read_text())
     FIELD_RES = 64
@@ -186,6 +302,8 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
         f["poly"] = _warp_poly(f["poly"], dy, dx)
     st = np.asarray(tl._stroke_img(spec)).astype(np.float32)
     st = _warp_bitmap(st, dy, dx)
+    _retopo(spec, ops)
+    st = _clip_strokes(st, spec["silhouette"])
     for op in ops:
         if op["op"] == "droopy_lids":
             for ey, ex in EYES:

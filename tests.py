@@ -315,6 +315,36 @@ class TestCandidateSheet(unittest.TestCase):
             iou = (mon & moff).sum() / max((mon | moff).sum(), 1)
             self.assertGreater(iou, 0.9)
 
+    def test_pose_integrity_no_defects(self):
+        """art:state-oracles gate — the 'can you not see' regression
+        pin: every canonical pose must pass structural integrity
+        (no interior holes / stroke bleed / self-intersection /
+        frame clip / fragments). A foot turning weird, a white gash,
+        a lost mark = immediate flag (operator 2026-11-10)."""
+        import pig_w5
+        import state_oracle as so
+        for pose, kw in [("rest", {}), ("notice", {}),
+                         ("flee", {"facing": -1}),
+                         ("fly", {"tilt": 18, "wings": 1})]:
+            img = pig_w5.render_pose(pose, **kw)
+            rep = so.inspect(pose, pig_w5.pose_spec(pose), img,
+                             wings=bool(kw.get("wings")))
+            self.assertEqual(rep["verdict"], "CLEAN",
+                             f"{pose}: {rep['integrity']}")
+
+    def test_pose_states_read(self):
+        """State recognizers: rest IS lying, flee IS running, fly IS
+        airborne — poses must score their intended state."""
+        import pig_w5
+        import state_oracle as so
+        rest = pig_w5.pose_spec("rest")
+        flee = pig_w5.pose_spec("flee")
+        fly = pig_w5.pose_spec("fly")
+        self.assertGreater(so.is_lying(rest)["score"], 0.4)
+        self.assertGreater(so.is_running(flee)["score"],
+                           so.is_running(rest)["score"])
+        self.assertTrue(so.is_flying(fly, wings=True)["score"] > 0.5)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
