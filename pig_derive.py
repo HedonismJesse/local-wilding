@@ -92,9 +92,12 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
             # reaches toward the head (-x), rear leg kicks back (+x),
             # both extend down; head dips; body pitches forward.
             a = float(op["a"])
-            legzone = np.clip((yy - 0.68) / 0.32, 0, 1) ** 1.4
-            front = np.exp(-(((xx - 0.30) / 0.11) ** 2))
-            rear = np.exp(-(((xx - 0.72) / 0.11) ** 2))
+            # saturate at y=0.82 — below that the whole foot moves as a
+            # RIGID block; a ramping gradient stretched foot tips past
+            # their hoof marks (the pale ghost-hoof daggers)
+            legzone = np.clip((yy - 0.68) / 0.14, 0, 1)
+            front = np.exp(-(((xx - 0.30) / 0.08) ** 2))
+            rear = np.exp(-(((xx - 0.72) / 0.08) ** 2))
             dy += a * 0.10 * legzone * (front + rear)
             dx -= a * 0.13 * legzone * front      # front leg reaches -x
             dx += a * 0.16 * legzone * rear       # rear leg kicks +x
@@ -123,15 +126,32 @@ def _warp_poly(poly: list, dy, dx) -> list:
 
 
 def _warp_bitmap(img: np.ndarray, dy, dx) -> np.ndarray:
-    """Remap a stroke bitmap (rows=y) by the field. img is 0/255."""
+    """FORWARD-scatter the stroke bitmap: every dark pixel moves by
+    the SAME field math the polys use (ghost limbs were the
+    backward-remap disagreeing with the poly warp by a few px).
+    Each pixel splats a 2x2 at its destination — gaps stay sparse."""
     h, w = img.shape
-    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
-    fy = np.clip(yy / max(1, h - 1), 0, 1) * (dy.shape[0] - 1)
-    fx = np.clip(xx / max(1, w - 1), 0, 1) * (dy.shape[1] - 1)
+    out = np.zeros((h, w), np.float32)
+    hh, ww = dy.shape
+    yy, xx = np.where(img > 80)
+    fy = np.clip(yy / max(1, h - 1), 0, 1) * (hh - 1)
+    fx = np.clip(xx / max(1, w - 1), 0, 1) * (ww - 1)
     shy = map_coordinates(dy, [fy, fx], order=1) * (h - 1)
     shx = map_coordinates(dx, [fy, fx], order=1) * (w - 1)
-    coords = [yy - shy, xx - shx]
-    return map_coordinates(img.astype(np.float32), coords, order=1)
+    nyy, nxx = yy + shy, xx + shx
+    ok = (nyy >= 0) & (nyy < h - 1) & (nxx >= 0) & (nxx < w - 1)
+    # DROP out-of-bounds destinations — clamping them piles every
+    # displaced stroke onto the frame edge (the flee face-block)
+    ny = np.clip(np.round(nyy[ok]).astype(int), 0, h - 2)
+    nx = np.clip(np.round(nxx[ok]).astype(int), 0, w - 2)
+    val = img[yy[ok], xx[ok]]
+    # binary presence (a 2x2 splat over-inked dense linework into
+    # solid blobs — stroke_clumping caught it); 1px close seals the
+    # gaps a sparse scatter leaves
+    np.maximum.at(out, (ny, nx), val)
+    from skimage import morphology
+    return morphology.binary_closing(
+        out > 80, morphology.disk(1)).astype(np.float32) * 255
 
 
 def _retopo(spec: dict, ops: list[dict]) -> None:
@@ -169,17 +189,38 @@ def _retopo(spec: dict, ops: list[dict]) -> None:
     m = binary_fill_holes(m)
     m = morphology.remove_small_objects(m, 200)
     lab = measure.label(m)
-    if lab.max() > 1:                        # keep largest component
+    if lab.max() > 1:
         sizes = np.bincount(lab.ravel())
         sizes[0] = 0
-        m = lab == sizes.argmax()
+        main = lab == sizes.argmax()
+        # re-attach severed islands: opening can cut a thin neck and
+        # orphan anatomy (the flee snout-tip bite). An island within
+        # closing distance of the body is anatomy, not noise.
+        near = morphology.binary_dilation(main, morphology.disk(8))
+        keep = main.copy()
+        for lbl in np.unique(lab[m & ~main]):
+            isl = lab == lbl
+            if isl.sum() > sizes.max() * 0.02 and isl[near].any():
+                keep |= isl
+            elif isl.sum() > sizes.max() * 0.01:
+                spec.setdefault("retopo_dropped", []).append(
+                    {"px": int(isl.sum()), "frac": round(
+                        float(isl.sum() / sizes.max()), 3)})
+        m = morphology.binary_closing(keep, morphology.disk(6))
     cs = measure.find_contours(np.pad(m, 1).astype(float), 0.5)
     poly = tl._smooth(max(cs, key=len) - 1)
     poly = measure.approximate_polygon(poly, tolerance=2.0)
     spec["silhouette"] = [[round(y0 + r / H * (y1 - y0), 4),
                            round(x0 + c / W * (x1 - x0), 4)]
                           for r, c in poly]
-    spec["fills"] = [f for f in spec["fills"] if f.pop("_inside")]
+    dropped_fills = [f for f in spec["fills"] if not f["_inside"]]
+    if dropped_fills:
+        spec.setdefault("retopo_dropped", []).extend(
+            {"fill": f["rgb"], "pts": len(f["poly"])}
+            for f in dropped_fills)
+    spec["fills"] = [f for f in spec["fills"] if f["_inside"]]
+    for f in spec["fills"]:
+        f.pop("_inside", None)
     for op in ops:                           # post-retopo clamps
         if op["op"] == "lie":
             line = float(op.get("line", 0.80))
@@ -320,6 +361,26 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
                 d.ellipse([(ex * w - r, ey * h - r),
                            (ex * w + r, ey * h + r)], fill=255)
             np.copyto(st, np.asarray(im))
+        elif op["op"] == "erase_stroke":
+            _erase(st, float(op["cy"]), float(op["cx"]),
+                   float(op.get("r", 0.06)))
+        elif op["op"] == "erase_comp":
+            # surgical: remove the stroke COMPONENT nearest (cy,cx) —
+            # a circle clips whatever neighbours it overlaps (rest's
+            # orphaned ear-V needed this)
+            from skimage import measure as _m
+            lab = _m.label(st > 80)
+            ty, tx = float(op["cy"]) * st.shape[0], \
+                float(op["cx"]) * st.shape[1]
+            lim = float(op.get("r", 0.12)) * st.shape[0]
+            best, bd = None, lim
+            for rr in _m.regionprops(lab):
+                d = ((rr.centroid[0] - ty) ** 2
+                     + (rr.centroid[1] - tx) ** 2) ** 0.5
+                if d < bd:
+                    bd, best = d, rr.label
+            if best is not None:
+                st[lab == best] = 0
         elif op["op"] == "respot":
             s = float(op.get("s", 1.0))
             ddx = float(op.get("dx", 0.0)); ddy = float(op.get("dy", 0.0))
@@ -389,7 +450,9 @@ if __name__ == "__main__":
                 keys = {"belly_droop": ["a"], "jowl": ["a"],
                         "ear_droop": ["a"], "squat": ["a"], "lean": ["a"],
                         "lie": ["a", "line"], "stride": ["a"],
-                        "pin_legs": ["a"], "respot": ["s", "dx", "dy"]}
+                        "pin_legs": ["a"], "erase_stroke": ["cy", "cx", "r"],
+                        "erase_comp": ["cy", "cx", "r"],
+                        "respot": ["s", "dx", "dy"]}
                 for k, vv in zip(keys.get(name, []), vals):
                     op[k] = vv
             ops.append(op)

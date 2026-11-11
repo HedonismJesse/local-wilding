@@ -136,6 +136,52 @@ def fragments(img: np.ndarray, min_px: int = 60,
     return {"defect": extras > 0, "extras": extras}
 
 
+_CLUMP_BASE: dict = {}
+
+
+def _clump_ref() -> np.ndarray | None:
+    """The canon baseline render — cached; legal solid zones (tail
+    spiral, filled hooves) make an absolute threshold meaningless."""
+    if "arr" not in _CLUMP_BASE:
+        try:
+            import trace_linework as _tl
+            base = json.loads(
+                (CANON / "ourpig_base.json").read_text())
+            _CLUMP_BASE["arr"] = np.asarray(_tl.render(base))
+        except Exception:
+            _CLUMP_BASE["arr"] = None
+    return _CLUMP_BASE["arr"]
+
+
+def stroke_clumping(img: np.ndarray,
+                    ref: np.ndarray | None = None) -> dict:
+    """Dense dark mass vs the CANON baseline — scatter-piled linework.
+    The art has legal solid zones (tail spiral, filled hooves: base
+    itself carries ~1080px of >0.9 density), so an absolute threshold
+    false-flags canon. A clump is NEW dense mass: the >0.9-density
+    pixel count exceeding the base's (scale-normalized) by margin."""
+    from scipy.ndimage import uniform_filter
+    a = _alpha(img)
+    sil = binary_fill_holes(a)
+    dark = (img[..., :3].mean(-1) < 90) & (img[..., 3] > 60) & sil
+    dens = uniform_filter(dark.astype(float), size=16)
+    out = {"peak_density": round(float(dens.max()), 2),
+           "dense_px": int((dens > 0.9).sum())}
+    ref = ref if ref is not None else _clump_ref()
+    if ref is None:
+        out["defect"] = out["peak_density"] > 0.98
+        return out
+    ra = _alpha(ref)
+    rsil = binary_fill_holes(ra)
+    rdark = (ref[..., :3].mean(-1) < 90) & (ref[..., 3] > 60) & rsil
+    rcount = int((uniform_filter(rdark.astype(float), size=16)
+                  > 0.9).sum())
+    norm = sil.sum() / max(1, rsil.sum())
+    out["base_dense_px"] = rcount
+    out["defect"] = bool(out["dense_px"] > rcount * norm * 1.3 + 60)
+    return out
+
+
 def thin_artifacts(img: np.ndarray) -> dict:
     """Hairline filaments — silhouette spikes that fill like body
     (the rest-pose head spike). A defect filament is LONG AND
@@ -303,6 +349,19 @@ def markings(spec: dict) -> dict:
             "regions": len(spec["fills"]) > 0}
 
 
+def _poly_area(poly) -> float:
+    p = np.asarray(poly, dtype=float)
+    return float(0.5 * abs(np.dot(p[:, 0], np.roll(p[:, 1], 1))
+                             - np.dot(p[:, 1], np.roll(p[:, 0], 1))))
+
+
+def mass_delta(spec: dict, anchor: dict) -> dict:
+    """Silhouette poly area vs the canonical base — a big silent loss
+    means something got bitten/cropped (flee's snout tip)."""
+    a, b = _poly_area(anchor["silhouette"]), _poly_area(spec["silhouette"])
+    return {"delta": round((b - a) / max(1e-9, a), 3)}
+
+
 # ---------- multi-scale verifier ---------------------------------
 
 SCALES = {"thumb": 160, "strip": 420, "full": 1100}
@@ -329,13 +388,25 @@ def inspect(pose: str, spec: dict, img: Image.Image,
             anchor: dict | None = None, wings: bool = False) -> dict:
     """Full registry pass over one rendered pose."""
     arr = np.asarray(img)
+    dropped = spec.get("retopo_dropped", [])
+    # clumping runs at canonical SPEC-res (361x556, same scale for
+    # every pose) so the differential vs base is apples-to-apples
+    import trace_linework as _tl
+    spec_arr = np.asarray(_tl.render(spec))
+    ref_arr = (np.asarray(_tl.render(anchor)) if anchor is not None
+               else None)
     rep = {"pose": pose,
            "integrity": {"interior_holes": interior_holes(arr),
                          "stroke_bleed": stroke_bleed(arr),
                          "self_intersect": self_intersect(spec),
                          "frame_clip": frame_clip(arr),
                          "fragments": fragments(arr),
-                         "thin_artifacts": thin_artifacts(arr)},
+                         "thin_artifacts": thin_artifacts(arr),
+                         "stroke_clumping": stroke_clumping(
+                             spec_arr, ref_arr),
+                         "discarded_geometry": {
+                             "defect": len(dropped) > 0,
+                             "items": dropped}},
            "states": {"lying": is_lying(spec),
                       "running": is_running(spec),
                       "flying": is_flying(spec, wings),
@@ -343,6 +414,7 @@ def inspect(pose: str, spec: dict, img: Image.Image,
                       "markings": markings(spec)}}
     if anchor is not None:
         rep["states"]["is_pig"] = is_pig(spec, anchor)
+        rep["states"]["mass_delta"] = mass_delta(spec, anchor)
     bad = [k for k, v in rep["integrity"].items() if v.get("defect")]
     rep["verdict"] = "CLEAN" if not bad else "DEFECTS: " + ",".join(bad)
     return rep
