@@ -77,6 +77,35 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
         elif op["op"] == "lean":
             a = float(op["a"])        # forward shear, stronger at top
             dx -= a * np.clip((0.85 - yy) / 0.85, 0, 1)
+        elif op["op"] == "lie":
+            # lying loaf (sleep-still grammar): legs TUCK — the whole
+            # underside pulls up to a flat ground-contact line, top
+            # compresses, body spreads slightly. a~1 = fully down.
+            a = float(op["a"])
+            line = float(op.get("line", 0.80))
+            below = np.clip((yy - line) / max(1e-6, 1.0 - line), 0, 1)
+            dy -= a * below * (1.0 - line)          # leg zone -> line
+            dy -= a * 0.22 * np.clip((line - yy) / line, 0, 1) ** 1.15
+            dx += a * 0.06 * (xx - 0.5) * np.clip((0.9 - yy) / 0.9, 0, 1)
+        elif op["op"] == "stride":
+            # run grammar (walk still): legs scissor — front leg
+            # reaches toward the head (-x), rear leg kicks back (+x),
+            # both extend down; head dips; body pitches forward.
+            a = float(op["a"])
+            legzone = np.clip((yy - 0.68) / 0.32, 0, 1) ** 1.4
+            front = np.exp(-(((xx - 0.30) / 0.11) ** 2))
+            rear = np.exp(-(((xx - 0.72) / 0.11) ** 2))
+            dy += a * 0.10 * legzone * (front + rear)
+            dx -= a * 0.13 * legzone * front      # front leg reaches -x
+            dx += a * 0.16 * legzone * rear       # rear leg kicks +x
+            headw = np.clip((0.45 - xx) / 0.45, 0, 1) * \
+                np.clip((0.55 - yy) / 0.55, 0, 1)
+            dy += a * 0.03 * headw                # head dips slightly
+        elif op["op"] == "pin_legs":
+            # flying: legs tuck short under the body (no ground)
+            a = float(op["a"])
+            below = np.clip((yy - 0.82) / 0.18, 0, 1)
+            dy -= a * 0.55 * below * 0.18
     return dy, dx
 
 
@@ -211,6 +240,13 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     spec["stroke_b64"] = base64.b64encode(buf.getvalue()).decode()
+    # auto-window: warps can push polys outside [0,1] (flee lean cut
+    # the face) — widen the render window to the new bounds + margin
+    # so nothing clips.
+    allr = [p[0] for p in spec["silhouette"]]
+    allc = [p[1] for p in spec["silhouette"]]
+    spec["window"] = [round(min(allr) - 0.04, 4), round(min(allc) - 0.04, 4),
+                      round(max(allr) + 0.04, 4), round(max(allc) + 0.04, 4)]
     spec["derived_from"] = str(base_path)
     spec["ops"] = ops
     return spec
@@ -234,7 +270,8 @@ if __name__ == "__main__":
             else:
                 keys = {"belly_droop": ["a"], "jowl": ["a"],
                         "ear_droop": ["a"], "squat": ["a"], "lean": ["a"],
-                        "respot": ["s", "dx", "dy"]}
+                        "lie": ["a", "line"], "stride": ["a"],
+                        "pin_legs": ["a"], "respot": ["s", "dx", "dy"]}
                 for k, vv in zip(keys.get(name, []), vals):
                     op[k] = vv
             ops.append(op)

@@ -43,10 +43,10 @@ import trace_linework as tl
 CANON = Path(__file__).parent / "canon"
 BASE_SPEC = "ourpig_base"
 # per-pose derivation ops on the base spec (pig_derive vocabulary)
-POSE_OPS = {"rest": [{"op": "squat", "a": 0.06}],
+POSE_OPS = {"rest": [{"op": "lie", "a": 1.0, "line": 0.80}],
             "notice": [{"op": "open_eyes"}],
-            "flee": [{"op": "lean", "a": 0.08}],
-            "fly": []}
+            "flee": [{"op": "stride", "a": 0.7}, {"op": "lean", "a": 0.12}],
+            "fly": [{"op": "pin_legs", "a": 1.0}]}
 POSE_TRACE = {p: BASE_SPEC for p in ("rest", "notice", "flee", "fly")}
 WING = (223, 244, 238, 255)      # mint — G-dominant (pig is R-dominant)
 WING_EC = (185, 228, 216, 255)

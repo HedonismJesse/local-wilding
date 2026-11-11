@@ -109,21 +109,31 @@ def _stroke_img(spec: dict) -> Image.Image:
 
 def render(spec: dict, size: tuple[int, int] | None = None,
            bg: tuple = (0, 0, 0, 0)) -> Image.Image:
-    """Re-draw the trace. size = (w,h) canvas; default = source bbox."""
+    """Re-draw the trace. size = (w,h) canvas; default = source bbox.
+
+    spec["window"] = [y0,x0,y1,x1] maps that frac window to the canvas;
+    default [0,0,1,1]. Derived specs widen it when a warp pushes
+    geometry outside [0,1] so nothing clips (flee lean cut the face)."""
     y0, x0, y1, x1 = spec["bbox"]
     w, h = (x1 - x0, y1 - y0) if size is None else size
+    wy0, wx0, wy1, wx1 = spec.get("window", [0.0, 0.0, 1.0, 1.0])
+    ww, wh = wx1 - wx0, wy1 - wy0
     img = Image.new("RGBA", (w, h), bg)
     dr = ImageDraw.Draw(img)
 
     def pts(poly):
-        return [(c * w, r * h) for r, c in poly]
+        return [((c - wx0) / ww * w, (r - wy0) / wh * h) for r, c in poly]
 
     dr.polygon(pts(spec["silhouette"]), fill=tuple(spec["body_rgb"]) + (255,))
     for f in spec["fills"]:
         dr.polygon(pts(f["poly"]), fill=tuple(f["rgb"]) + (255,))
-    st = _stroke_img(spec).resize((w, h), Image.NEAREST)
-    dark = Image.new("RGBA", (w, h), (30, 25, 30, 255))
-    img.paste(dark, (0, 0), st)
+    # stroke bitmap covers frac [0,1]x[0,1] — paste at window offset
+    st = _stroke_img(spec).resize((max(1, int(w / ww)),
+                                   max(1, int(h / wh))), Image.NEAREST)
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    dark = Image.new("RGBA", st.size, (30, 25, 30, 255))
+    layer.paste(dark, (int(-wx0 / ww * w), int(-wy0 / wh * h)), st)
+    img = Image.alpha_composite(img, layer)
     return img
 
 
