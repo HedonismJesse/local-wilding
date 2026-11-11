@@ -1,6 +1,6 @@
 {
   "subject": "our-pig",
-  "canon_doc": "art:design-canon — signature vs family feature map",
+  "canon_doc": "art:design-canon \u00e2\u20ac\u201d signature vs family feature map",
   "family_markers": [
     "loaf silhouette (aspect ~1.5, uniform mass, head-dips-low)",
     "4 tapered leg nubs, filled dark hooves",
@@ -11,20 +11,40 @@
     "closed-curve / dot eye grammar (sleep still + sheet)"
   ],
   "signature_markers_waddles": [
-    "cheek blush circle around far eye (THE tell — removing it collapsed identity to family, operator 2026-11-10)",
+    "cheek blush circle around far eye (THE tell \u00e2\u20ac\u201d removing it collapsed identity to family, operator 2026-11-10)",
     "flank spot cluster (large irregular blob + satellite dot)",
     "exact coral snout plate fill",
     "tail curl at rear-top"
   ],
   "chosen_base": {
     "derived_from": "canon/trace_profile.json",
-    "ops": ["belly_droop=0.07", "droopy_lids", "nospots", "noeyespot"],
-    "spec": "canon/ourpig_E1.json",
-    "distinctness": "keeps all family markers; removes all signature markers; body stays pink (color axis available later if more distance needed)"
+    "ops": [
+      "belly_droop=0.07",
+      "droopy_lids",
+      "recolor=250:213:188",
+      "nospots",
+      "noeyespot"
+    ],
+    "spec": "canon/ourpig_E2.json",
+    "operator_pick": "E2 (operator 2026-11-10): peach body, all markings removed",
+    "markings": "extras layered over base, not base identity (operator ruling)",
+    "distinctness": "keeps all family markers; removes all signature markers; body peach (color axis used)"
   },
   "ops_vocabulary": {
-    "form": ["belly_droop", "jowl", "ear_droop"],
-    "marks": ["droopy_lids", "respot", "nospots", "noeyespot", "eyepatch", "saddle", "recolor"],
+    "form": [
+      "belly_droop",
+      "jowl",
+      "ear_droop"
+    ],
+    "marks": [
+      "droopy_lids",
+      "respot",
+      "nospots",
+      "noeyespot",
+      "eyepatch",
+      "saddle",
+      "recolor"
+    ],
     "note": "form ops are displacement fields warping sil+fills+stroke together; mark ops edit fill polys or the stroke bitmap"
   }
 }
