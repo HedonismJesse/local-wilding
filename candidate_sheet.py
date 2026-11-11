@@ -177,10 +177,15 @@ def _review_html(variants: list[dict], out: Path,
         ps = " ".join(f"{k}={p}" for k, p in v["params"].items())
         fl = ",".join(v["flags"]) if v["flags"] else "clean"
         color = "#e65a6e" if v["flags"] else "#50dca0"
+        rm = (f'<div class=fl style="color:#5aa8e0">ref-match '
+              f'{v["ref_match"]["score"]:.2f} — misses: '
+              f'{_h.escape(",".join(v["ref_match"]["misses"]) or "none")}'
+              f'</div>' if "ref_match" in v else "")
         cells.append(
             f'<div class=cell><div class=cap>{v["id"]} — '
             f'{_h.escape(ps)}</div>'
             f'<img src="data:image/png;base64,{b64}">'
+            f'{rm}'
             f'<div class=fl style="color:{color}">{_h.escape(fl)}'
             f'</div></div>')
     ref_panel = (_refs_html(refs_man, pick_ids, base=out)
@@ -222,6 +227,9 @@ def cmd_sheet(a) -> int:
         return 2
     refs_man = json.loads(a.refs.read_text()) if a.refs else None
     pick_ids = a.ref_pick.split(",") if a.ref_pick else None
+    anchor = next((r for r in refs_man["refs"]
+                   if pick_ids and r["id"] == pick_ids[0]),
+                  None) if refs_man else None
     mod, fn = a.builder.split(":")
     builder = getattr(importlib.import_module(mod), fn)
     params = {}
@@ -240,9 +248,19 @@ def cmd_sheet(a) -> int:
         png = a.out_dir / f"{vid}.png"
         _render(builder, ps, png)
         rep = _audit(png, spec)
-        variants.append({"id": vid, "params": ps, "png": str(png),
-                         "flags": rep["flags"], "audit": rep})
-        print(f"{vid} {ps} -> {rep['flags'] or 'clean'}")
+        v = {"id": vid, "params": ps, "png": str(png),
+             "flags": rep["flags"], "audit": rep}
+        if anchor and anchor.get("parts"):
+            import ref_match as rm
+            m = rm.score(png, anchor,
+                         mirror=(ps.get("facing", 1) < 0))
+            v["ref_match"] = m
+            v["flags"] = v["flags"] + \
+                [f"ref_miss:{x}" for x in m["misses"]]
+        variants.append(v)
+        tag = (f" ref={v['ref_match']['score']:.2f}"
+               if "ref_match" in v else "")
+        print(f"{vid} {ps} -> {rep['flags'] or 'clean'}{tag}")
     sheet_png = a.out_dir / "sheet.png"
     _sheet(variants, sheet_png)
     review = _review_html(variants, a.out_dir,

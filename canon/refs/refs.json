@@ -1,6 +1,11 @@
 {
  "subject": "fat lazy pig that notices wings, flees, gets docked, flies off",
- "picked": null,
+ "picked": [
+  "waddles",
+  "ab_minion",
+  "porky",
+  "oksmith_lineart"
+ ],
  "refs": [
   {
    "id": "ab_minion",
@@ -9,7 +14,7 @@
    "author": "Rovio - Angry Birds",
    "license": "copyrighted - internal reference only, never ships",
    "role": "style-target",
-   "status": "candidate",
+   "status": "kept",
    "register": "professional flat-shaded cartoon, front view",
    "signature_elements": [
     "capsule/pill body, vertical - head IS the body, zero neck",
@@ -20,7 +25,8 @@
     "legs = tiny stumps at bottom edge of the pill",
     "ears + arms vestigial nubs - silhouette stays clean",
     "no outline - gradient shading carries the silhouette"
-   ]
+   ],
+   "operator_note": "ok (2026-11-10)"
   },
   {
    "id": "waddles",
@@ -29,8 +35,16 @@
    "author": "Disney - Gravity Falls",
    "license": "copyrighted - internal reference only, never ships",
    "role": "style-target",
-   "status": "candidate",
+   "status": "picked",
    "register": "thin-outline flat cartoon, 3/4 loaf body",
+   "parts": {
+    "snout":  {"bbox_frac": [0.40, 0.72, 0.78, 1.00], "color": "#F4A8A0", "min_coverage": 0.30, "weight": 2.0},
+    "ear":    {"bbox_frac": [0.00, 0.52, 0.32, 0.80], "color": "#F4A8A0", "min_coverage": 0.15},
+    "eye":    {"bbox_frac": [0.30, 0.62, 0.50, 0.78], "color": "#2E2E38", "min_coverage": 0.03},
+    "legs":   {"bbox_frac": [0.82, 0.15, 1.00, 0.90], "color": "#46464F", "min_coverage": 0.03},
+    "tail":   {"bbox_frac": [0.30, 0.00, 0.62, 0.15], "color": "#F4A8A0", "min_coverage": 0.10},
+    "spots":  {"bbox_frac": [0.10, 0.28, 0.40, 0.60], "color": "#E08F86", "min_coverage": 0.10, "weight": 0.5}
+   },
    "signature_elements": [
     "horizontal loaf/potato body - lazy = low and long",
     "floppy ear folds over the forehead",
@@ -39,7 +53,8 @@
     "tiny legs mostly hidden under the body",
     "thin dark outline + darker spot patches",
     "curled tail"
-   ]
+   ],
+   "operator_note": "best pig - primary anchor (2026-11-10)"
   },
   {
    "id": "porky",
@@ -48,7 +63,7 @@
    "author": "Warner Bros - Looney Tunes",
    "license": "copyrighted - internal reference only, never ships",
    "role": "style-target",
-   "status": "candidate",
+   "status": "kept",
    "register": "classic clean-outline cartoon",
    "signature_elements": [
     "giant head ~50% of total height - infant-proportion appeal",
@@ -57,6 +72,58 @@
     "small upturned snout",
     "ears small triangles on the head",
     "body small relative to head - clothed here (off-brief, grammar still transfers)"
+   ],
+   "operator_note": "the standard for anthropomorphic pig cartoon (2026-11-10)"
+  },
+  {
+   "id": "waddles_rest",
+   "file": "canon/refs/pig_waddles_rest.png",
+   "source": "https://gravityfalls.fandom.com/wiki/File:S2e19_Waddles_rest.png",
+   "author": "Disney - Gravity Falls S2e19",
+   "license": "copyrighted - internal reference only, never ships",
+   "role": "style-target",
+   "status": "candidate",
+   "expansion_of": "waddles",
+   "register": "same waddles register - rest pose truth",
+   "signature_elements": [
+    "rest = squashed blob - body flattens, face smushes into the mass",
+    "snout LARGE in rest - ~30% of face width, dead center-front",
+    "closed eye = one simple curved line",
+    "ears fold flat at the top of the blob",
+    "legs fully hidden - only dark hoof tips peek at the bottom",
+    "expansion rule: same-register ref; anchor stays primary until this scores higher AND operator confirms"
+   ]
+  },
+  {
+   "id": "waddles_scene",
+   "file": "canon/refs/pig_waddles_scene.jpg",
+   "source": "https://gravityfalls.fandom.com/wiki/File:S1e18_Waddles_being_a_pig.jpg",
+   "author": "Disney - Gravity Falls S1e18",
+   "license": "copyrighted - internal reference only, never ships",
+   "role": "style-target",
+   "status": "candidate",
+   "expansion_of": "waddles",
+   "register": "same waddles register - grounded/eat posture truth",
+   "signature_elements": [
+    "eyes are TINY DOTS - small dark ovals, no big cartoon eye whites",
+    "head dips LOW to reach the floor - lazy eat posture",
+    "ear flops forward over the dip",
+    "spot patch on back AND head-cheek",
+    "stub legs visible only as short dark tips"
+   ]
+  },
+  {
+   "id": "waddles_motion_icon",
+   "file": "canon/refs/waddles_motion.gif",
+   "source": "https://gravityfalls.fandom.com/wiki/File:Waddles.gif",
+   "author": "Disney - Gravity Falls",
+   "license": "copyrighted - internal reference only, never ships",
+   "role": "motion",
+   "status": "weak",
+   "register": "animated gif - 50px avatar icon",
+   "signature_elements": [
+    "motion refs join the manifest as role=motion (operator rule 2026-11-10): the animatic needs exemplar movement, not just stills",
+    "this one is a weak 50px avatar - needs a real cycle/strip ref (walk cycle, run cycle, squash-stretch bounce)"
    ]
   },
   {
@@ -84,7 +151,7 @@
    "author": "johnny_automatic (after 1889 Nils Lilja drawing)",
    "license": "CC0",
    "role": "anatomy",
-   "status": "candidate",
+   "status": "rejected",
    "register": "realistic ink - anatomy truth, NOT a style target",
    "signature_elements": [
     "belly hangs low, nearly to ground - fat reads as sag",

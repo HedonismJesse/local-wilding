@@ -1,0 +1,46 @@
+{
+ "subject": "waddles-grammar lazy pig (reference-anchored v2)",
+ "frame_role": "asset",
+ "notes": "spec for render_audit --spec, sibling of canon/pig_lazy.json re-anchored on waddles signature elements (canon/refs/refs.json, operator-picked 2026-11-10): loaf body (head merged - ONE mass), snout droops LOW on the front, floppy ear over forehead, stub legs, curled tail. _l/_r pairs OR together for mirrored flee. No global min_components: the loaf IS one connected mass - the waddles blob lesson is the face must hang ON the loaf, not float inside it.",
+ "subject_aspect_min": 1.35,
+ "aspect_named_failure": "thin_pig",
+ "regions": {
+  "snout_r": {
+   "bbox_frac": [0.40, 0.70, 0.95, 1.00],
+   "min_components": 1,
+   "exclude_near_dom_dist": 2,
+   "named_failure": "missing_snout"
+  },
+  "snout_l": {
+   "bbox_frac": [0.40, 0.00, 0.95, 0.30],
+   "min_components": 1,
+   "exclude_near_dom_dist": 2,
+   "named_failure": "missing_snout"
+  },
+  "ear_r": {
+   "bbox_frac": [0.00, 0.60, 0.35, 1.00],
+   "min_components": 1,
+   "named_failure": "missing_ear"
+  },
+  "ear_l": {
+   "bbox_frac": [0.00, 0.00, 0.35, 0.40],
+   "min_components": 1,
+   "named_failure": "missing_ear"
+  },
+  "belly": {
+   "bbox_frac": [0.50, 0.10, 1.00, 0.85],
+   "min_solidity": 0.80,
+   "named_failure": "hollow_belly"
+  },
+  "tail_l": {
+   "bbox_frac": [0.10, 0.00, 0.80, 0.20],
+   "min_components": 1,
+   "named_failure": "missing_tail"
+  },
+  "tail_r": {
+   "bbox_frac": [0.10, 0.80, 0.80, 1.00],
+   "min_components": 1,
+   "named_failure": "missing_tail"
+  }
+ }
+}
