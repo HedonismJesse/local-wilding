@@ -119,6 +119,28 @@ def _draw_lid(stroke: np.ndarray, cy: float, cx: float,
     np.copyto(stroke, np.asarray(im))
 
 
+def _spot_fills(spec: dict) -> list:
+    """Flank-marking fills: centroid in the rear-upper body region."""
+    out = []
+    for f in spec["fills"]:
+        cy = float(np.mean([p[0] for p in f["poly"]]))
+        cx = float(np.mean([p[1] for p in f["poly"]]))
+        if cx > 0.55 and 0.10 < cy < 0.62:
+            out.append(f)
+    return out
+
+
+def _eyespot_fills(spec: dict) -> list:
+    """The cheek/eye blush circle — waddles' signature marking."""
+    out = []
+    for f in spec["fills"]:
+        cy = float(np.mean([p[0] for p in f["poly"]]))
+        cx = float(np.mean([p[1] for p in f["poly"]]))
+        if 0.24 < cx < 0.44 and 0.12 < cy < 0.40:
+            out.append(f)
+    return out
+
+
 def derive(base_path: Path, ops: list[dict]) -> dict:
     spec = json.loads(base_path.read_text())
     FIELD_RES = 64
@@ -137,13 +159,37 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
         elif op["op"] == "respot":
             s = float(op.get("s", 1.0))
             ddx = float(op.get("dx", 0.0)); ddy = float(op.get("dy", 0.0))
-            for f in spec["fills"]:
-                if max(abs(p[0] - 0.34) for p in f["poly"]) < 0.5:
-                    cys = np.mean([p[0] for p in f["poly"]])
-                    cxs = np.mean([p[1] for p in f["poly"]])
-                    f["poly"] = [[round(cys + (p[0] - cys) * s + ddy, 4),
-                                  round(cxs + (p[1] - cxs) * s + ddx, 4)]
-                                 for p in f["poly"]]
+            for f in _spot_fills(spec):
+                cys = np.mean([p[0] for p in f["poly"]])
+                cxs = np.mean([p[1] for p in f["poly"]])
+                f["poly"] = [[round(cys + (p[0] - cys) * s + ddy, 4),
+                              round(cxs + (p[1] - cxs) * s + ddx, 4)]
+                             for p in f["poly"]]
+        elif op["op"] == "nospots":
+            spec["fills"] = [f for f in spec["fills"]
+                             if f not in _spot_fills(spec)]
+        elif op["op"] == "noeyespot":
+            spec["fills"] = [f for f in spec["fills"]
+                             if f not in _eyespot_fills(spec)]
+        elif op["op"] == "eyepatch":
+            # replace the blush circle with a bigger, darker, irregular
+            # patch over the near eye — marking swap, not removal
+            for f in _eyespot_fills(spec):
+                cys = np.mean([p[0] for p in f["poly"]])
+                cxs = np.mean([p[1] for p in f["poly"]])
+                f["poly"] = [[round(cys + (p[0] - cys) * 1.9 + 0.03, 4),
+                              round(cxs + (p[1] - cxs) * 1.9 - 0.02, 4)]
+                             for p in f["poly"]]
+                f["rgb"] = [int(c) for c in op.get("rgb", [203, 138, 148])]
+        elif op["op"] == "recolor":
+            spec["body_rgb"] = [int(c) for c in op["rgb"]]
+        elif op["op"] == "saddle":
+            # back patch: polygon draped over the top-rear silhouette
+            spec["fills"].append({
+                "poly": [[0.06, 0.42], [0.00, 0.55], [0.02, 0.72],
+                         [0.10, 0.82], [0.26, 0.80], [0.34, 0.70],
+                         [0.30, 0.55], [0.20, 0.44]],
+                "rgb": [int(c) for c in op.get("rgb", [231, 155, 155])]})
     img = Image.fromarray(np.clip(st, 0, 255).astype(np.uint8), "L")
     buf = io.BytesIO()
     img.save(buf, format="PNG")
@@ -166,10 +212,13 @@ if __name__ == "__main__":
             name, arg = tok.split("=", 1)
             vals = [float(x) for x in arg.split(":")]
             op = {"op": name}
-            keys = {"belly_droop": ["a"], "jowl": ["a"], "ear_droop": ["a"],
-                    "respot": ["s", "dx", "dy"]}
-            for k, vv in zip(keys.get(name, []), vals):
-                op[k] = vv
+            if name in ("recolor", "saddle", "eyepatch") and len(vals) == 3:
+                op["rgb"] = vals
+            else:
+                keys = {"belly_droop": ["a"], "jowl": ["a"],
+                        "ear_droop": ["a"], "respot": ["s", "dx", "dy"]}
+                for k, vv in zip(keys.get(name, []), vals):
+                    op[k] = vv
             ops.append(op)
         else:
             ops.append({"op": tok})
