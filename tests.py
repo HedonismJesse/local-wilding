@@ -345,6 +345,24 @@ class TestCandidateSheet(unittest.TestCase):
                            so.is_running(rest)["score"])
         self.assertTrue(so.is_flying(fly, wings=True)["score"] > 0.5)
 
+    def test_report_schema_verdict_is_rollups(self):
+        """The report's CLEAN must be computed FROM integrity
+        defects — a misread key once produced false '12 CLEAN'
+        (2026-11-11). Pin the schema: every run has a verdict that
+        equals the defect rollup."""
+        import json
+        r = json.loads(Path("_oracle_report.json").read_text())
+        self.assertTrue(r, "empty report")
+        for k, v in r.items():
+            self.assertIn("verdict", v, f"{k}: no verdict field")
+            self.assertIn("integrity", v, f"{k}: no integrity block")
+            bad = [n for n, d in v["integrity"].items()
+                   if isinstance(d, dict) and d.get("defect")]
+            expected = "CLEAN" if not bad else f"DEFECTS: {','.join(bad)}"
+            self.assertEqual(v["verdict"], expected,
+                             f"{k}: verdict '{v['verdict']}' "
+                             f"!= rollup '{expected}'")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

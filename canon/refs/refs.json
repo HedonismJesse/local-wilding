@@ -26,7 +26,12 @@
     "ears + arms vestigial nubs - silhouette stays clean",
     "no outline - gradient shading carries the silhouette"
    ],
-   "operator_note": "ok (2026-11-10)"
+   "operator_note": "ok (2026-11-10)",
+   "teaches": [
+    "flat-register",
+    "snout-read",
+    "stump-feet"
+   ]
   },
   {
    "id": "waddles",
@@ -110,7 +115,13 @@
     "thin dark outline + darker spot patches",
     "curled tail"
    ],
-   "operator_note": "best pig - primary anchor (2026-11-10)"
+   "operator_note": "best pig - primary anchor (2026-11-10)",
+   "teaches": [
+    "silhouette",
+    "linework",
+    "family-proportions",
+    "lazy-read"
+   ]
   },
   {
    "id": "porky",
@@ -129,7 +140,11 @@
     "ears small triangles on the head",
     "body small relative to head - clothed here (off-brief, grammar still transfers)"
    ],
-   "operator_note": "the standard for anthropomorphic pig cartoon (2026-11-10)"
+   "operator_note": "the standard for anthropomorphic pig cartoon (2026-11-10)",
+   "teaches": [
+    "anthro-standard",
+    "hoof-anatomy"
+   ]
   },
   {
    "id": "waddles_rest",
@@ -148,6 +163,10 @@
     "ears fold flat at the top of the blob",
     "legs fully hidden - only dark hoof tips peek at the bottom",
     "expansion rule: same-register ref; anchor stays primary until this scores higher AND operator confirms"
+   ],
+   "teaches": [
+    "pose-grammar:rest",
+    "staging"
    ]
   },
   {
@@ -166,6 +185,10 @@
     "ear flops forward over the dip",
     "spot patch on back AND head-cheek",
     "stub legs visible only as short dark tips"
+   ],
+   "teaches": [
+    "staging",
+    "context"
    ]
   },
   {
@@ -175,12 +198,13 @@
    "author": "Disney - Gravity Falls",
    "license": "copyrighted - internal reference only, never ships",
    "role": "motion",
-   "status": "weak",
+   "status": "empty - 1-frame icon, no motion grammar",
    "register": "animated gif - 50px avatar icon",
    "signature_elements": [
     "motion refs join the manifest as role=motion (operator rule 2026-11-10): the animatic needs exemplar movement, not just stills",
     "this one is a weak 50px avatar - needs a real cycle/strip ref (walk cycle, run cycle, squash-stretch bounce)"
-   ]
+   ],
+   "teaches": []
   },
   {
    "id": "oksmith_lineart",
@@ -198,7 +222,12 @@
     "pointed ear at top of head",
     "curled tail"
    ],
-   "operator_note": "the only v1 ref the operator approved (2026-11-10)"
+   "operator_note": "the only v1 ref the operator approved (2026-11-10)",
+   "teaches": [
+    "anatomy-truth",
+    "cloven-hoof",
+    "leg-structure"
+   ]
   },
   {
    "id": "johnny_hog",
@@ -215,6 +244,9 @@
     "droopy ear flops forward over the eye",
     "bristle ridge along the back",
     "head-down graze posture - the 'lazy' default"
+   ],
+   "teaches": [
+    "boundary:realism-off-register"
    ]
   },
   {
@@ -228,6 +260,10 @@
    "register": "clipart flat + uniform outline",
    "signature_elements": [
     "operator verdict 2026-11-10: clipart register, not professional cartoon quality"
+   ],
+   "teaches": [
+    "boundary:wing-register",
+    "flying-staging"
    ]
   },
   {
@@ -241,6 +277,9 @@
    "register": "flat painterly fills, no outline",
    "signature_elements": [
     "operator verdict 2026-11-10: clipart register, not professional cartoon quality"
+   ],
+   "teaches": [
+    "boundary:cute-off-family"
    ]
   },
   {
@@ -254,6 +293,9 @@
    "register": "anthro sticker - clothed, bipedal",
    "signature_elements": [
     "operator verdict 2026-11-10: clipart register, not professional cartoon quality"
+   ],
+   "teaches": [
+    "boundary:clothed-off-brief"
    ]
   },
   {
@@ -334,7 +376,12 @@
      ],
      "weight": 1.0
     }
-   }
+   },
+   "teaches": [
+    "model-sheet",
+    "silhouette",
+    "view-coherence"
+   ]
   },
   {
    "id": "waddles_ms_front",
@@ -349,7 +396,12 @@
     "ear bumps top",
     "tapered nubs"
    ],
-   "parts": {}
+   "parts": {},
+   "teaches": [
+    "model-sheet",
+    "front-view",
+    "view-coherence"
+   ]
   },
   {
    "id": "waddles_ms_back",
@@ -364,7 +416,12 @@
     "dual ear bumps",
     "curl tail"
    ],
-   "parts": {}
+   "parts": {},
+   "teaches": [
+    "model-sheet",
+    "back-view",
+    "view-coherence"
+   ]
   },
   {
    "id": "waddles_walk",
@@ -379,7 +436,11 @@
     "ear bump",
     "leg notches"
    ],
-   "parts": {}
+   "parts": {},
+   "teaches": [
+    "pose-grammar:walk",
+    "view-coherence"
+   ]
   },
   {
    "id": "waddles_sleep",
@@ -394,7 +455,11 @@
     "flopped-ear hook",
     "tucked legs"
    ],
-   "parts": {}
+   "parts": {},
+   "teaches": [
+    "pose-grammar:sleep",
+    "view-coherence"
+   ]
   }
  ]
 }

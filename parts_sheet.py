@@ -118,7 +118,63 @@ def _board(rows, is_action, out: Path) -> None:
     sheet.convert("RGB").save(out)
 
 
+def _manifest() -> list[dict]:
+    """Every board cell as a verdict target — the manifest is what
+    makes a PNG cell addressable: verdicts land on ops, not pixels."""
+    out = []
+    for rlabel, cells in PARTS:
+        for label, ops in cells:
+            out.append({"cell": f"parts:{rlabel}:{label}",
+                        "board": "parts", "ops": ops})
+    for rlabel, cells in ACTIONS:
+        for label, pose, ops in cells:
+            out.append({"cell": f"actions:{rlabel}:{label}",
+                        "board": "actions",
+                        "ops": ops if ops is not None else
+                        pw.POSE_OPS[pose]})
+    return out
+
+
+def _verdict(argv: list[str]) -> None:
+    """parts_sheet.py verdict 'parts:color:pink=pick:warmer reads
+    better' ... — appends board-cell verdicts to reads.jsonl in the
+    candidate_sheet schema so the ledger learns from boards too."""
+    import sys
+    from datetime import datetime
+    ledger = ROOT.parent / "ai-hub" / "Artifacts" / "art_sphere" / \
+        "reads.jsonl"
+    cells = {c["cell"]: c for c in _manifest()}
+    rows = []
+    for tok in argv:
+        cid, rest = tok.split("=", 1)
+        verdict, _, reason = rest.partition(":")
+        c = cells[cid]
+        rows.append({"artifact": f"{c['board']}_board.png",
+                     "candidate_id": cid,
+                     "variant_params": {"ops": c["ops"]},
+                     "verdict": verdict,
+                     "operator_reason": reason or None,
+                     "named_failure": None,
+                     "ts": datetime.now().isoformat(timespec="seconds"),
+                     "source": "board pick",
+                     "audit_features": []})
+    with ledger.open("a", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r) + "\n")
+    print(f"{len(rows)} verdicts -> {ledger}")
+
+
 if __name__ == "__main__":
-    _board(PARTS, False, ROOT / "parts_board.png")
-    _board(ACTIONS, True, ROOT / "action_board.png")
-    print("parts_board.png + action_board.png")
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "manifest":
+        (ROOT / "boards_manifest.json").write_text(
+            json.dumps(_manifest(), indent=1))
+        print("boards_manifest.json")
+    elif len(sys.argv) > 1 and sys.argv[1] == "verdict":
+        _verdict(sys.argv[2:])
+    else:
+        _board(PARTS, False, ROOT / "parts_board.png")
+        _board(ACTIONS, True, ROOT / "action_board.png")
+        (ROOT / "boards_manifest.json").write_text(
+            json.dumps(_manifest(), indent=1))
+        print("parts_board.png + action_board.png + manifest")

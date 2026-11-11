@@ -1,0 +1,293 @@
+[
+ {
+  "cell": "parts:body:canon",
+  "board": "parts",
+  "ops": []
+ },
+ {
+  "cell": "parts:body:belly+",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "belly_droop",
+    "a": 0.1
+   }
+  ]
+ },
+ {
+  "cell": "parts:body:squat",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "squat",
+    "a": 0.1
+   }
+  ]
+ },
+ {
+  "cell": "parts:body:jowl",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "jowl",
+    "a": 0.06
+   }
+  ]
+ },
+ {
+  "cell": "parts:ears:canon",
+  "board": "parts",
+  "ops": []
+ },
+ {
+  "cell": "parts:ears:droop+",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "ear_droop",
+    "a": 0.1
+   }
+  ]
+ },
+ {
+  "cell": "parts:ears:pointy",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "ear_point",
+    "a": 0.08
+   }
+  ]
+ },
+ {
+  "cell": "parts:eyes:canon",
+  "board": "parts",
+  "ops": []
+ },
+ {
+  "cell": "parts:eyes:open",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "open_eyes"
+   }
+  ]
+ },
+ {
+  "cell": "parts:eyes:lids",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "droopy_lids"
+   }
+  ]
+ },
+ {
+  "cell": "parts:snout:canon",
+  "board": "parts",
+  "ops": []
+ },
+ {
+  "cell": "parts:snout:plate+",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "snout_scale",
+    "s": 1.4
+   }
+  ]
+ },
+ {
+  "cell": "parts:snout:plate-",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "snout_scale",
+    "s": 0.65
+   }
+  ]
+ },
+ {
+  "cell": "parts:marks:canon",
+  "board": "parts",
+  "ops": []
+ },
+ {
+  "cell": "parts:marks:spots",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "addspots"
+   }
+  ]
+ },
+ {
+  "cell": "parts:marks:saddle",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "saddle"
+   }
+  ]
+ },
+ {
+  "cell": "parts:marks:eyepatch",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "eyepatch"
+   }
+  ]
+ },
+ {
+  "cell": "parts:color:canon",
+  "board": "parts",
+  "ops": []
+ },
+ {
+  "cell": "parts:color:pink",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "recolor",
+    "rgb": [
+     247,
+     168,
+     184
+    ]
+   }
+  ]
+ },
+ {
+  "cell": "parts:color:tan",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "recolor",
+    "rgb": [
+     222,
+     184,
+     135
+    ]
+   }
+  ]
+ },
+ {
+  "cell": "parts:color:grey",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "recolor",
+    "rgb": [
+     196,
+     186,
+     186
+    ]
+   }
+  ]
+ },
+ {
+  "cell": "parts:tail:canon",
+  "board": "parts",
+  "ops": []
+ },
+ {
+  "cell": "parts:tail:straight",
+  "board": "parts",
+  "ops": [
+   {
+    "op": "tail_straight"
+   }
+  ]
+ },
+ {
+  "cell": "actions:ground:rest",
+  "board": "actions",
+  "ops": [
+   {
+    "op": "lie",
+    "a": 1.0,
+    "line": 0.8
+   },
+   {
+    "op": "erase_comp",
+    "cy": 0.42,
+    "cx": 0.53,
+    "r": 0.12
+   }
+  ]
+ },
+ {
+  "cell": "actions:ground:sit*",
+  "board": "actions",
+  "ops": [
+   {
+    "op": "squat",
+    "a": 0.14
+   },
+   {
+    "op": "open_eyes"
+   }
+  ]
+ },
+ {
+  "cell": "actions:ground:notice",
+  "board": "actions",
+  "ops": [
+   {
+    "op": "open_eyes"
+   }
+  ]
+ },
+ {
+  "cell": "actions:ground:dig*",
+  "board": "actions",
+  "ops": [
+   {
+    "op": "lean",
+    "a": 0.16
+   },
+   {
+    "op": "open_eyes"
+   }
+  ]
+ },
+ {
+  "cell": "actions:run:flee",
+  "board": "actions",
+  "ops": [
+   {
+    "op": "stride",
+    "a": 0.7
+   },
+   {
+    "op": "lean",
+    "a": 0.12
+   }
+  ]
+ },
+ {
+  "cell": "actions:run:jump*",
+  "board": "actions",
+  "ops": [
+   {
+    "op": "squat",
+    "a": 0.16
+   },
+   {
+    "op": "pin_legs",
+    "a": 0.55
+   }
+  ]
+ },
+ {
+  "cell": "actions:air:fly",
+  "board": "actions",
+  "ops": [
+   {
+    "op": "pin_legs",
+    "a": 1.0
+   }
+  ]
+ }
+]
