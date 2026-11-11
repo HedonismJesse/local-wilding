@@ -108,12 +108,21 @@ def _stroke_img(spec: dict) -> Image.Image:
 
 
 def render(spec: dict, size: tuple[int, int] | None = None,
-           bg: tuple = (0, 0, 0, 0)) -> Image.Image:
+           bg: tuple = (0, 0, 0, 0), style: str = "rough") -> Image.Image:
     """Re-draw the trace. size = (w,h) canvas; default = source bbox.
 
     spec["window"] = [y0,x0,y1,x1] maps that frac window to the canvas;
     default [0,0,1,1]. Derived specs widen it when a warp pushes
-    geometry outside [0,1] so nothing clips (flee lean cut the face)."""
+    geometry outside [0,1] so nothing clips (flee lean cut the face).
+
+    style = the emitter (Reson: IR -> target language):
+      "rough" — the ref's own register: near-black variable-weight line
+      "flat"  — cel/poster register: lineart harmonized to a dark
+                body-tone (x0.32) at uniform thin weight, fills
+                crisp — same spec, different emission. Emitter
+                contract: linework luminance must stay < body
+                luminance so the oracle's dark detectors remain
+                valid on any emission."""
     y0, x0, y1, x1 = spec["bbox"]
     w, h = (x1 - x0, y1 - y0) if size is None else size
     wy0, wx0, wy1, wx1 = spec.get("window", [0.0, 0.0, 1.0, 1.0])
@@ -128,10 +137,19 @@ def render(spec: dict, size: tuple[int, int] | None = None,
     for f in spec["fills"]:
         dr.polygon(pts(f["poly"]), fill=tuple(f["rgb"]) + (255,))
     # stroke bitmap covers frac [0,1]x[0,1] — paste at window offset
-    st = _stroke_img(spec).resize((max(1, int(w / ww)),
-                                   max(1, int(h / wh))), Image.NEAREST)
+    st = _stroke_img(spec)
+    if style == "flat":                    # uniform thin weight —
+        import numpy as _np                # the cel register (IR
+        from scipy.ndimage import binary_erosion  # bitmap untouched)
+        st = Image.fromarray(
+            (binary_erosion(_np.asarray(st) > 40) * 255)
+            .astype(_np.uint8))
+    st = st.resize((max(1, int(w / ww)),
+                    max(1, int(h / wh))), Image.NEAREST)
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    dark = Image.new("RGBA", st.size, (30, 25, 30, 255))
+    line_rgb = ((30, 25, 30) if style == "rough"
+                else tuple(int(c * 0.32) for c in spec["body_rgb"]))
+    dark = Image.new("RGBA", st.size, line_rgb + (255,))
     layer.paste(dark, (int(-wx0 / ww * w), int(-wy0 / wh * h)), st)
     img = Image.alpha_composite(img, layer)
     return img

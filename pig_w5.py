@@ -106,11 +106,14 @@ def pose_spec(pose: str) -> dict:
 def render_pose(pose: str = "rest", facing: int = 1, tilt: float = 0.0,
                 squash: float = 1.0, wings: int = 0,
                 canvas: tuple[int, int] = (1200, 750),
-                trace_dir: Path | None = None) -> Image.Image:
+                trace_dir: Path | None = None,
+                style: str = "rough") -> Image.Image:
     """Render a pose from its trace spec. All warps apply to the whole
-    composite (sil+linework+fills together) — marks stay consistent."""
+    composite (sil+linework+fills together) — marks stay consistent.
+    style = the emitter (trace_linework.render): 'rough' (ref's own
+    lineart) or 'flat' (cel register) — same spec, different style."""
     spec = pose_spec(pose)
-    pig = tl.render(spec)                          # source-res RGBA
+    pig = tl.render(spec, style=style)             # source-res RGBA
     if squash != 1.0:                              # squash = height scale
         pig = pig.resize((pig.width, max(1, int(pig.height * squash))),
                          Image.BICUBIC)
@@ -153,10 +156,13 @@ def pig_bitmap(pose: str = "rest", facing: int = 1, tilt: float = 0.0,
 if __name__ == "__main__":
     poses = [("rest", {}), ("notice", {}), ("flee", {"facing": -1}),
              ("fly", {"tilt": 18, "wings": 1})]
-    fig, axs = plt.subplots(1, 4, figsize=(20, 5), dpi=110)
-    for ax, (pose, kw) in zip(axs, poses):
-        ax.imshow(np.asarray(render_pose(pose, **kw)))
-        ax.set_title(pose)
-        ax.axis("off")
-    fig.savefig("pig_w5_poses.png", transparent=True)
-    print("pig_w5_poses.png")
+    for style in ("rough", "flat"):
+        fig, axs = plt.subplots(1, 4, figsize=(20, 5), dpi=110)
+        for ax, (pose, kw) in zip(axs, poses):
+            ax.imshow(np.asarray(render_pose(pose, style=style, **kw)))
+            ax.set_title(pose)
+            ax.axis("off")
+        out = ("pig_w5_poses.png" if style == "rough"
+               else f"pig_w5_poses_{style}.png")
+        fig.savefig(out, transparent=True)
+        print(out)

@@ -139,22 +139,25 @@ def fragments(img: np.ndarray, min_px: int = 60,
 _CLUMP_BASE: dict = {}
 
 
-def _clump_ref() -> np.ndarray | None:
-    """The canon baseline render — cached; legal solid zones (tail
-    spiral, filled hooves) make an absolute threshold meaningless."""
-    if "arr" not in _CLUMP_BASE:
+def _clump_ref(style: str = "rough") -> np.ndarray | None:
+    """The canon baseline render — cached per emitter (a differential
+    is only apples-to-apples inside one emission style); legal solid
+    zones (tail spiral, filled hooves) make absolute thresholds
+    meaningless."""
+    if style not in _CLUMP_BASE:
         try:
             import trace_linework as _tl
             base = json.loads(
                 (CANON / "ourpig_base.json").read_text())
-            _CLUMP_BASE["arr"] = np.asarray(_tl.render(base))
+            _CLUMP_BASE[style] = np.asarray(_tl.render(base, style=style))
         except Exception:
-            _CLUMP_BASE["arr"] = None
-    return _CLUMP_BASE["arr"]
+            _CLUMP_BASE[style] = None
+    return _CLUMP_BASE[style]
 
 
 def stroke_clumping(img: np.ndarray,
-                    ref: np.ndarray | None = None) -> dict:
+                    ref: np.ndarray | None = None,
+                    style: str = "rough") -> dict:
     """Dense dark mass vs the CANON baseline — scatter-piled linework.
     The art has legal solid zones (tail spiral, filled hooves: base
     itself carries ~1080px of >0.9 density), so an absolute threshold
@@ -167,7 +170,7 @@ def stroke_clumping(img: np.ndarray,
     dens = uniform_filter(dark.astype(float), size=16)
     out = {"peak_density": round(float(dens.max()), 2),
            "dense_px": int((dens > 0.9).sum())}
-    ref = ref if ref is not None else _clump_ref()
+    ref = ref if ref is not None else _clump_ref(style)
     if ref is None:
         out["defect"] = out["peak_density"] > 0.98
         return out
@@ -591,16 +594,19 @@ def multisheet(img: Image.Image, out: Path) -> None:
 
 
 def inspect(pose: str, spec: dict, img: Image.Image,
-            anchor: dict | None = None, wings: bool = False) -> dict:
-    """Full registry pass over one rendered pose."""
+            anchor: dict | None = None, wings: bool = False,
+            style: str = "rough") -> dict:
+    """Full registry pass over one rendered pose. style = the emitter
+    the image came through — differentials compare inside one
+    emission (rough base vs rough pose, flat base vs flat pose)."""
     arr = np.asarray(img)
     dropped = spec.get("retopo_dropped", [])
     # clumping runs at canonical SPEC-res (361x556, same scale for
     # every pose) so the differential vs base is apples-to-apples
     import trace_linework as _tl
-    spec_arr = np.asarray(_tl.render(spec))
-    ref_arr = (np.asarray(_tl.render(anchor)) if anchor is not None
-               else None)
+    spec_arr = np.asarray(_tl.render(spec, style=style))
+    ref_arr = (np.asarray(_tl.render(anchor, style=style))
+               if anchor is not None else None)
     rep = {"pose": pose,
            "integrity": {"interior_holes": interior_holes(arr),
                          "stroke_bleed": stroke_bleed(arr),
@@ -609,7 +615,7 @@ def inspect(pose: str, spec: dict, img: Image.Image,
                          "fragments": fragments(arr),
                          "thin_artifacts": thin_artifacts(arr),
                          "stroke_clumping": stroke_clumping(
-                             spec_arr, ref_arr),
+                             spec_arr, ref_arr, style),
                          "contour_bays": contour_bays(spec),
                          "stripe_marks": stripe_marks(spec),
                          "part_cohesion": part_cohesion(spec),
@@ -635,13 +641,19 @@ if __name__ == "__main__":
     poses = [("rest", {}), ("notice", {}), ("flee", {"facing": -1}),
              ("fly", {"tilt": 18, "wings": 1})]
     out = {}
-    for pose, kw in poses:
-        img = pig_w5.render_pose(pose, **kw)
-        spec = pig_w5.pose_spec(pose)
-        rep = inspect(pose, spec, img, anchor, wings=bool(kw.get("wings")))
-        multisheet(img, Path(f"_oracle_{pose}.png"))
-        out[pose] = rep
-        print(pose, rep["verdict"], "| lying", rep["states"]["lying"]["score"],
-              "running", rep["states"]["running"]["score"],
-              "eyes", rep["states"]["eyes"]["eyes"])
+    for style in ("rough", "flat"):  # emitters: same spec, two styles
+        for pose, kw in poses:
+            img = pig_w5.render_pose(pose, style=style, **kw)
+            spec = pig_w5.pose_spec(pose)
+            rep = inspect(pose, spec, img, anchor,
+                          wings=bool(kw.get("wings")), style=style)
+            rep["style"] = style
+            multisheet(img, Path(f"_oracle_{pose}"
+                                 + ("" if style == "rough"
+                                    else f"_{style}") + ".png"))
+            out[f"{pose}:{style}"] = rep
+            print(f"{pose}:{style}", rep["verdict"], "| lying",
+                  rep["states"]["lying"]["score"], "running",
+                  rep["states"]["running"]["score"],
+                  "eyes", rep["states"]["eyes"]["eyes"])
     Path("_oracle_report.json").write_text(json.dumps(out, indent=2))
