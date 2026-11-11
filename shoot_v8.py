@@ -60,14 +60,20 @@ CARDS = {
   <h1>a 1B model answered this claim —<br>and cited its sources.</h1>
   <div class=big>none of the sources exist.</div>
   <div class=dim>the answer was fluent, confident — and fabricated.</div></div>""",
- "b6": f"""<div class=tag>local-wilding</div><div class=card>
+ "b8": f"""<div class=tag>local-wilding</div><div class=card>
+  <h1>the honest limits</h1>
+  <div class=code>replay mode — recorded evidence, no keys, no spend</div>
+  <div class=code>live mode — your endpoint, your key, real settle</div>
+  <div class=code>receipts mint per job — per-step is the next pass</div>
+  <div class=dim style="margin-top:22px">printed where you can see them — not buried in a readme.</div></div>""",
+ "b9": f"""<div class=tag>local-wilding</div><div class=card>
   <div class=steps>
    <div class=code>git clone</div><span class=dim>→</span>
    <div class=code>pip install -r requirements.txt</div><span class=dim>→</span>
    <div class=code>python app.py</div><span class=dim>→</span>
    <div class=code teal>click</div></div>
   <div class=dim style="margin-top:22px">three lines. the console opens. the demo is one button.</div></div>""",
- "b7": f"""<div class=tag>local-wilding</div><div class=card>
+ "b10": f"""<div class=tag>local-wilding</div><div class=card>
   <h1>tools · budgets · <span class=teal>receipts</span> · a local control arm</h1>
   <div class=dim>every dispatch mints a hash-verifiable receipt linked to raw evidence.<br>
   honest limits, printed where you can see them.</div>
@@ -115,8 +121,22 @@ def shot_card(name, html):
     ctx.close()
 
 
-import sys
+import sys, json, random
 ONLY = set(sys.argv[1:]) or None
+
+
+def human_type(page, sel, text):
+    """bursty typing: variable per-char delay, pauses at word edges"""
+    el = page.locator(sel)
+    el.click()
+    for ch in text:
+        el.press_sequentially(ch, delay=0)
+        wait = random.gauss(48, 22)
+        if ch in " ,.':":
+            wait += random.uniform(60, 240)
+        if random.random() < 0.03:
+            wait += random.uniform(150, 420)
+        page.wait_for_timeout(max(28, wait))
 
 
 def want(name):
@@ -133,17 +153,21 @@ with sync_playwright() as pw:
             shot_card(name, html)
             print("card", name)
 
-    # ---- b1 console reveal ----
+    # ---- b1 console reveal + endpoint tour ----
     def b1(p):
         prep(p)
         cursor(p, "#epbase", 700); spot(p, ".endpoint")
-        p.wait_for_timeout(1400)
+        p.wait_for_timeout(1600)
         cursor(p, ".endpoint button", 600)
         p.wait_for_timeout(900); spot(p, ".endpoint", False)
-        cursor(p, "button[onclick='demo()']", 700); spot(p, "button[onclick='demo()']")
-        p.wait_for_timeout(1200); spot(p, "button[onclick='demo()']", False)
+        cursor(p, "#model", 700); spot(p, "#model")
+        p.wait_for_timeout(1400); spot(p, "#model", False)
+        cursor(p, "#cap", 600); spot(p, "#cap")
+        p.wait_for_timeout(1500); spot(p, "#cap", False)
+        cursor(p, "#arm", 700); spot(p, "#arm")
+        p.wait_for_timeout(1600); spot(p, "#arm", False)
         cursor(p, "#prompt", 700)
-        p.wait_for_timeout(2200)
+        p.wait_for_timeout(1800)
     if want("b1"):
         shoot(b1, "b1")
 
@@ -151,7 +175,7 @@ with sync_playwright() as pw:
     def b2(p):
         prep(p)
         cursor(p, "#prompt", 600)
-        p.locator("#prompt").press_sequentially(CLAIM, delay=28)
+        human_type(p, "#prompt", CLAIM)
         p.wait_for_timeout(700)
         cursor(p, "#send", 500); spot(p, "#send")
         p.wait_for_timeout(400); spot(p, "#send", False)
@@ -189,7 +213,11 @@ with sync_playwright() as pw:
         p.wait_for_timeout(1300); spot(p, "#dg", False)
         cursor(p, "#capfeed", 800); spot(p, "#capfeed")
         p.wait_for_timeout(1600); spot(p, "#capfeed", False)
-        p.wait_for_timeout(800)
+        # dwell on the local arm's flawed answer — scroll it into view
+        p.evaluate("document.querySelector('#answer')?.scrollIntoView()")
+        spot(p, "#answer")
+        p.wait_for_timeout(3500); spot(p, "#answer", False)
+        p.wait_for_timeout(1200)
     if want("b3"):
         shoot(b3, "b3")
 
@@ -224,9 +252,53 @@ with sync_playwright() as pw:
         cursor(p, "#rbox .rcpt .hash", 800); spot(p, "#rbox .rcpt .rdet")
         p.wait_for_timeout(1900); spot(p, "#rbox .rcpt .rdet", False)
         cursor(p, "a[href*='jsonl']", 900)
-        p.wait_for_timeout(1100)
+        p.wait_for_timeout(900)
+        with p.expect_download() as dl:
+            p.click("a[href*='jsonl']")
+        dl.value.save_as(os.path.join(OUT, "receipts_export.jsonl"))
+        p.wait_for_timeout(1400)
     if want("b5"):
         shoot(b5, "b5")
+
+    # ---- b6 evidence walk — scroll the real raw response ----
+    def b6(p):
+        raw = json.load(open("evidence/01_step1_openai_gpt-oss-120b.json"))
+        body = json.dumps(raw["body"], indent=2)[:4000]
+        p.set_content(f"""<style>{CSS}
+         .term{{font-family:Consolas,monospace;font-size:15px;background:#0B1620;
+          border:1px solid #1d3a47;border-radius:10px;padding:26px 30px;
+          width:1280px;margin:40px auto;color:#DFF4EE;white-space:pre-wrap}}
+         .path{{color:#3FD9A8;font-family:Consolas,monospace;font-size:20px;
+          text-align:center;margin-top:60px}}</style>
+         <div class=tag>local-wilding</div>
+         <div class=path>evidence/console_raw — the bytes the endpoint returned</div>
+         <div class=term id=t>{body}</div>
+         <script>setInterval(()=>{{window.scrollBy(0,3)}},60)</script>""")
+        p.wait_for_timeout(14000)
+    if want("b6"):
+        shoot(b6, "b6")
+
+    # ---- b7 self-score — real certificate output, line reveal ----
+    def b7(p):
+        import subprocess
+        out = subprocess.run([sys.executable, "sphere_fitness.py"],
+                             capture_output=True, text=True).stdout
+        lines = "".join(f"<div class=ln>{l}</div>"
+                        for l in out.strip().splitlines())
+        p.set_content(f"""<style>{CSS}
+         .term{{font-family:Consolas,monospace;font-size:17px;background:#0B1620;
+          border:1px solid #1d3a47;border-radius:10px;padding:30px 36px;
+          width:900px;margin:80px auto;color:#DFF4EE}}
+         .ln{{opacity:0;animation:rv .4s forwards}}
+         @keyframes rv{{to{{opacity:1}}}}
+         .cmd{{color:#3FD9A8}}</style>
+         <div class=tag>local-wilding</div>
+         <div class=term><div class="ln cmd">$ python sphere_fitness.py</div>{lines}</div>
+         <script>document.querySelectorAll('.ln').forEach(
+           (l,i)=>l.style.animationDelay=(i*0.55)+'s')</script>""")
+        p.wait_for_timeout(15000)
+    if want("b7"):
+        shoot(b7, "b7")
 
     browser.close()
 print("done ->", OUT)
