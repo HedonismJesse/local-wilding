@@ -37,11 +37,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageDraw
 
+import pig_derive as pd
 import trace_linework as tl
 
 CANON = Path(__file__).parent / "canon"
-POSE_TRACE = {"rest": "trace_rest", "notice": "trace_profile",
-              "flee": "trace_walk", "fly": "trace_profile"}
+BASE_SPEC = "ourpig_base"
+# per-pose derivation ops on the base spec (pig_derive vocabulary)
+POSE_OPS = {"rest": [{"op": "squat", "a": 0.06}],
+            "notice": [{"op": "open_eyes"}],
+            "flee": [{"op": "lean", "a": 0.08}],
+            "fly": []}
+POSE_TRACE = {p: BASE_SPEC for p in ("rest", "notice", "flee", "fly")}
 WING = (223, 244, 238, 255)      # mint — G-dominant (pig is R-dominant)
 WING_EC = (185, 228, 216, 255)
 _SPECS: dict = {}
@@ -76,7 +82,9 @@ def render_pose(pose: str = "rest", facing: int = 1, tilt: float = 0.0,
                 trace_dir: Path | None = None) -> Image.Image:
     """Render a pose from its trace spec. All warps apply to the whole
     composite (sil+linework+fills together) — marks stay consistent."""
-    spec = _spec(POSE_TRACE[pose])
+    base = CANON / f"{BASE_SPEC}.json"
+    ops = POSE_OPS.get(pose, [])
+    spec = (_spec(POSE_TRACE[pose]) if not ops else pd.derive(base, ops))
     pig = tl.render(spec)                          # source-res RGBA
     if squash != 1.0:                              # squash = height scale
         pig = pig.resize((pig.width, max(1, int(pig.height * squash))),

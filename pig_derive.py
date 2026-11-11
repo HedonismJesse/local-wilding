@@ -71,6 +71,12 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
             cy = np.clip((0.45 - yy) / 0.45, 0, 1)
             dy += a * cx * cy
             dx -= a * 0.30 * cx * cy
+        elif op["op"] == "squat":
+            a = float(op["a"])        # top squishes down (resting weight)
+            dy -= a * np.clip((0.80 - yy) / 0.80, 0, 1) ** 1.3
+        elif op["op"] == "lean":
+            a = float(op["a"])        # forward shear, stronger at top
+            dx -= a * np.clip((0.85 - yy) / 0.85, 0, 1)
     return dy, dx
 
 
@@ -156,6 +162,17 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
             for ey, ex in EYES:
                 _erase(st, ey, ex, 0.022)
                 _draw_lid(st, ey, ex, 0.034, 0.034)
+        elif op["op"] == "open_eyes":
+            for ey, ex in EYES:
+                _erase(st, ey, ex, 0.024)
+            h, w = st.shape
+            im = Image.fromarray(np.clip(st, 0, 255).astype(np.uint8))
+            d = ImageDraw.Draw(im)
+            r = 0.020 * h
+            for ey, ex in EYES:
+                d.ellipse([(ex * w - r, ey * h - r),
+                           (ex * w + r, ey * h + r)], fill=255)
+            np.copyto(st, np.asarray(im))
         elif op["op"] == "respot":
             s = float(op.get("s", 1.0))
             ddx = float(op.get("dx", 0.0)); ddy = float(op.get("dy", 0.0))
@@ -216,7 +233,8 @@ if __name__ == "__main__":
                 op["rgb"] = vals
             else:
                 keys = {"belly_droop": ["a"], "jowl": ["a"],
-                        "ear_droop": ["a"], "respot": ["s", "dx", "dy"]}
+                        "ear_droop": ["a"], "squat": ["a"], "lean": ["a"],
+                        "respot": ["s", "dx", "dy"]}
                 for k, vv in zip(keys.get(name, []), vals):
                     op[k] = vv
             ops.append(op)
