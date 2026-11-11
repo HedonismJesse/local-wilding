@@ -203,6 +203,203 @@ def thin_artifacts(img: np.ndarray) -> dict:
     return {"defect": worst > 0, "filament_px": int(worst)}
 
 
+# ---------- parts cohesion (operator 2026-11-11) -----------------
+# The pig is PARTS, not one blob: snout_plate, ear, eyes, legs,
+# hooves, tail, cheek/mouth. Each must stay recognizably itself
+# through a warp — or the op that broke it gets flagged. Parts are
+# located by RULE over the spec (fill color / stroke zone / sil
+# region), never by pixel guess.
+
+def _spec_arr(spec: dict) -> np.ndarray:
+    import trace_linework as tl
+    return np.asarray(tl.render(spec))
+
+
+def _stroke_comps(spec: dict, min_px: int = 12) -> list:
+    import trace_linework as tl
+    st = np.asarray(tl._stroke_img(spec))
+    lab = measure.label(st > 80)
+    h, w = st.shape
+    out = []
+    for r in measure.regionprops(lab):
+        if r.area >= min_px:
+            out.append({"area": r.area, "bbox": r.bbox,
+                        "cy": r.centroid[0] / h, "cx": r.centroid[1] / w})
+    return out
+
+
+def _fills_of(spec: dict) -> list:
+    out = []
+    for f in spec["fills"]:
+        pts = np.asarray(f["poly"], dtype=float)
+        out.append({"rgb": tuple(f["rgb"]), "poly": pts,
+                    "cy": float(pts[:, 0].mean()),
+                    "cx": float(pts[:, 1].mean()),
+                    "area": _poly_area(pts)})
+    return out
+
+
+def _poly_area(pts: np.ndarray) -> float:
+    x, y = pts[:, 1], pts[:, 0]
+    return float(abs(np.dot(x, np.roll(y, 1))
+                     - np.dot(y, np.roll(x, 1))) / 2)
+
+
+def parts(spec: dict) -> dict:
+    """Locate the named anatomy in a spec."""
+    sil = np.asarray(spec["silhouette"], dtype=float)
+    fills = _fills_of(spec)
+    comps = _stroke_comps(spec)
+    p = {"fills": fills, "strokes": comps}
+    p["snout_plate"] = next((f for f in fills
+                             if f["rgb"] == (239, 121, 131)), None)
+    p["tail_curls"] = [f for f in fills if f["rgb"] == (128, 128, 128)]
+    # legs: silhouette protrusions in the lower band
+    p["leg_protrusions"] = [
+        (float(r["cy"]), float(r["cx"]))
+        for r in _bottom_protrusions(sil)]
+    # hooves: dark pixels in the foot zone — the marks merge into
+    # the outline web, so count DENSITY not components
+    import trace_linework as tl
+    st = np.asarray(tl._stroke_img(spec))
+    fh = st.shape[0]
+    p["foot_dark_px"] = int((st[int(fh * 0.80):, :] > 80).sum())
+    p["foot_marks"] = [c for c in comps if c["cy"] > 0.78]
+    p["eye_marks"] = [c for c in comps
+                      if 0.10 < c["cx"] < 0.42 and 0.12 < c["cy"] < 0.45]
+    p["face_marks"] = [c for c in comps
+                       if 0.05 < c["cx"] < 0.35 and 0.30 < c["cy"] < 0.70]
+    return p
+
+
+def _bottom_protrusions(sil: np.ndarray) -> list:
+    """Legs = protrusions of the underside below the BELLY baseline
+    (the belly itself lives below any fixed line, so components
+    merge — count runs in the bottom profile instead)."""
+    nb = 80
+    xl, xh = sil[:, 1].min(), sil[:, 1].max()
+    edges = np.linspace(xl, xh, nb + 1)
+    def _binmax(i):
+        sel = (sil[:, 1] >= edges[i]) & (sil[:, 1] < edges[i + 1])
+        return sil[sel, 0].max() if sel.any() else 0.0
+    prof = np.array([_binmax(i) for i in range(nb)])
+    belly = np.percentile(prof[prof > 0], 60)
+    gate = belly + 0.045
+    runs = []
+    s = None
+    for i, v in enumerate(prof):
+        if v > gate and s is None:
+            s = i
+        if v <= gate and s is not None:
+            runs.append((s, i)); s = None
+    if s is not None:
+        runs.append((s, nb))
+    return [{"cy": float(prof[a:b].max()),
+             "cx": float((edges[a] + edges[b]) / 2),
+             "area": int((b - a) * 10),
+             "depth": float(prof[a:b].max() - belly)}
+            for a, b in runs if b - a >= 3]
+
+
+_BAY_BASE: dict = {}
+
+
+def _bay_masks(spec: dict) -> tuple:
+    """Silhouette mask + convex-hull bay label map, both in a
+    bbox-normalized 800px frame — comparable across specs."""
+    from skimage.morphology import convex_hull_image
+    sil = np.asarray(spec["silhouette"], dtype=float)
+    W, H = 800, 800
+    y0, x0 = sil[:, 0].min() - 0.02, sil[:, 1].min() - 0.02
+    ys, xs = sil[:, 0].max() - y0 + 0.04, sil[:, 1].max() - x0 + 0.04
+    im = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(im).polygon(
+        [((c - x0) / xs * W, (r - y0) / ys * H) for r, c in sil],
+        fill=255)
+    m = np.asarray(im) > 0
+    hull = convex_hull_image(m)
+    return m, measure.label(hull & ~m)
+
+
+def _base_bays() -> np.ndarray | None:
+    if "mask" not in _BAY_BASE:
+        try:
+            spec = json.loads(
+                (CANON / "ourpig_base.json").read_text())
+            _BAY_BASE["mask"] = _bay_masks(spec)[1] > 0
+        except Exception:
+            _BAY_BASE["mask"] = None
+    return _BAY_BASE["mask"]
+
+
+def contour_bays(spec: dict) -> dict:
+    """NEW concave bites vs the canon baseline — 'a square chunk
+    missing in the cheek' (flee). The base pig legitimately carries
+    jowl/leg-gap/underbelly bays, so only a bay with no overlapping
+    counterpart in the base's bay map is a defect."""
+    from skimage import morphology
+    m, bays = _bay_masks(spec)
+    base = _base_bays()
+    near = (morphology.binary_dilation(base, morphology.disk(40))
+            if base is not None else None)
+    out = []
+    for r in measure.regionprops(bays):
+        if r.area <= m.sum() * 0.004:
+            continue
+        comp = bays == r.label
+        if near is not None \
+                and (comp & near).sum() / comp.sum() > 0.5:
+            continue                    # base carries this bay
+        out.append({"area": int(r.area), "bbox": r.bbox,
+                    "cy": round(r.centroid[0] / 800, 2),
+                    "cx": round(r.centroid[1] / 800, 2)})
+    return {"defect": len(out) > 0, "bays": out}
+
+
+def stripe_marks(spec: dict) -> dict:
+    """Smeared horizontal stroke bars — 'feet are weird stripes'.
+    A hoof mark is a compact blob; a stripe is wide and thin
+    (aspect > 3.5, taller zones excluded)."""
+    bad = []
+    for c in _stroke_comps(spec, min_px=20):
+        bh = c["bbox"][2] - c["bbox"][0]
+        bw = c["bbox"][3] - c["bbox"][1]
+        if bw > 40 and bw > 3.5 * max(1, bh):
+            bad.append({"cy": round(c["cy"], 3), "cx": round(c["cx"], 3),
+                        "w": bw, "h": bh})
+    return {"defect": len(bad) > 0, "stripes": bad}
+
+
+# which parts each op is allowed to absorb (legs/hooves tuck under
+# lie and pin_legs — present but hidden = correct)
+ABSORB_OK = {"lie": {"legs", "hooves"}, "pin_legs": {"legs", "hooves"},
+             "pin_legs_clamp": {"legs", "hooves"}}
+
+
+def part_cohesion(spec: dict, ops: list | None = None) -> dict:
+    """Per-part survival check. The base pig ships: snout_plate fill,
+    tail_curl fills, ear interior, eye marks, leg protrusions,
+    hoof marks, face marks. A warp may absorb a declared part;
+    everything else must be present and unstreaked."""
+    absorbed = set()
+    for o in (ops or spec.get("ops", [])):
+        absorbed |= ABSORB_OK.get(o["op"], set())
+    p = parts(spec)
+    issues = []
+    if p["snout_plate"] is None:
+        issues.append("snout_plate_lost")
+    if not p["tail_curls"]:
+        issues.append("tail_curls_lost")
+    if "legs" not in absorbed and len(p["leg_protrusions"]) < 2:
+        issues.append(f"legs_missing:{len(p['leg_protrusions'])}")
+    if "hooves" not in absorbed and p["foot_dark_px"] < 150:
+        issues.append(f"hoof_marks_missing:{p['foot_dark_px']}")
+    if not p["eye_marks"]:
+        issues.append("eye_marks_missing")
+    return {"defect": len(issues) > 0, "issues": issues,
+            "absorbed": sorted(absorbed)}
+
+
 # ---------- state recognizers (the 'full list') ------------------
 
 def _sil_pts(spec: dict):
@@ -222,15 +419,24 @@ def _resample(poly, n=400):
 
 
 def is_lying(spec: dict) -> dict:
-    """Flat ground-contact underside (arc-length share of the
-    perimeter) + low aspect — the lying loaf."""
+    """Flat ground-contact underside (share of WIDTH, not perimeter
+    — a loaf's flat bottom spans most of its span) + wide aspect."""
     p = _resample(_sil_pts(spec))
     h = p[:, 0].max() - p[:, 0].min()
     w = p[:, 1].max() - p[:, 1].min()
-    lo = p[:, 0].max()
-    flat_frac = float((p[:, 0] > lo - h * 0.03).mean())
-    score = float(np.clip(flat_frac * 2.2
-                          + np.clip((w / h - 1.35) * 0.5, 0, 0.3), 0, 1))
+    x0, x1 = p[:, 1].min(), p[:, 1].max()
+    bins = np.linspace(x0 + 0.05 * (x1 - x0), x1 - 0.05 * (x1 - x0), 60)
+    # bottom profile: LOWEST contour point within each bin (nearest-x
+    # alone can land on the top edge — same x, other side of the ring)
+    half = (bins[1] - bins[0]) / 2
+    bottom = np.array([
+        p[np.abs(p[:, 1] - b) <= half, 0].max()
+        if (np.abs(p[:, 1] - b) <= half).any() else 0.0
+        for b in bins])
+    lo = np.percentile(bottom, 92)       # modal underside level
+    flat_frac = float((bottom > lo - h * 0.035).mean())
+    score = float(np.clip(flat_frac * 0.85
+                          + np.clip((w / h - 1.35) * 0.5, 0, 0.25), 0, 1))
     return {"score": round(score, 2), "flat_frac": round(flat_frac, 3),
             "aspect_wh": round(float(w / h), 2)}
 
@@ -364,7 +570,7 @@ def mass_delta(spec: dict, anchor: dict) -> dict:
 
 # ---------- multi-scale verifier ---------------------------------
 
-SCALES = {"thumb": 160, "strip": 420, "full": 1100}
+SCALES = {"thumb": 160, "strip": 420, "full": 1100, "huge": 2000}
 
 
 def multisheet(img: Image.Image, out: Path) -> None:
@@ -404,6 +610,9 @@ def inspect(pose: str, spec: dict, img: Image.Image,
                          "thin_artifacts": thin_artifacts(arr),
                          "stroke_clumping": stroke_clumping(
                              spec_arr, ref_arr),
+                         "contour_bays": contour_bays(spec),
+                         "stripe_marks": stripe_marks(spec),
+                         "part_cohesion": part_cohesion(spec),
                          "discarded_geometry": {
                              "defect": len(dropped) > 0,
                              "items": dropped}},

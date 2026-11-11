@@ -28,10 +28,26 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "peak_density": 0.93,
-        "dense_px": 9,
+        "peak_density": 0.95,
+        "dense_px": 23,
         "base_dense_px": 1080,
         "defect": false
+      },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": [
+          "hooves",
+          "legs"
+        ]
       },
       "discarded_geometry": {
         "defect": false,
@@ -40,14 +56,14 @@
     },
     "states": {
       "lying": {
-        "score": 0.7,
-        "flat_frac": 0.228,
-        "aspect_wh": 1.74
+        "score": 0.55,
+        "flat_frac": 0.617,
+        "aspect_wh": 1.4
       },
       "running": {
-        "score": 0.03,
+        "score": 0.16,
         "protrusions": 0,
-        "max_depth": 0.007,
+        "max_depth": 0.04,
         "leg_x": []
       },
       "flying": {
@@ -56,19 +72,19 @@
         "wings": false
       },
       "eyes": {
-        "eyes": "not_found",
-        "arcs": 0,
-        "matched": 0
+        "eyes": "mixed",
+        "arcs": 1,
+        "matched": 1
       },
       "markings": {
         "fills": 3,
         "regions": true
       },
       "is_pig": {
-        "score": 0.622
+        "score": 0.715
       },
       "mass_delta": {
-        "delta": -0.332
+        "delta": -0.21
       }
     },
     "verdict": "CLEAN"
@@ -107,6 +123,19 @@
         "base_dense_px": 1080,
         "defect": false
       },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": []
+      },
       "discarded_geometry": {
         "defect": false,
         "items": []
@@ -114,8 +143,8 @@
     },
     "states": {
       "lying": {
-        "score": 0.04,
-        "flat_frac": 0.018,
+        "score": 0.2,
+        "flat_frac": 0.233,
         "aspect_wh": 0.94
       },
       "running": {
@@ -127,8 +156,8 @@
         ]
       },
       "flying": {
-        "score": 0.59,
-        "grounded": false,
+        "score": 0.19,
+        "grounded": true,
         "wings": false
       },
       "eyes": {
@@ -179,9 +208,22 @@
       },
       "stroke_clumping": {
         "peak_density": 1.0,
-        "dense_px": 180,
+        "dense_px": 131,
         "base_dense_px": 1080,
         "defect": false
+      },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": []
       },
       "discarded_geometry": {
         "defect": false,
@@ -190,23 +232,21 @@
     },
     "states": {
       "lying": {
-        "score": 0.1,
-        "flat_frac": 0.045,
-        "aspect_wh": 0.94
+        "score": 0.2,
+        "flat_frac": 0.233,
+        "aspect_wh": 0.86
       },
       "running": {
-        "score": 1.0,
-        "protrusions": 3,
-        "max_depth": 0.121,
+        "score": 0.56,
+        "protrusions": 1,
+        "max_depth": 0.103,
         "leg_x": [
-          0.28,
-          0.43,
-          0.45
+          0.25
         ]
       },
       "flying": {
-        "score": 0.59,
-        "grounded": false,
+        "score": 0.19,
+        "grounded": true,
         "wings": false
       },
       "eyes": {
@@ -219,10 +259,10 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.854
+        "score": 0.856
       },
       "mass_delta": {
-        "delta": 0.029
+        "delta": 0.017
       }
     },
     "verdict": "CLEAN"
@@ -256,10 +296,26 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "peak_density": 0.89,
-        "dense_px": 0,
+        "peak_density": 0.93,
+        "dense_px": 12,
         "base_dense_px": 1080,
         "defect": false
+      },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": [
+          "hooves",
+          "legs"
+        ]
       },
       "discarded_geometry": {
         "defect": false,
@@ -268,23 +324,19 @@
     },
     "states": {
       "lying": {
-        "score": 0.04,
-        "flat_frac": 0.018,
-        "aspect_wh": 0.94
+        "score": 0.72,
+        "flat_frac": 0.85,
+        "aspect_wh": 1.2
       },
       "running": {
-        "score": 1.0,
-        "protrusions": 3,
-        "max_depth": 0.222,
-        "leg_x": [
-          0.34,
-          0.43,
-          0.47
-        ]
+        "score": 0.05,
+        "protrusions": 0,
+        "max_depth": 0.013,
+        "leg_x": []
       },
       "flying": {
-        "score": 0.99,
-        "grounded": false,
+        "score": 0.59,
+        "grounded": true,
         "wings": true
       },
       "eyes": {
@@ -297,10 +349,10 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.922
+        "score": 0.761
       },
       "mass_delta": {
-        "delta": -0.07
+        "delta": -0.095
       }
     },
     "verdict": "CLEAN"

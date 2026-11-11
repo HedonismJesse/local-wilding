@@ -62,19 +62,36 @@ def _spec(name: str) -> dict:
 
 
 def _wing(img_size: tuple[int, int], span: float) -> Image.Image:
-    """Simple cartoon wing pair — separate attachment layer."""
+    """Cartoon wing pair — rounded leading edge, scalloped feather
+    tips (the old two-blade triangles read as a propeller beanie)."""
     w, h = img_size
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     cx, cy = w * 0.5, h * 0.30
     s = span * min(w, h)
     for sgn in (-1, 1):
-        pts = [(cx + sgn * s * 0.10, cy + s * 0.30),
-               (cx + sgn * s * 0.55, cy - s * 0.42),
-               (cx + sgn * s * 0.95, cy - s * 0.30),
-               (cx + sgn * s * 0.72, cy - s * 0.02),
-               (cx + sgn * s * 0.40, cy + s * 0.22)]
-        d.polygon(pts, fill=WING, outline=WING_EC, width=max(2, int(s * 0.03)))
+        root = (cx + sgn * s * 0.10, cy + s * 0.30)
+        tip = (cx + sgn * s * 0.90, cy - s * 0.55)
+        # leading edge: root -> tip as a smooth arc (control pt above)
+        mid = (cx + sgn * s * 0.52, cy - s * 0.45)
+        lead = [root]
+        for t in np.linspace(0.08, 1.0, 14):
+            x = (1 - t) ** 2 * root[0] + 2 * (1 - t) * t * mid[0] \
+                + t ** 2 * tip[0]
+            y = (1 - t) ** 2 * root[1] + 2 * (1 - t) * t * mid[1] \
+                + t ** 2 * tip[1]
+            lead.append((x, y))
+        # trailing edge: tip -> root as feather scallops —
+        # alternating feather tip (out) and notch (in)
+        trail = []
+        for fx, fy in [(0.74, -0.14), (0.60, -0.04), (0.50, 0.08),
+                       (0.38, 0.18), (0.24, 0.30)]:
+            trail.append((cx + sgn * s * fx, cy + s * fy))
+            trail.append((cx + sgn * s * (fx + 0.04),
+                          cy + s * (fy + 0.05)))
+        pts = lead + trail + [root]
+        d.polygon(pts, fill=WING, outline=WING_EC,
+                  width=max(2, int(s * 0.03)))
     return layer
 
 

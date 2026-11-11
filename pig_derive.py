@@ -77,6 +77,10 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
         elif op["op"] == "lean":
             a = float(op["a"])        # forward shear, stronger at top
             dx -= a * np.clip((0.85 - yy) / 0.85, 0, 1)
+            # the snout tip is the extreme left edge — full shear
+            # folds it past the cheek (the cheek bay). Ease the tip.
+            dx += a * np.clip((0.18 - xx) / 0.18, 0, 1) * 0.45 \
+                * np.clip((0.85 - yy) / 0.85, 0, 1)
         elif op["op"] == "lie":
             # lying loaf (sleep-still grammar): legs TUCK — the whole
             # underside pulls up to a flat ground-contact line, top
@@ -96,9 +100,15 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
             # RIGID block; a ramping gradient stretched foot tips past
             # their hoof marks (the pale ghost-hoof daggers)
             legzone = np.clip((yy - 0.68) / 0.14, 0, 1)
-            front = np.exp(-(((xx - 0.30) / 0.08) ** 2))
-            rear = np.exp(-(((xx - 0.72) / 0.08) ** 2))
-            dy += a * 0.10 * legzone * (front + rear)
+            # flat-top leg windows: a gaussian's gradient differs
+            # across each leg's WIDTH and smears hoof marks into
+            # horizontal stripes; flat interior = rigid translation
+            front = np.clip(1 - ((xx - 0.30) / 0.14) ** 2, 0, 1) ** 0.5
+            rear = np.clip(1 - ((xx - 0.72) / 0.14) ** 2, 0, 1) ** 0.5
+            # run grammar: front leg extends DOWN-forward, rear leg
+            # kicks UP-back — alternating extension, not both planted
+            dy += a * 0.16 * legzone * front
+            dy -= a * 0.05 * legzone * rear
             dx -= a * 0.13 * legzone * front      # front leg reaches -x
             dx += a * 0.16 * legzone * rear       # rear leg kicks +x
             headw = np.clip((0.45 - xx) / 0.45, 0, 1) * \
@@ -114,11 +124,15 @@ def _field_grid(h: int, w: int, ops: list[dict]) -> tuple:
 
 
 def _warp_poly(poly: list, dy, dx) -> list:
-    """poly in [y,x] fracs; field indexed at (h*w) frac coords."""
+    """poly in [y,x] fracs; field indexed at (h*w) frac coords.
+    Sampling is CLAMPED to field bounds — base leg tips sit at
+    y>1.0; unclamped they got zero displacement (out-of-bounds ->
+    constant 0) and escaped every field (fly's dangling pegs)."""
     h, w = dy.shape
     out = []
     for r, c in poly:
-        ri, ci = r * (h - 1), c * (w - 1)
+        ri = min(max(r * (h - 1), 0), h - 1)
+        ci = min(max(c * (w - 1), 0), w - 1)
         fy = float(map_coordinates(dy, [[ri], [ci]], order=1)[0])
         fx = float(map_coordinates(dx, [[ri], [ci]], order=1)[0])
         out.append([round(float(r + fy), 4), round(float(c + fx), 4)])
@@ -222,13 +236,22 @@ def _retopo(spec: dict, ops: list[dict]) -> None:
     for f in spec["fills"]:
         f.pop("_inside", None)
     for op in ops:                           # post-retopo clamps
-        if op["op"] == "lie":
-            line = float(op.get("line", 0.80))
+        if op["op"] in ("lie", "pin_legs"):
+            # floor ops guarantee the underside — leg tips at y>1.0
+            # escape the field's reach (clamped sampling caps their
+            # pull), so clamp the contour to the line itself
+            line = (float(op.get("line", 0.80)) if op["op"] == "lie"
+                    else 0.82)
             xs = [p[1] for p in spec["silhouette"]]
             xl, xh = min(xs), max(xs)
             spec["silhouette"] = [
                 [line + 0.010 * np.sin(
                     np.pi * np.clip((p[1] - xl) / (xh - xl), 0, 1))
+                 # folded-leg hint: a lying pig's front hoof peeks
+                 # past the ground line — a ruler-flat underside
+                 # reads amputated (operator 2026-11-11)
+                 + (0.030 * np.exp(-(((p[1] - 0.30) / 0.09) ** 2))
+                    if op["op"] == "lie" else 0.0)
                  if p[0] > line else p[0], p[1]]
                 for p in spec["silhouette"]]
 
@@ -296,6 +319,10 @@ def _integrity_flags(spec: dict) -> list:
                            ("frame_clip", so.frame_clip),
                            ("fragments", so.fragments))
            if fn(arr)["defect"]]
+    if so.contour_bays(spec)["defect"]:
+        out.append("contour_bays")
+    if so.stripe_marks(spec)["defect"]:
+        out.append("stripe_marks")
     if so.self_intersect(spec)["defect"]:
         out.append("self_intersect")
     return out
