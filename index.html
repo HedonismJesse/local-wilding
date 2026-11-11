@@ -8,13 +8,28 @@
  p{color:#8fb0c0;font-size:14px}
  .done{color:#50dca0}
 </style></head><body>
-<h1>pig rebuild — waddles-grammar storyboard (2026-11-10)</h1>
-<p class=done><b>Reference picked:</b> waddles anchor (family hull:
-waddles_rest + waddles_scene inside, porky/ab_minion boundary).
-<b>Oracle rebuilt:</b> resemblance = silhouette IoU + per-part shape
-vs the anchor's own mask — the old zone-coverage "1.00" was proven
-false by operator verdict.</p>
-<h2>CURRENT DECISION: storyboard w4 — silhouette-TRACED candidates</h2>
+<h1>pig rebuild — waddles-grammar storyboard</h1>
+<h2>CURRENT STATE (2026-11-11) — w5 poses, oracle-verified, 2 emitters</h2>
+<p class=done>All 4 poses CLEAN across 8 oracle runs (integrity +
+states + part cohesion, differential vs canon). Same spec renders
+through two emitters — <b>rough</b> (ref's lineart) and <b>flat</b>
+(cel register) — with identical state scores. 24/24 tests.</p>
+<p><a href="pig_w5_poses.png">pose strip — rough</a> ·
+<a href="pig_w5_poses_flat.png">pose strip — flat</a> ·
+<a href="_oracle_report.json">oracle report (8 runs)</a></p>
+<p>4-scale sheets (thumb|strip|full|huge):<br>
+rest <a href="_oracle_rest.png">rough</a>/<a href="_oracle_rest_flat.png">flat</a> ·
+notice <a href="_oracle_notice.png">rough</a>/<a href="_oracle_notice_flat.png">flat</a> ·
+flee <a href="_oracle_flee.png">rough</a>/<a href="_oracle_flee_flat.png">flat</a> ·
+fly <a href="_oracle_fly.png">rough</a>/<a href="_oracle_fly_flat.png">flat</a></p>
+<h2>oracle registry</h2>
+<p><a href="state_oracle.py">state_oracle.py</a> — integrity
+(holes/bays/stripes/fragments/clumping/parts) + states
+(lying/running/flying/eyes/is_pig) + parts-cohesion map ·
+<a href="pig_derive.py">pig_derive.py</a> (ops + derive_checked
+undo loop) · <a href="trace_linework.py">trace_linework.py</a>
+(IR + emitters) · <a href="pig_w5.py">pig_w5.py</a> (poses)</p>
+<h2>storyboard w4 — silhouette-TRACED candidates (superseded by w5)</h2>
 <p><a href="candidates/storyboard_w4_v5/review.html">storyboard w4 review</a>
 — the contour IS the model-sheet reference's own (trace IoU ~0.96);
 resemblance scored vs 6 silhouette anchors (model-sheet
