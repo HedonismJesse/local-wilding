@@ -11,16 +11,20 @@
 <h1>pig rebuild — waddles-grammar storyboard (2026-11-10)</h1>
 <p class=done><b>Reference picked:</b> waddles anchor (family hull:
 waddles_rest + waddles_scene inside, porky/ab_minion boundary).
-Candidates score ref-match vs the anchor's part definer.</p>
-<h2>CURRENT DECISION: storyboard poses — base vs fatter/droopier</h2>
-<p><a href="candidates/storyboard_w2_v1/review.html">storyboard review</a>
-— rest/notice/flee/fly, ref-match scores + part misses per pose</p>
-<iframe src="candidates/storyboard_w2_v1/review.html"></iframe>
+<b>Oracle rebuilt:</b> resemblance = silhouette IoU + per-part shape
+vs the anchor's own mask — the old zone-coverage "1.00" was proven
+false by operator verdict.</p>
+<h2>CURRENT DECISION: storyboard w3 — silhouette-rebuilt candidates</h2>
+<p><a href="candidates/storyboard_w3_v2/review.html">storyboard w3 review</a>
+— converged against resemblance (0.74–0.86; old torpedo scored 0.70/IoU
+0.56). Each pose jitter-converged vs the anchor, then audited.</p>
+<iframe src="candidates/storyboard_w3_v2/review.html"></iframe>
 <h2>reference library</h2>
 <p><a href="canon/refs_review/refs_review.html">reference pick page</a>
 — anchor, family, boundary, contrast</p>
 <h2>superseded (rejected lineage, kept for the ledger)</h2>
-<p><a href="candidates/lazy_storyboard_v1/review.html">lazy storyboard v1</a> ·
+<p><a href="candidates/storyboard_w2_v1/review.html">storyboard w2 v1</a> ·
+<a href="candidates/lazy_storyboard_v1/review.html">lazy storyboard v1</a> ·
 <a href="candidates/pig_pick_v1/review.html">flying variants v1</a>
-— all 16 rejected: no-reference extrapolations</p>
+— torpedo construction + no-reference extrapolations</p>
 </body></html>

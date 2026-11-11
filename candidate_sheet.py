@@ -181,6 +181,10 @@ def _review_html(variants: list[dict], out: Path,
               f'{v["ref_match"]["score"]:.2f} — misses: '
               f'{_h.escape(",".join(v["ref_match"]["misses"]) or "none")}'
               f'</div>' if "ref_match" in v else "")
+        if "resemblance" in v:
+            rm += (f'<div class=fl style="color:#3fd9a8">'
+                   f'resemblance {v["resemblance"]:.2f} '
+                   f'(silhouette+shape)</div>')
         cells.append(
             f'<div class=cell><div class=cap>{v["id"]} — '
             f'{_h.escape(ps)}</div>'
@@ -261,6 +265,35 @@ def cmd_sheet(a) -> int:
         tag = (f" ref={v['ref_match']['score']:.2f}"
                if "ref_match" in v else "")
         print(f"{vid} {ps} -> {rep['flags'] or 'clean'}{tag}")
+    if a.converge and anchor and anchor.get("parts"):
+        import random
+        import resemblance as rsm
+        rng = random.Random(0)
+        ref_png = Path(anchor["file"])
+        for v in variants:
+            best = rsm.score(ref_png, anchor,
+                             Path(v["png"]))["score"]
+            for _ in range(a.converge):
+                ps2 = dict(v["params"])
+                for k, val in ps2.items():
+                    if isinstance(val, (int, float)) and \
+                            k not in ("facing", "phase"):
+                        ps2[k] = round(val * rng.uniform(0.75, 1.25), 3)
+                tmp = a.out_dir / f"_{v['id']}_try.png"
+                _render(builder, ps2, tmp)
+                s2 = rsm.score(ref_png, anchor, tmp)["score"]
+                if s2 > best:
+                    best, v["params"] = s2, ps2
+                    tmp.replace(v["png"])
+                else:
+                    tmp.unlink(missing_ok=True)
+                if best >= a.target:
+                    break
+            rep = _audit(Path(v["png"]), spec)
+            v["flags"] = rep["flags"]
+            v["resemblance"] = round(best, 3)
+            print(f"{v['id']} converged ref={best:.2f} "
+                  f"{v['params']}")
     sheet_png = a.out_dir / "sheet.png"
     _sheet(variants, sheet_png)
     review = _review_html(variants, a.out_dir,
@@ -322,6 +355,11 @@ def main() -> int:
                     help="emit the reference pick page, no candidates")
     ap.add_argument("--allow-no-ref", action="store_true",
                     help="mark batch floor-level (not approvable)")
+    ap.add_argument("--converge", type=int, default=0,
+                    help="jitter params N rounds until resemblance "
+                         ">= --target or budget out")
+    ap.add_argument("--target", type=float, default=0.6,
+                    help="resemblance target for --converge")
     ap.add_argument("--out-dir", type=Path,
                     default=Path("candidates/run"))
     ap.add_argument("--verdict-dir", type=Path)
