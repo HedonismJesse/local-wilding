@@ -155,14 +155,49 @@ def _clump_ref(style: str = "rough") -> np.ndarray | None:
     return _CLUMP_BASE[style]
 
 
+def _block_dark(img: np.ndarray, unit: int) -> tuple:
+    """Solid-dark unit cells + biggest connected cluster — the clump
+    metric in EMITTER units. At block scale, piled linework and
+    normal linework both pixelate to solid cells, so pixel-density
+    is meaningless; a real clump is an anomalously LARGE cluster."""
+    a = _alpha(img)
+    sil = binary_fill_holes(a)
+    dark = (img[..., :3].mean(-1) < 90) & (img[..., 3] > 60) & sil
+    h, w = dark.shape
+    cells = np.zeros((h // unit + 1, w // unit + 1), bool)
+    for y in range(0, h, unit):
+        for x in range(0, w, unit):
+            c = dark[y:y + unit, x:x + unit]
+            if c.size and c.mean() > 0.7:
+                cells[y // unit, x // unit] = 1
+    lab = measure.label(cells)
+    biggest = max((r.area for r in measure.regionprops(lab)),
+                  default=0)
+    return int(cells.sum()), int(biggest)
+
+
 def stroke_clumping(img: np.ndarray,
                     ref: np.ndarray | None = None,
-                    style: str = "rough") -> dict:
+                    style: str = "rough", unit: int = 1) -> dict:
     """Dense dark mass vs the CANON baseline — scatter-piled linework.
     The art has legal solid zones (tail spiral, filled hooves: base
     itself carries ~1080px of >0.9 density), so an absolute threshold
-    false-flags canon. A clump is NEW dense mass: the >0.9-density
-    pixel count exceeding the base's (scale-normalized) by margin."""
+    false-flags canon. A clump is NEW dense mass: in pixel units the
+    >0.9-density pixel count exceeding base's (scale-normalized) by
+    margin; in EMITTER units (sprite) it's an oversized solid-block
+    cluster — the register can't show pile-ups at finer grain."""
+    ref = ref if ref is not None else _clump_ref(style)
+    if unit > 1:
+        cells, biggest = _block_dark(img, unit)
+        out = {"solid_blocks": cells, "biggest_cluster": biggest}
+        if ref is None:
+            out["defect"] = bool(biggest > 40)
+            return out
+        rc, rbig = _block_dark(ref, unit)
+        out["base_cells"], out["base_cluster"] = rc, rbig
+        out["defect"] = bool(biggest > rbig * 1.5
+                             and cells > rc * 1.3)
+        return out
     from scipy.ndimage import uniform_filter
     a = _alpha(img)
     sil = binary_fill_holes(a)
@@ -170,7 +205,6 @@ def stroke_clumping(img: np.ndarray,
     dens = uniform_filter(dark.astype(float), size=16)
     out = {"peak_density": round(float(dens.max()), 2),
            "dense_px": int((dens > 0.9).sum())}
-    ref = ref if ref is not None else _clump_ref(style)
     if ref is None:
         out["defect"] = out["peak_density"] > 0.98
         return out
@@ -185,25 +219,31 @@ def stroke_clumping(img: np.ndarray,
     return out
 
 
-def thin_artifacts(img: np.ndarray) -> dict:
+def thin_artifacts(img: np.ndarray, unit: float = 1.0) -> dict:
     """Hairline filaments — silhouette spikes that fill like body
     (the rest-pose head spike). A defect filament is LONG AND
-    NARROW: legs/ears are short nubs and don't qualify."""
+    NARROW *in emitter units*: legs/ears are short nubs, and a
+    sprite's stair-steps are a feature of the pixel register, not
+    a spike — unit = the emitter's smallest feature size (12px for
+    sprite, 1 for vector styles)."""
     from skimage import morphology
-    from scipy.ndimage import distance_transform_edt
+    from scipy.ndimage import distance_transform_edt, binary_erosion
     a = _alpha(img)
     if not a.any():
         return {"defect": False}
-    dist = distance_transform_edt(a)
-    spine = (dist > 0) & (dist < 2.5)
-    lab = measure.label(spine)
+    # tips = silhouette minus its eroded core — erasing ~1.2 units
+    # absorbs stair-steps and edge noise; only a protrusion TALLER
+    # than the unit survives to be measured
+    tips = a & ~binary_erosion(
+        a, morphology.disk(max(2, int(1.2 * unit))))
     worst = 0
-    for r in measure.regionprops(lab):
+    for r in measure.regionprops(measure.label(tips)):
         bh = r.bbox[2] - r.bbox[0]
         bw = r.bbox[3] - r.bbox[1]
-        if r.area > 25 and max(bh, bw) > 4.5 * max(1, min(bh, bw)):
-            worst = max(worst, r.area)
-    return {"defect": worst > 0, "filament_px": int(worst)}
+        if (r.area > 25 * unit
+                and max(bh, bw) > 4.5 * max(1, min(bh, bw))):
+            worst = max(worst, int(r.area))
+    return {"defect": bool(worst > 0), "filament_px": int(worst)}
 
 
 # ---------- parts cohesion (operator 2026-11-11) -----------------
@@ -553,6 +593,55 @@ def is_pig(spec: dict, anchor: dict) -> dict:
     return {"score": round(iou, 3)}
 
 
+def _mark_desc(spec: dict) -> np.ndarray:
+    """Per-component mark descriptors — [log_area, aspect, extent].
+    Position-free on purpose: a stride MOVES the hoof stroke (pose);
+    what must not change is that the mark still IS that shape
+    (character)."""
+    import trace_linework as tl
+    st = np.asarray(tl._stroke_img(spec)) > 80
+    out = []
+    for r in measure.regionprops(measure.label(st)):
+        if r.area < 15:
+            continue
+        bh, bw = r.bbox[2] - r.bbox[0], r.bbox[3] - r.bbox[1]
+        out.append([np.log(r.area), max(bh, bw) / max(1, min(bh, bw)),
+                    r.extent])
+    return np.asarray(out) if out else np.zeros((0, 3))
+
+
+def char_fidelity(spec: dict, anchor: dict) -> dict:
+    """Perceptual 'same character' fidelity — the BERTScore analog
+    to is_pig's chrF (structural IoU). Bag-of-mark-shapes matching
+    vs the canon anchor: each canon mark must find a same-shape
+    partner in the pose (and vice versa), wherever the pose put it.
+    Plus palette drift — the pig must stay its color."""
+    from scipy.spatial import cKDTree
+    da, db = _mark_desc(anchor), _mark_desc(spec)
+    if len(da) < 3 or len(db) < 3:
+        return {"score": 0.0, "mark_sim": 0.0}
+    scale = da.std(0) + 1e-6
+    na, nb = da / scale, db / scale
+    d_ab = cKDTree(nb).query(na)[0]
+    d_ba = cKDTree(na).query(nb)[0]
+    hit = 0.9                                        # norm-units
+    frac_ab, frac_ba = float((d_ab < hit).mean()), \
+        float((d_ba < hit).mean())
+    mean_d = float(np.concatenate([d_ab, d_ba]).mean())
+    mark_sim = float(np.sqrt(frac_ab * frac_ba)
+                     * np.exp(-mean_d / 1.5))
+    drgb = float(np.abs(np.asarray(spec["body_rgb"], float)
+                        - np.asarray(anchor["body_rgb"], float))
+                 .mean())
+    color_sim = float(np.exp(-drgb / 30))
+    return {"score": round(0.8 * mark_sim + 0.2 * color_sim, 3),
+            "mark_sim": round(mark_sim, 3),
+            "color_sim": round(color_sim, 3),
+            "canon_marks": len(da), "pose_marks": len(db),
+            "match_ab": round(frac_ab, 2),
+            "match_ba": round(frac_ba, 2)}
+
+
 def markings(spec: dict) -> dict:
     return {"fills": len(spec["fills"]),
             "regions": len(spec["fills"]) > 0}
@@ -607,15 +696,16 @@ def inspect(pose: str, spec: dict, img: Image.Image,
     spec_arr = np.asarray(_tl.render(spec, style=style))
     ref_arr = (np.asarray(_tl.render(anchor, style=style))
                if anchor is not None else None)
+    unit = 12 if style == "sprite" else 1  # emitter's feature grain
     rep = {"pose": pose,
            "integrity": {"interior_holes": interior_holes(arr),
                          "stroke_bleed": stroke_bleed(arr),
                          "self_intersect": self_intersect(spec),
                          "frame_clip": frame_clip(arr),
                          "fragments": fragments(arr),
-                         "thin_artifacts": thin_artifacts(arr),
+                         "thin_artifacts": thin_artifacts(arr, unit),
                          "stroke_clumping": stroke_clumping(
-                             spec_arr, ref_arr, style),
+                             spec_arr, ref_arr, style, unit),
                          "contour_bays": contour_bays(spec),
                          "stripe_marks": stripe_marks(spec),
                          "part_cohesion": part_cohesion(spec),
@@ -629,6 +719,7 @@ def inspect(pose: str, spec: dict, img: Image.Image,
                       "markings": markings(spec)}}
     if anchor is not None:
         rep["states"]["is_pig"] = is_pig(spec, anchor)
+        rep["states"]["char_fidelity"] = char_fidelity(spec, anchor)
         rep["states"]["mass_delta"] = mass_delta(spec, anchor)
     bad = [k for k, v in rep["integrity"].items() if v.get("defect")]
     rep["verdict"] = "CLEAN" if not bad else "DEFECTS: " + ",".join(bad)
@@ -641,7 +732,7 @@ if __name__ == "__main__":
     poses = [("rest", {}), ("notice", {}), ("flee", {"facing": -1}),
              ("fly", {"tilt": 18, "wings": 1})]
     out = {}
-    for style in ("rough", "flat"):  # emitters: same spec, two styles
+    for style in ("rough", "flat", "sprite"):  # emitters over one IR
         for pose, kw in poses:
             img = pig_w5.render_pose(pose, style=style, **kw)
             spec = pig_w5.pose_spec(pose)

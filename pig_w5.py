@@ -156,7 +156,7 @@ def pig_bitmap(pose: str = "rest", facing: int = 1, tilt: float = 0.0,
 if __name__ == "__main__":
     poses = [("rest", {}), ("notice", {}), ("flee", {"facing": -1}),
              ("fly", {"tilt": 18, "wings": 1})]
-    for style in ("rough", "flat"):
+    for style in ("rough", "flat", "sprite"):
         fig, axs = plt.subplots(1, 4, figsize=(20, 5), dpi=110)
         for ax, (pose, kw) in zip(axs, poses):
             ax.imshow(np.asarray(render_pose(pose, style=style, **kw)))

@@ -9,19 +9,22 @@
  .done{color:#50dca0}
 </style></head><body>
 <h1>pig rebuild — waddles-grammar storyboard</h1>
-<h2>CURRENT STATE (2026-11-11) — w5 poses, oracle-verified, 2 emitters</h2>
-<p class=done>All 4 poses CLEAN across 8 oracle runs (integrity +
-states + part cohesion, differential vs canon). Same spec renders
-through two emitters — <b>rough</b> (ref's lineart) and <b>flat</b>
-(cel register) — with identical state scores. 24/24 tests.</p>
+<h2>CURRENT STATE (2026-11-11) — w5 poses, oracle-verified, 3 emitters</h2>
+<p class=done>All 4 poses CLEAN across 12 oracle runs (integrity +
+states + part cohesion, differential vs canon). One spec renders
+through three emitters — <b>rough</b> (ref's lineart), <b>flat</b>
+(cel register), <b>sprite</b> (pixel art) — with identical state
+scores. char_fidelity (bag-of-mark-shapes) scores same-character
+0.62–0.84 per pose. 24/24 tests.</p>
 <p><a href="pig_w5_poses.png">pose strip — rough</a> ·
-<a href="pig_w5_poses_flat.png">pose strip — flat</a> ·
-<a href="_oracle_report.json">oracle report (8 runs)</a></p>
+<a href="pig_w5_poses_flat.png">flat</a> ·
+<a href="pig_w5_poses_sprite.png">sprite</a> ·
+<a href="_oracle_report.json">oracle report (12 runs)</a></p>
 <p>4-scale sheets (thumb|strip|full|huge):<br>
-rest <a href="_oracle_rest.png">rough</a>/<a href="_oracle_rest_flat.png">flat</a> ·
-notice <a href="_oracle_notice.png">rough</a>/<a href="_oracle_notice_flat.png">flat</a> ·
-flee <a href="_oracle_flee.png">rough</a>/<a href="_oracle_flee_flat.png">flat</a> ·
-fly <a href="_oracle_fly.png">rough</a>/<a href="_oracle_fly_flat.png">flat</a></p>
+rest <a href="_oracle_rest.png">rough</a>/<a href="_oracle_rest_flat.png">flat</a>/<a href="_oracle_rest_sprite.png">sprite</a> ·
+notice <a href="_oracle_notice.png">rough</a>/<a href="_oracle_notice_flat.png">flat</a>/<a href="_oracle_notice_sprite.png">sprite</a> ·
+flee <a href="_oracle_flee.png">rough</a>/<a href="_oracle_flee_flat.png">flat</a>/<a href="_oracle_flee_sprite.png">sprite</a> ·
+fly <a href="_oracle_fly.png">rough</a>/<a href="_oracle_fly_flat.png">flat</a>/<a href="_oracle_fly_sprite.png">sprite</a></p>
 <h2>oracle registry</h2>
 <p><a href="state_oracle.py">state_oracle.py</a> — integrity
 (holes/bays/stripes/fragments/clumping/parts) + states

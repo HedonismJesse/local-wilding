@@ -116,13 +116,14 @@ def render(spec: dict, size: tuple[int, int] | None = None,
     geometry outside [0,1] so nothing clips (flee lean cut the face).
 
     style = the emitter (Reson: IR -> target language):
-      "rough" — the ref's own register: near-black variable-weight line
-      "flat"  — cel/poster register: lineart harmonized to a dark
-                body-tone (x0.32) at uniform thin weight, fills
-                crisp — same spec, different emission. Emitter
-                contract: linework luminance must stay < body
-                luminance so the oracle's dark detectors remain
-                valid on any emission."""
+      "rough"  — the ref's own register: near-black variable-weight
+      "flat"   — cel/poster register: lineart harmonized to a dark
+                 body-tone (x0.32) at uniform thin weight
+      "sprite" — pixel-art register: dark body-tone linework (x0.28),
+                 the whole emission pixelated ~12px blocks
+    Same spec, different emission. Emitter contract: linework
+    luminance must stay < body luminance so the oracle's dark
+    detectors remain valid on any emission."""
     y0, x0, y1, x1 = spec["bbox"]
     w, h = (x1 - x0, y1 - y0) if size is None else size
     wy0, wx0, wy1, wx1 = spec.get("window", [0.0, 0.0, 1.0, 1.0])
@@ -147,11 +148,24 @@ def render(spec: dict, size: tuple[int, int] | None = None,
     st = st.resize((max(1, int(w / ww)),
                     max(1, int(h / wh))), Image.NEAREST)
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    line_rgb = ((30, 25, 30) if style == "rough"
-                else tuple(int(c * 0.32) for c in spec["body_rgb"]))
-    dark = Image.new("RGBA", st.size, line_rgb + (255,))
+    tints = {"rough": (30, 25, 30),
+             "flat": tuple(int(c * 0.32) for c in spec["body_rgb"]),
+             "sprite": tuple(int(c * 0.28) for c in spec["body_rgb"])}
+    dark = Image.new("RGBA", st.size,
+                     tints.get(style, tints["rough"]) + (255,))
     layer.paste(dark, (int(-wx0 / ww * w), int(-wy0 / wh * h)), st)
     img = Image.alpha_composite(img, layer)
+    if style == "sprite":          # chunky blocks are an emission
+        import numpy as _np                          # choice — the
+        from scipy.ndimage import binary_fill_holes  # IR stays whole
+        sw, sh = max(1, w // 12), max(1, h // 12)
+        img = img.resize((sw, sh), Image.NEAREST) \
+                 .resize((w, h), Image.NEAREST)
+        # sprites must be solid: pixelation's stair edges can leave
+        # sub-threshold alpha gaps inside — seal them at emission
+        a = _np.asarray(img)[..., 3] > 40
+        img.putalpha(Image.fromarray(
+            (binary_fill_holes(a) * 255).astype(_np.uint8)))
     return img
 
 

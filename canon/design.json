@@ -67,5 +67,16 @@
     ],
     "multi_scale_rule": "zoom in AND out are both verifiers — inspect at thumb/strip/full every render; defects hide at exactly one scale (operator 2026-11-10)",
     "undo_rule": "derive_checked applies ops one at a time; an op that introduces an integrity defect is halved then dropped — 'like any good artist, undo anything that isn't good' (operator 2026-11-10)"
+  },
+  "emitters": {
+    "canon_doc": "art:media-producer — Reson applied to art (operator 2026-11-11): the spec is the IR; style emitters are target languages; the SAME oracle chain verifies every emission",
+    "instrument": "trace_linework.render(spec, style=)",
+    "styles": {
+      "rough": "ref's own register — near-black variable-weight lineart",
+      "flat": "cel register — dark body-tone lineart (x0.32), uniform thin weight",
+      "sprite": "pixel-art register — dark body-tone lineart (x0.28), ~12px blocks"
+    },
+    "emitter_contract": "linework luminance < body luminance; attachments stay G-dominant; silhouette geometry unchanged — the registry inspects the emission, not the emitter's intent",
+    "fidelity_oracle": "char_fidelity — bag-of-mark-shapes vs canon (position-invariant: pose may move a mark, must not smear it) + palette drift; the BERTScore analog to is_pig's chrF"
   }
 }

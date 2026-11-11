@@ -83,6 +83,15 @@
       "is_pig": {
         "score": 0.715
       },
+      "char_fidelity": {
+        "score": 0.62,
+        "mark_sim": 0.525,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 9,
+        "match_ab": 0.75,
+        "match_ba": 0.78
+      },
       "mass_delta": {
         "delta": -0.21
       }
@@ -173,6 +182,15 @@
       "is_pig": {
         "score": 0.992
       },
+      "char_fidelity": {
+        "score": 0.72,
+        "mark_sim": 0.649,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 9,
+        "match_ab": 0.88,
+        "match_ba": 0.78
+      },
       "mass_delta": {
         "delta": 0.003
       }
@@ -262,6 +280,15 @@
       },
       "is_pig": {
         "score": 0.856
+      },
+      "char_fidelity": {
+        "score": 0.731,
+        "mark_sim": 0.664,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 10,
+        "match_ab": 0.88,
+        "match_ba": 0.9
       },
       "mass_delta": {
         "delta": 0.017
@@ -354,6 +381,15 @@
       "is_pig": {
         "score": 0.761
       },
+      "char_fidelity": {
+        "score": 0.838,
+        "mark_sim": 0.797,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 7,
+        "match_ab": 0.88,
+        "match_ba": 1.0
+      },
       "mass_delta": {
         "delta": -0.095
       }
@@ -445,6 +481,15 @@
       "is_pig": {
         "score": 0.715
       },
+      "char_fidelity": {
+        "score": 0.62,
+        "mark_sim": 0.525,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 9,
+        "match_ab": 0.75,
+        "match_ba": 0.78
+      },
       "mass_delta": {
         "delta": -0.21
       }
@@ -535,6 +580,15 @@
       "is_pig": {
         "score": 0.992
       },
+      "char_fidelity": {
+        "score": 0.72,
+        "mark_sim": 0.649,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 9,
+        "match_ab": 0.88,
+        "match_ba": 0.78
+      },
       "mass_delta": {
         "delta": 0.003
       }
@@ -624,6 +678,15 @@
       },
       "is_pig": {
         "score": 0.856
+      },
+      "char_fidelity": {
+        "score": 0.731,
+        "mark_sim": 0.664,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 10,
+        "match_ab": 0.88,
+        "match_ba": 0.9
       },
       "mass_delta": {
         "delta": 0.017
@@ -716,11 +779,422 @@
       "is_pig": {
         "score": 0.761
       },
+      "char_fidelity": {
+        "score": 0.838,
+        "mark_sim": 0.797,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 7,
+        "match_ab": 0.88,
+        "match_ba": 1.0
+      },
       "mass_delta": {
         "delta": -0.095
       }
     },
     "verdict": "CLEAN",
     "style": "flat"
+  },
+  "rest:sprite": {
+    "pose": "rest",
+    "integrity": {
+      "interior_holes": {
+        "defect": false,
+        "count": 0,
+        "area_px": 0
+      },
+      "stroke_bleed": {
+        "defect": false,
+        "px": 0
+      },
+      "self_intersect": {
+        "defect": false,
+        "crossings": 0
+      },
+      "frame_clip": {
+        "defect": false,
+        "edge_px": 0
+      },
+      "fragments": {
+        "defect": false,
+        "extras": 0
+      },
+      "thin_artifacts": {
+        "defect": false,
+        "filament_px": 0
+      },
+      "stroke_clumping": {
+        "solid_blocks": 93,
+        "biggest_cluster": 14,
+        "base_cells": 137,
+        "base_cluster": 31,
+        "defect": false
+      },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": [
+          "hooves",
+          "legs"
+        ]
+      },
+      "discarded_geometry": {
+        "defect": false,
+        "items": []
+      }
+    },
+    "states": {
+      "lying": {
+        "score": 0.55,
+        "flat_frac": 0.617,
+        "aspect_wh": 1.4
+      },
+      "running": {
+        "score": 0.16,
+        "protrusions": 0,
+        "max_depth": 0.04,
+        "leg_x": []
+      },
+      "flying": {
+        "score": 0.2,
+        "grounded": true,
+        "wings": false
+      },
+      "eyes": {
+        "eyes": "mixed",
+        "arcs": 1,
+        "matched": 1
+      },
+      "markings": {
+        "fills": 3,
+        "regions": true
+      },
+      "is_pig": {
+        "score": 0.715
+      },
+      "char_fidelity": {
+        "score": 0.62,
+        "mark_sim": 0.525,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 9,
+        "match_ab": 0.75,
+        "match_ba": 0.78
+      },
+      "mass_delta": {
+        "delta": -0.21
+      }
+    },
+    "verdict": "CLEAN",
+    "style": "sprite"
+  },
+  "notice:sprite": {
+    "pose": "notice",
+    "integrity": {
+      "interior_holes": {
+        "defect": false,
+        "count": 0,
+        "area_px": 0
+      },
+      "stroke_bleed": {
+        "defect": false,
+        "px": 0
+      },
+      "self_intersect": {
+        "defect": false,
+        "crossings": 0
+      },
+      "frame_clip": {
+        "defect": false,
+        "edge_px": 0
+      },
+      "fragments": {
+        "defect": false,
+        "extras": 0
+      },
+      "thin_artifacts": {
+        "defect": false,
+        "filament_px": 0
+      },
+      "stroke_clumping": {
+        "solid_blocks": 125,
+        "biggest_cluster": 23,
+        "base_cells": 137,
+        "base_cluster": 31,
+        "defect": false
+      },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": []
+      },
+      "discarded_geometry": {
+        "defect": false,
+        "items": []
+      }
+    },
+    "states": {
+      "lying": {
+        "score": 0.2,
+        "flat_frac": 0.233,
+        "aspect_wh": 0.94
+      },
+      "running": {
+        "score": 0.65,
+        "protrusions": 1,
+        "max_depth": 0.125,
+        "leg_x": [
+          0.45
+        ]
+      },
+      "flying": {
+        "score": 0.19,
+        "grounded": true,
+        "wings": false
+      },
+      "eyes": {
+        "eyes": "open",
+        "arcs": 0,
+        "matched": 2
+      },
+      "markings": {
+        "fills": 3,
+        "regions": true
+      },
+      "is_pig": {
+        "score": 0.992
+      },
+      "char_fidelity": {
+        "score": 0.72,
+        "mark_sim": 0.649,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 9,
+        "match_ab": 0.88,
+        "match_ba": 0.78
+      },
+      "mass_delta": {
+        "delta": 0.003
+      }
+    },
+    "verdict": "CLEAN",
+    "style": "sprite"
+  },
+  "flee:sprite": {
+    "pose": "flee",
+    "integrity": {
+      "interior_holes": {
+        "defect": false,
+        "count": 0,
+        "area_px": 0
+      },
+      "stroke_bleed": {
+        "defect": false,
+        "px": 0
+      },
+      "self_intersect": {
+        "defect": false,
+        "crossings": 0
+      },
+      "frame_clip": {
+        "defect": false,
+        "edge_px": 0
+      },
+      "fragments": {
+        "defect": false,
+        "extras": 0
+      },
+      "thin_artifacts": {
+        "defect": false,
+        "filament_px": 0
+      },
+      "stroke_clumping": {
+        "solid_blocks": 85,
+        "biggest_cluster": 16,
+        "base_cells": 137,
+        "base_cluster": 31,
+        "defect": false
+      },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": []
+      },
+      "discarded_geometry": {
+        "defect": false,
+        "items": []
+      }
+    },
+    "states": {
+      "lying": {
+        "score": 0.2,
+        "flat_frac": 0.233,
+        "aspect_wh": 0.86
+      },
+      "running": {
+        "score": 0.56,
+        "protrusions": 1,
+        "max_depth": 0.103,
+        "leg_x": [
+          0.25
+        ]
+      },
+      "flying": {
+        "score": 0.19,
+        "grounded": true,
+        "wings": false
+      },
+      "eyes": {
+        "eyes": "open",
+        "arcs": 0,
+        "matched": 2
+      },
+      "markings": {
+        "fills": 3,
+        "regions": true
+      },
+      "is_pig": {
+        "score": 0.856
+      },
+      "char_fidelity": {
+        "score": 0.731,
+        "mark_sim": 0.664,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 10,
+        "match_ab": 0.88,
+        "match_ba": 0.9
+      },
+      "mass_delta": {
+        "delta": 0.017
+      }
+    },
+    "verdict": "CLEAN",
+    "style": "sprite"
+  },
+  "fly:sprite": {
+    "pose": "fly",
+    "integrity": {
+      "interior_holes": {
+        "defect": false,
+        "count": 0,
+        "area_px": 0
+      },
+      "stroke_bleed": {
+        "defect": false,
+        "px": 0
+      },
+      "self_intersect": {
+        "defect": false,
+        "crossings": 0
+      },
+      "frame_clip": {
+        "defect": false,
+        "edge_px": 0
+      },
+      "fragments": {
+        "defect": false,
+        "extras": 0
+      },
+      "thin_artifacts": {
+        "defect": false,
+        "filament_px": 0
+      },
+      "stroke_clumping": {
+        "solid_blocks": 101,
+        "biggest_cluster": 25,
+        "base_cells": 137,
+        "base_cluster": 31,
+        "defect": false
+      },
+      "contour_bays": {
+        "defect": false,
+        "bays": []
+      },
+      "stripe_marks": {
+        "defect": false,
+        "stripes": []
+      },
+      "part_cohesion": {
+        "defect": false,
+        "issues": [],
+        "absorbed": [
+          "hooves",
+          "legs"
+        ]
+      },
+      "discarded_geometry": {
+        "defect": false,
+        "items": []
+      }
+    },
+    "states": {
+      "lying": {
+        "score": 0.72,
+        "flat_frac": 0.85,
+        "aspect_wh": 1.2
+      },
+      "running": {
+        "score": 0.05,
+        "protrusions": 0,
+        "max_depth": 0.013,
+        "leg_x": []
+      },
+      "flying": {
+        "score": 0.59,
+        "grounded": true,
+        "wings": true
+      },
+      "eyes": {
+        "eyes": "open",
+        "arcs": 1,
+        "matched": 2
+      },
+      "markings": {
+        "fills": 3,
+        "regions": true
+      },
+      "is_pig": {
+        "score": 0.761
+      },
+      "char_fidelity": {
+        "score": 0.838,
+        "mark_sim": 0.797,
+        "color_sim": 1.0,
+        "canon_marks": 8,
+        "pose_marks": 7,
+        "match_ab": 0.88,
+        "match_ba": 1.0
+      },
+      "mass_delta": {
+        "delta": -0.095
+      }
+    },
+    "verdict": "CLEAN",
+    "style": "sprite"
   }
 }
