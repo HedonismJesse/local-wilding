@@ -107,6 +107,36 @@ def _stroke_img(spec: dict) -> Image.Image:
     return Image.open(io.BytesIO(base64.b64decode(spec["stroke_b64"]))).convert("L")
 
 
+def _leg_tips(spec: dict) -> list:
+    """Bottom-protrusion tips: [(x_lo, x_hi, y_tip)] in spec frac.
+    Emission-level leg finder for drawing hoof caps (flat/sprite
+    registers where the bitmap band detaches from the edge)."""
+    import numpy as _np
+    sil = _np.asarray(spec["silhouette"], dtype=float)
+    nb = 80
+    xl, xh = sil[:, 1].min(), sil[:, 1].max()
+    edges = _np.linspace(xl, xh, nb + 1)
+    prof = _np.array([
+        sil[(sil[:, 1] >= edges[i]) & (sil[:, 1] < edges[i + 1]),
+            0].max()
+        if ((sil[:, 1] >= edges[i]) & (sil[:, 1] < edges[i + 1])).any()
+        else 0.0 for i in range(nb)])
+    belly = _np.percentile(prof[prof > 0], 60)
+    gate = belly + 0.045
+    tips, s = [], None
+    for i, v in enumerate(prof):
+        if v > gate and s is None:
+            s = i
+        if v <= gate and s is not None:
+            if i - s >= 3:
+                band = sil[(sil[:, 1] >= edges[s])
+                           & (sil[:, 1] < edges[i])]
+                tips.append((float(edges[s]), float(edges[i]),
+                             float(band[:, 0].max())))
+            s = None
+    return tips
+
+
 def render(spec: dict, size: tuple[int, int] | None = None,
            bg: tuple = (0, 0, 0, 0), style: str = "rough") -> Image.Image:
     """Re-draw the trace. size = (w,h) canvas; default = source bbox.
@@ -137,22 +167,108 @@ def render(spec: dict, size: tuple[int, int] | None = None,
     dr.polygon(pts(spec["silhouette"]), fill=tuple(spec["body_rgb"]) + (255,))
     for f in spec["fills"]:
         dr.polygon(pts(f["poly"]), fill=tuple(f["rgb"]) + (255,))
+    line_rgb_all = {"rough": (30, 25, 30),
+                    "flat": tuple(int(c * 0.32)
+                                  for c in spec["body_rgb"]),
+                    "sprite": tuple(int(c * 0.28)
+                                    for c in spec["body_rgb"])}
+    if style == "flat":
+        # outline ON the shape edge — operator 2026-11-11: "the
+        # outline fits inside the shape instead of outside line".
+        # The drawn ring replaces the bitmap contour (which the
+        # thinning pass stranded inside the fill).
+        sp = pts(spec["silhouette"])
+        dr.line(sp + [sp[0]], fill=line_rgb_all["flat"] + (255,),
+                width=max(2, int(w * 0.006)), joint="curve")
+    if style in ("flat", "sprite"):
+        # hoof caps — cel/pixel registers draw the foot's dark cap
+        # at the tip (the bitmap hoof band reads detached once the
+        # contour ring is gone). Caps are CLIPPED to the silhouette —
+        # a detected tip y can sit below the warped edge (flee's
+        # detached-block). A run wider than one leg is two legs
+        # merged by the detector — split at the leg-gap saddle.
+        import numpy as _np2
+        from skimage.morphology import binary_dilation as _bd, \
+            disk as _dk
+        cap_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        cd = ImageDraw.Draw(cap_layer)
+        body = tuple(spec["body_rgb"]) + (255,)
+        sil_arr = _np2.asarray(spec["silhouette"])
+        for x_lo, x_hi, y_tip in _leg_tips(spec):
+            cuts = [(x_lo, x_hi)]
+            if x_hi - x_lo > 0.075:
+                sel = ((sil_arr[:, 1] > x_lo + 0.02)
+                       & (sil_arr[:, 1] < x_hi - 0.02)
+                       & (sil_arr[:, 0] > y_tip - 0.12))
+                if sel.any():
+                    gi = _np2.flatnonzero(sel)
+                    gx = float(sil_arr[gi[_np2.argmin(
+                        sil_arr[gi, 0])], 1])
+                    cuts = [(x_lo, gx), (gx, x_hi)]
+                else:
+                    m = (x_lo + x_hi) / 2
+                    cuts = [(x_lo, m), (m, x_hi)]
+            for cx_lo, cx_hi in cuts:
+                px_lo = (cx_lo - wx0) / ww * w
+                px_hi = (cx_hi - wx0) / ww * w
+                py = (y_tip - wy0) / wh * h
+                ch = 0.055 / wh * h
+                cd.polygon([(px_lo, py + 0.012 * h),
+                            (px_lo, py - ch), (px_hi, py - ch),
+                            (px_hi, py + 0.012 * h)],
+                           fill=line_rgb_all[style] + (255,))
+                xm = (px_lo + px_hi) / 2
+                cd.line([(xm, py + 0.012 * h), (xm, py - ch * 0.85)],
+                        fill=body, width=max(2, int(w * 0.004)))
+        sila = _np2.asarray(img)[..., 3] > 128
+        caparr = _np2.asarray(cap_layer).copy()
+        caparr[..., 3] = _np2.where(
+            _bd(sila, _dk(3)) & (caparr[..., 3] > 0),
+            caparr[..., 3], 0)
+        img = Image.alpha_composite(img, Image.fromarray(caparr))
     # stroke bitmap covers frac [0,1]x[0,1] — paste at window offset
     st = _stroke_img(spec)
-    if style == "flat":                    # uniform thin weight —
-        import numpy as _np                # the cel register (IR
-        from scipy.ndimage import binary_erosion  # bitmap untouched)
+    if style in ("flat", "sprite"):
+        import numpy as _np
+        from skimage import measure as _m
+        # erase the bitmap hoof bands inside the cap zone — the
+        # drawn cap IS the hoof here; band + cap = "weird stripes"
+        snp = _np.asarray(st).copy()
+        h0, w0 = snp.shape
+        tips = _leg_tips(spec)
+        for x_lo, x_hi, y_tip in tips:
+            snp[int(max(0, y_tip - 0.20) * h0):h0,
+                int(max(0, x_lo - 0.015) * w0):
+                int(min(w0, x_hi + 0.015) * w0)] = 0
+        # orphan hoof marks: stroke components in the foot band with
+        # no cap to own them (the hidden far-hoof teardrop)
+        lab = _m.label(snp > 80)
+        for r in _m.regionprops(lab):
+            cy, cx = r.centroid[0] / h0, r.centroid[1] / w0
+            if (cy > 0.76 and not any(
+                    x_lo - 0.03 <= cx <= x_hi + 0.03
+                    for x_lo, x_hi, _ in tips)):
+                snp[lab == r.label] = 0
+        st = Image.fromarray(snp)
+    if style == "flat":
+        import numpy as _np
+        from skimage.morphology import disk, erosion
+        # interior marks ONLY: erase the contour ring (the drawn
+        # outline owns the edge now) — keep strokes >=3px inside
+        sil_m = Image.new("L", st.size, 0)
+        ImageDraw.Draw(sil_m).polygon(
+            [(c * st.size[0], r * st.size[1]) for r, c in
+             spec["silhouette"]], fill=255)
+        inner = erosion(_np.asarray(sil_m) > 0, disk(3))
+        st_np = (_np.asarray(st) > 40) & inner
         st = Image.fromarray(
-            (binary_erosion(_np.asarray(st) > 40) * 255)
-            .astype(_np.uint8))
+            (erosion(st_np, disk(1)) * 255).astype(_np.uint8))
     st = st.resize((max(1, int(w / ww)),
                     max(1, int(h / wh))), Image.NEAREST)
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    tints = {"rough": (30, 25, 30),
-             "flat": tuple(int(c * 0.32) for c in spec["body_rgb"]),
-             "sprite": tuple(int(c * 0.28) for c in spec["body_rgb"])}
     dark = Image.new("RGBA", st.size,
-                     tints.get(style, tints["rough"]) + (255,))
+                     line_rgb_all.get(style, line_rgb_all["rough"])
+                     + (255,))
     layer.paste(dark, (int(-wx0 / ww * w), int(-wy0 / wh * h)), st)
     img = Image.alpha_composite(img, layer)
     if style == "sprite":          # chunky blocks are an emission

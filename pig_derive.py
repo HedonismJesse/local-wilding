@@ -242,6 +242,7 @@ def _retopo(spec: dict, ops: list[dict]) -> None:
             # pull), so clamp the contour to the line itself
             line = (float(op.get("line", 0.80)) if op["op"] == "lie"
                     else 0.82)
+            fl = [p[0] > line for p in spec["silhouette"]]
             xs = [p[1] for p in spec["silhouette"]]
             xl, xh = min(xs), max(xs)
             spec["silhouette"] = [
@@ -254,6 +255,42 @@ def _retopo(spec: dict, ops: list[dict]) -> None:
                     if op["op"] == "lie" else 0.0)
                  if p[0] > line else p[0], p[1]]
                 for p in spec["silhouette"]]
+            # the clamped floor is single-valued f(x), but toe-notch
+            # micro-vertices collapse onto it and double back in x
+            # (rest's self_intersect). Sort each contiguous floor run
+            # monotonic in x — a function cannot cross itself.
+            if any(fl) and not all(fl):
+                n = len(fl)
+                seq = [(fl.index(False) + k) % n for k in range(n)]
+                out, i = [], 0
+                while i < n:
+                    k = seq[i]
+                    if not fl[k]:
+                        out.append(spec["silhouette"][k])
+                        i += 1
+                        continue
+                    run = []
+                    while i < n and fl[seq[i]]:
+                        run.append(seq[i])
+                        i += 1
+                    prev_x = out[-1][1] if out else None
+                    nxt_x = (out[0][1] if i >= n
+                             else spec["silhouette"][seq[i]][1])
+                    seg = sorted(
+                        (spec["silhouette"][k] for k in run),
+                        key=lambda s: s[1],
+                        reverse=bool(prev_x is not None
+                                     and prev_x > nxt_x))
+                    # the clamp can map distinct pre-clamp vertices to
+                    # the same floor point — a zero-length segment is
+                    # a degenerate crossing to the detector
+                    kept = []
+                    for s in seg:
+                        if (not kept or abs(s[1] - kept[-1][1]) > 5e-4
+                                or abs(s[0] - kept[-1][0]) > 5e-4):
+                            kept.append(s)
+                    out.extend(kept)
+                spec["silhouette"] = out
 
 
 def _clip_strokes(st: np.ndarray, sil: list) -> np.ndarray:
@@ -306,6 +343,40 @@ def _eyespot_fills(spec: dict) -> list:
         if 0.24 < cx < 0.44 and 0.12 < cy < 0.40:
             out.append(f)
     return out
+
+
+def _toe_split(spec: dict, st: np.ndarray, depth: float = 0.045,
+               halfw: float = 0.011) -> None:
+    """Cloven-hoof grammar: each standing-leg tip gets a V-notch in
+    the silhouette (one tip -> two toes) plus a slit through the
+    dark hoof band — 'all the feet could use a toe split' (operator
+    2026-11-11). Tucked poses no-op when no protrusions remain."""
+    import state_oracle as so
+    sil = np.asarray(spec["silhouette"], dtype=float)
+    tips = so._bottom_protrusions(sil)
+    if not tips:
+        return
+    tip_idx = set()
+    for t in tips:                     # deepest vertex in each run
+        sel = np.abs(sil[:, 1] - t["cx"]) < 0.02
+        if sel.any():
+            idx = np.flatnonzero(sel)
+            tip_idx.add(int(idx[np.argmax(sil[idx, 0])]))
+    out = []
+    for i, (r, c) in enumerate(spec["silhouette"]):
+        if i in tip_idx:               # one tip -> two toes (V)
+            out += [[round(r, 4), round(c - halfw, 4)],
+                    [round(r - depth, 4), round(c, 4)],
+                    [round(r, 4), round(c + halfw, 4)]]
+        else:
+            out.append([r, c])
+    spec["silhouette"] = out
+    h, w = st.shape                    # slit the hoof band center
+    for i in tip_idx:
+        ty, tx = sil[i]
+        st[int(max(0, ty - depth * 2.2) * h):int(ty * h) + 1,
+           int(max(0, tx - 0.007) * w):int(tx + 0.007) * w] = 0
+    st[...] = _clip_strokes(st, spec["silhouette"])  # notch gap is bg
 
 
 def _integrity_flags(spec: dict) -> list:
@@ -425,8 +496,16 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
                              if f not in _eyespot_fills(spec)]
         elif op["op"] == "eyepatch":
             # replace the blush circle with a bigger, darker, irregular
-            # patch over the near eye — marking swap, not removal
-            for f in _eyespot_fills(spec):
+            # patch over the near eye — on a spotless base (E2) there
+            # is nothing to replace, so ADD the patch instead
+            spots = _eyespot_fills(spec)
+            if not spots:
+                spec["fills"].append({
+                    "poly": [[0.14, 0.22], [0.12, 0.30], [0.15, 0.38],
+                             [0.22, 0.43], [0.31, 0.41], [0.35, 0.33],
+                             [0.32, 0.25], [0.24, 0.20]],
+                    "rgb": [int(c) for c in op.get("rgb", [203, 138, 148])]})
+            for f in spots:
                 cys = np.mean([p[0] for p in f["poly"]])
                 cxs = np.mean([p[1] for p in f["poly"]])
                 f["poly"] = [[round(cys + (p[0] - cys) * 1.9 + 0.03, 4),
@@ -435,6 +514,8 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
                 f["rgb"] = [int(c) for c in op.get("rgb", [203, 138, 148])]
         elif op["op"] == "recolor":
             spec["body_rgb"] = [int(c) for c in op["rgb"]]
+        elif op["op"] == "toe_split":
+            _toe_split(spec, st)
         elif op["op"] == "saddle":
             # back patch: polygon draped over the top-rear silhouette
             spec["fills"].append({
@@ -442,6 +523,59 @@ def derive(base_path: Path, ops: list[dict]) -> dict:
                          [0.10, 0.82], [0.26, 0.80], [0.34, 0.70],
                          [0.30, 0.55], [0.20, 0.44]],
                 "rgb": [int(c) for c in op.get("rgb", [231, 155, 155])]})
+        elif op["op"] == "addspots":
+            # flank spot cluster — waddles' signature marking family,
+            # added back as an OPTIONAL layer over the E2 peach base
+            for poly in ([[0.14, 0.62], [0.11, 0.70], [0.13, 0.78],
+                          [0.19, 0.80], [0.24, 0.74], [0.22, 0.66],
+                          [0.18, 0.61]],
+                         [[0.24, 0.68], [0.23, 0.74], [0.27, 0.77],
+                          [0.31, 0.74], [0.30, 0.69]]):
+                spec["fills"].append({
+                    "poly": poly,
+                    "rgb": [int(c) for c in op.get("rgb", [231, 155, 155])]})
+        elif op["op"] == "snout_scale":
+            # the snout plate is the coral fill — scale about its
+            # centroid; silhouette untouched (plate size is a
+            # marking-level knob on the parts board)
+            s = float(op.get("s", 1.0))
+            for f in spec["fills"]:
+                if all(abs(f["rgb"][i] - c) < 25 for i, c in
+                       enumerate([239, 121, 131])):
+                    cys = float(np.mean([p[0] for p in f["poly"]]))
+                    cxs = float(np.mean([p[1] for p in f["poly"]]))
+                    f["poly"] = [[round(cys + (p[0] - cys) * s, 4),
+                                  round(cxs + (p[1] - cxs) * s, 4)]
+                                 for p in f["poly"]]
+        elif op["op"] == "ear_point":
+            # perked-ear variant: the flop tip is the LOWEST vertex in
+            # the head-top band; raise it toward the skull and pull
+            # neighbours in — upright triangle vs the canon flop
+            a = float(op.get("a", 0.05))
+            sil = spec["silhouette"]
+            band = [i for i, p in enumerate(sil)
+                    if 0.25 < p[1] < 0.58 and p[0] < 0.22]
+            if band:
+                i = max(band, key=lambda k: sil[k][0])
+                n = len(sil)
+                sil[i] = [round(sil[i][0] - a, 4), sil[i][1]]
+                for k, dc in (((i - 1) % n, 0.3), ((i + 1) % n, -0.3)):
+                    sil[k] = [round(sil[k][0] + a * 0.2, 4),
+                              round(sil[k][1] + a * dc, 4)]
+        elif op["op"] == "tail_straight":
+            # unfurl the signature curl: drop the grey curl fills,
+            # wipe the curl zone, draw a short straight flick
+            spec["fills"] = [
+                f for f in spec["fills"]
+                if not (abs(f["rgb"][0] - 128) < 25
+                        and abs(f["rgb"][1] - 128) < 25)]
+            _erase(st, 0.10, 0.95, 0.09)
+            h, w = st.shape
+            im = Image.fromarray(np.clip(st, 0, 255).astype(np.uint8))
+            d = ImageDraw.Draw(im)
+            d.line([(0.94 * w, 0.14 * h), (1.02 * w, 0.07 * h)],
+                   fill=255, width=max(2, int(h * 0.018)))
+            np.copyto(st, np.asarray(im))
     img = Image.fromarray(np.clip(st, 0, 255).astype(np.uint8), "L")
     buf = io.BytesIO()
     img.save(buf, format="PNG")

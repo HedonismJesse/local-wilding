@@ -29,8 +29,8 @@
       },
       "stroke_clumping": {
         "peak_density": 0.95,
-        "dense_px": 23,
-        "base_dense_px": 1080,
+        "dense_px": 20,
+        "base_dense_px": 486,
         "defect": false
       },
       "contour_bays": {
@@ -63,7 +63,7 @@
       "running": {
         "score": 0.16,
         "protrusions": 0,
-        "max_depth": 0.04,
+        "max_depth": 0.041,
         "leg_x": []
       },
       "flying": {
@@ -81,19 +81,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.715
+        "score": 0.716
       },
       "char_fidelity": {
-        "score": 0.62,
-        "mark_sim": 0.525,
+        "score": 0.669,
+        "mark_sim": 0.587,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 9,
-        "match_ab": 0.75,
+        "match_ab": 0.86,
         "match_ba": 0.78
       },
       "mass_delta": {
-        "delta": -0.21
+        "delta": -0.212
       }
     },
     "verdict": "CLEAN",
@@ -129,8 +129,8 @@
       },
       "stroke_clumping": {
         "peak_density": 1.0,
-        "dense_px": 610,
-        "base_dense_px": 1080,
+        "dense_px": 492,
+        "base_dense_px": 486,
         "defect": false
       },
       "contour_bays": {
@@ -153,20 +153,21 @@
     },
     "states": {
       "lying": {
-        "score": 0.2,
-        "flat_frac": 0.233,
-        "aspect_wh": 0.94
+        "score": 0.17,
+        "flat_frac": 0.2,
+        "aspect_wh": 0.95
       },
       "running": {
-        "score": 0.65,
-        "protrusions": 1,
-        "max_depth": 0.125,
+        "score": 0.74,
+        "protrusions": 2,
+        "max_depth": 0.1,
         "leg_x": [
+          0.43,
           0.45
         ]
       },
       "flying": {
-        "score": 0.19,
+        "score": 0.2,
         "grounded": true,
         "wings": false
       },
@@ -180,19 +181,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.992
+        "score": 0.985
       },
       "char_fidelity": {
-        "score": 0.72,
-        "mark_sim": 0.649,
+        "score": 0.822,
+        "mark_sim": 0.777,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 9,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 0.78
       },
       "mass_delta": {
-        "delta": 0.003
+        "delta": -0.002
       }
     },
     "verdict": "CLEAN",
@@ -228,8 +229,8 @@
       },
       "stroke_clumping": {
         "peak_density": 1.0,
-        "dense_px": 131,
-        "base_dense_px": 1080,
+        "dense_px": 128,
+        "base_dense_px": 486,
         "defect": false
       },
       "contour_bays": {
@@ -257,11 +258,13 @@
         "aspect_wh": 0.86
       },
       "running": {
-        "score": 0.56,
-        "protrusions": 1,
-        "max_depth": 0.103,
+        "score": 1.0,
+        "protrusions": 3,
+        "max_depth": 0.131,
         "leg_x": [
-          0.25
+          0.23,
+          0.28,
+          0.39
         ]
       },
       "flying": {
@@ -279,19 +282,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.856
+        "score": 0.859
       },
       "char_fidelity": {
-        "score": 0.731,
-        "mark_sim": 0.664,
+        "score": 0.79,
+        "mark_sim": 0.737,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 10,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 0.9
       },
       "mass_delta": {
-        "delta": 0.017
+        "delta": 0.015
       }
     },
     "verdict": "CLEAN",
@@ -328,7 +331,7 @@
       "stroke_clumping": {
         "peak_density": 0.93,
         "dense_px": 12,
-        "base_dense_px": 1080,
+        "base_dense_px": 486,
         "defect": false
       },
       "contour_bays": {
@@ -354,18 +357,18 @@
     },
     "states": {
       "lying": {
-        "score": 0.72,
-        "flat_frac": 0.85,
+        "score": 0.71,
+        "flat_frac": 0.833,
         "aspect_wh": 1.2
       },
       "running": {
-        "score": 0.05,
+        "score": 0.02,
         "protrusions": 0,
-        "max_depth": 0.013,
+        "max_depth": 0.005,
         "leg_x": []
       },
       "flying": {
-        "score": 0.59,
+        "score": 0.6,
         "grounded": true,
         "wings": true
       },
@@ -379,19 +382,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.761
+        "score": 0.76
       },
       "char_fidelity": {
-        "score": 0.838,
-        "mark_sim": 0.797,
+        "score": 0.953,
+        "mark_sim": 0.941,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 7,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 1.0
       },
       "mass_delta": {
-        "delta": -0.095
+        "delta": -0.092
       }
     },
     "verdict": "CLEAN",
@@ -426,9 +429,9 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "peak_density": 0.88,
+        "peak_density": 0.76,
         "dense_px": 0,
-        "base_dense_px": 707,
+        "base_dense_px": 32,
         "defect": false
       },
       "contour_bays": {
@@ -461,7 +464,7 @@
       "running": {
         "score": 0.16,
         "protrusions": 0,
-        "max_depth": 0.04,
+        "max_depth": 0.041,
         "leg_x": []
       },
       "flying": {
@@ -479,19 +482,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.715
+        "score": 0.716
       },
       "char_fidelity": {
-        "score": 0.62,
-        "mark_sim": 0.525,
+        "score": 0.669,
+        "mark_sim": 0.587,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 9,
-        "match_ab": 0.75,
+        "match_ab": 0.86,
         "match_ba": 0.78
       },
       "mass_delta": {
-        "delta": -0.21
+        "delta": -0.212
       }
     },
     "verdict": "CLEAN",
@@ -526,9 +529,9 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "peak_density": 1.0,
-        "dense_px": 471,
-        "base_dense_px": 707,
+        "peak_density": 0.99,
+        "dense_px": 19,
+        "base_dense_px": 32,
         "defect": false
       },
       "contour_bays": {
@@ -551,20 +554,21 @@
     },
     "states": {
       "lying": {
-        "score": 0.2,
-        "flat_frac": 0.233,
-        "aspect_wh": 0.94
+        "score": 0.17,
+        "flat_frac": 0.2,
+        "aspect_wh": 0.95
       },
       "running": {
-        "score": 0.65,
-        "protrusions": 1,
-        "max_depth": 0.125,
+        "score": 0.74,
+        "protrusions": 2,
+        "max_depth": 0.1,
         "leg_x": [
+          0.43,
           0.45
         ]
       },
       "flying": {
-        "score": 0.19,
+        "score": 0.2,
         "grounded": true,
         "wings": false
       },
@@ -578,19 +582,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.992
+        "score": 0.985
       },
       "char_fidelity": {
-        "score": 0.72,
-        "mark_sim": 0.649,
+        "score": 0.822,
+        "mark_sim": 0.777,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 9,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 0.78
       },
       "mass_delta": {
-        "delta": 0.003
+        "delta": -0.002
       }
     },
     "verdict": "CLEAN",
@@ -626,8 +630,8 @@
       },
       "stroke_clumping": {
         "peak_density": 1.0,
-        "dense_px": 87,
-        "base_dense_px": 707,
+        "dense_px": 90,
+        "base_dense_px": 32,
         "defect": false
       },
       "contour_bays": {
@@ -655,11 +659,13 @@
         "aspect_wh": 0.86
       },
       "running": {
-        "score": 0.56,
-        "protrusions": 1,
-        "max_depth": 0.103,
+        "score": 1.0,
+        "protrusions": 3,
+        "max_depth": 0.131,
         "leg_x": [
-          0.25
+          0.23,
+          0.28,
+          0.39
         ]
       },
       "flying": {
@@ -677,19 +683,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.856
+        "score": 0.859
       },
       "char_fidelity": {
-        "score": 0.731,
-        "mark_sim": 0.664,
+        "score": 0.79,
+        "mark_sim": 0.737,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 10,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 0.9
       },
       "mass_delta": {
-        "delta": 0.017
+        "delta": 0.015
       }
     },
     "verdict": "CLEAN",
@@ -724,9 +730,9 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "peak_density": 0.86,
+        "peak_density": 0.9,
         "dense_px": 0,
-        "base_dense_px": 707,
+        "base_dense_px": 32,
         "defect": false
       },
       "contour_bays": {
@@ -752,18 +758,18 @@
     },
     "states": {
       "lying": {
-        "score": 0.72,
-        "flat_frac": 0.85,
+        "score": 0.71,
+        "flat_frac": 0.833,
         "aspect_wh": 1.2
       },
       "running": {
-        "score": 0.05,
+        "score": 0.02,
         "protrusions": 0,
-        "max_depth": 0.013,
+        "max_depth": 0.005,
         "leg_x": []
       },
       "flying": {
-        "score": 0.59,
+        "score": 0.6,
         "grounded": true,
         "wings": true
       },
@@ -777,19 +783,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.761
+        "score": 0.76
       },
       "char_fidelity": {
-        "score": 0.838,
-        "mark_sim": 0.797,
+        "score": 0.953,
+        "mark_sim": 0.941,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 7,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 1.0
       },
       "mass_delta": {
-        "delta": -0.095
+        "delta": -0.092
       }
     },
     "verdict": "CLEAN",
@@ -824,10 +830,10 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "solid_blocks": 93,
-        "biggest_cluster": 14,
-        "base_cells": 137,
-        "base_cluster": 31,
+        "solid_blocks": 100,
+        "biggest_cluster": 20,
+        "base_cells": 98,
+        "base_cluster": 21,
         "defect": false
       },
       "contour_bays": {
@@ -860,7 +866,7 @@
       "running": {
         "score": 0.16,
         "protrusions": 0,
-        "max_depth": 0.04,
+        "max_depth": 0.041,
         "leg_x": []
       },
       "flying": {
@@ -878,19 +884,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.715
+        "score": 0.716
       },
       "char_fidelity": {
-        "score": 0.62,
-        "mark_sim": 0.525,
+        "score": 0.669,
+        "mark_sim": 0.587,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 9,
-        "match_ab": 0.75,
+        "match_ab": 0.86,
         "match_ba": 0.78
       },
       "mass_delta": {
-        "delta": -0.21
+        "delta": -0.212
       }
     },
     "verdict": "CLEAN",
@@ -925,10 +931,10 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "solid_blocks": 125,
-        "biggest_cluster": 23,
-        "base_cells": 137,
-        "base_cluster": 31,
+        "solid_blocks": 108,
+        "biggest_cluster": 20,
+        "base_cells": 98,
+        "base_cluster": 21,
         "defect": false
       },
       "contour_bays": {
@@ -951,20 +957,21 @@
     },
     "states": {
       "lying": {
-        "score": 0.2,
-        "flat_frac": 0.233,
-        "aspect_wh": 0.94
+        "score": 0.17,
+        "flat_frac": 0.2,
+        "aspect_wh": 0.95
       },
       "running": {
-        "score": 0.65,
-        "protrusions": 1,
-        "max_depth": 0.125,
+        "score": 0.74,
+        "protrusions": 2,
+        "max_depth": 0.1,
         "leg_x": [
+          0.43,
           0.45
         ]
       },
       "flying": {
-        "score": 0.19,
+        "score": 0.2,
         "grounded": true,
         "wings": false
       },
@@ -978,19 +985,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.992
+        "score": 0.985
       },
       "char_fidelity": {
-        "score": 0.72,
-        "mark_sim": 0.649,
+        "score": 0.822,
+        "mark_sim": 0.777,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 9,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 0.78
       },
       "mass_delta": {
-        "delta": 0.003
+        "delta": -0.002
       }
     },
     "verdict": "CLEAN",
@@ -1025,10 +1032,10 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "solid_blocks": 85,
-        "biggest_cluster": 16,
-        "base_cells": 137,
-        "base_cluster": 31,
+        "solid_blocks": 73,
+        "biggest_cluster": 17,
+        "base_cells": 98,
+        "base_cluster": 21,
         "defect": false
       },
       "contour_bays": {
@@ -1056,11 +1063,13 @@
         "aspect_wh": 0.86
       },
       "running": {
-        "score": 0.56,
-        "protrusions": 1,
-        "max_depth": 0.103,
+        "score": 1.0,
+        "protrusions": 3,
+        "max_depth": 0.131,
         "leg_x": [
-          0.25
+          0.23,
+          0.28,
+          0.39
         ]
       },
       "flying": {
@@ -1078,19 +1087,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.856
+        "score": 0.859
       },
       "char_fidelity": {
-        "score": 0.731,
-        "mark_sim": 0.664,
+        "score": 0.79,
+        "mark_sim": 0.737,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 10,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 0.9
       },
       "mass_delta": {
-        "delta": 0.017
+        "delta": 0.015
       }
     },
     "verdict": "CLEAN",
@@ -1125,10 +1134,10 @@
         "filament_px": 0
       },
       "stroke_clumping": {
-        "solid_blocks": 101,
+        "solid_blocks": 95,
         "biggest_cluster": 25,
-        "base_cells": 137,
-        "base_cluster": 31,
+        "base_cells": 98,
+        "base_cluster": 21,
         "defect": false
       },
       "contour_bays": {
@@ -1154,18 +1163,18 @@
     },
     "states": {
       "lying": {
-        "score": 0.72,
-        "flat_frac": 0.85,
+        "score": 0.71,
+        "flat_frac": 0.833,
         "aspect_wh": 1.2
       },
       "running": {
-        "score": 0.05,
+        "score": 0.02,
         "protrusions": 0,
-        "max_depth": 0.013,
+        "max_depth": 0.005,
         "leg_x": []
       },
       "flying": {
-        "score": 0.59,
+        "score": 0.6,
         "grounded": true,
         "wings": true
       },
@@ -1179,19 +1188,19 @@
         "regions": true
       },
       "is_pig": {
-        "score": 0.761
+        "score": 0.76
       },
       "char_fidelity": {
-        "score": 0.838,
-        "mark_sim": 0.797,
+        "score": 0.953,
+        "mark_sim": 0.941,
         "color_sim": 1.0,
-        "canon_marks": 8,
+        "canon_marks": 7,
         "pose_marks": 7,
-        "match_ab": 0.88,
+        "match_ab": 1.0,
         "match_ba": 1.0
       },
       "mass_delta": {
-        "delta": -0.095
+        "delta": -0.092
       }
     },
     "verdict": "CLEAN",
