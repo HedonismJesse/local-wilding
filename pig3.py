@@ -20,7 +20,11 @@ def ellipse(x, y, w, h, c, z, angle=0, ec="none", lw=0):
     ax.add_patch(e); return e
 
 def curve(verts, c, z, closed=True, ec="none", lw=0):
-    codes = [Path.MOVETO] + [Path.CURVE4] * (len(verts) - 1)
+    # CURVE4 consumes verts in triples; leftovers -> CURVE3/LINETO or the
+    # dangling control point spikes to the frame edge (2026-11-10 stray line)
+    c4, rem = divmod(len(verts) - 1, 3)
+    codes = [Path.MOVETO] + [Path.CURVE4] * (c4 * 3)
+    codes += [Path.CURVE3] * 2 if rem == 2 else [Path.LINETO] * rem
     if closed:
         verts = verts + [verts[0]]; codes = codes + [Path.CLOSEPOLY]
     p = mpatches.PathPatch(Path(verts, codes), fc=c, ec=ec, lw=lw,

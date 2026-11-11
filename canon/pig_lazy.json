@@ -1,0 +1,48 @@
+{
+ "subject": "lazy pig (local-wilding mascot, grounded poses)",
+ "frame_role": "asset",
+ "notes": "typed construction spec for render_audit --spec, grounded sibling of canon/pig.json. Regions are fractions of the SUBJECT bbox [y0,x0,y1,x1]. Identity claims: FAT (subject_aspect_min - a lazy pig is wide not tall), belly mass solid in the bottom band, snout midtone ring survives, ears at the head end, tail at the rear. _l/_r region pairs share a named_failure and OR together so mirrored poses (flee faces left) check the correct end. exclude_near_dom_dist=2 lets the DPINK snout ring count as its own midtone (dist 3 from body PINK; nostril dots still dark-excluded). No global min_components: a lying pig is ONE connected mass by design - the blob lesson says interior features, not connectivity.",
+ "subject_aspect_min": 1.25,
+ "aspect_named_failure": "thin_pig",
+ "regions": {
+  "snout_r": {
+   "bbox_frac": [0.30, 0.72, 0.80, 1.00],
+   "min_midtone_keys": 1,
+   "min_key_area_px": 400,
+   "exclude_near_dom_dist": 2,
+   "named_failure": "missing_snout"
+  },
+  "snout_l": {
+   "bbox_frac": [0.30, 0.00, 0.80, 0.28],
+   "min_midtone_keys": 1,
+   "min_key_area_px": 400,
+   "exclude_near_dom_dist": 2,
+   "named_failure": "missing_snout"
+  },
+  "ear_r": {
+   "bbox_frac": [0.00, 0.65, 0.35, 1.00],
+   "min_components": 1,
+   "named_failure": "missing_ear"
+  },
+  "ear_l": {
+   "bbox_frac": [0.00, 0.00, 0.35, 0.35],
+   "min_components": 1,
+   "named_failure": "missing_ear"
+  },
+  "belly": {
+   "bbox_frac": [0.55, 0.10, 1.00, 0.85],
+   "min_solidity": 0.80,
+   "named_failure": "hollow_belly"
+  },
+  "tail_l": {
+   "bbox_frac": [0.15, 0.00, 0.80, 0.22],
+   "min_components": 1,
+   "named_failure": "missing_tail"
+  },
+  "tail_r": {
+   "bbox_frac": [0.15, 0.78, 0.80, 1.00],
+   "min_components": 1,
+   "named_failure": "missing_tail"
+  }
+ }
+}

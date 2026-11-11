@@ -242,6 +242,53 @@ class TestCandidateSheet(unittest.TestCase):
             self.assertEqual(row["named_failure"], "clean")
             self.assertEqual(row["variant_params"], {"pose": 0})
 
+    def test_sheet_refuses_without_refs(self):
+        """art:reference-canon gate: no --refs and no --allow-no-ref
+        -> refusal before the builder is ever touched (the mass-reject
+        regression: lineage-extrapolated candidates)."""
+        import candidate_sheet as cs
+        import types
+        args = types.SimpleNamespace(
+            refs=None, allow_no_ref=False, ref_pick=None,
+            builder="pig_sheet:draw_pig", param=None, variants=None,
+            spec=None, out_dir=Path("unused"))
+        self.assertEqual(cs.cmd_sheet(args), 2)
+
+    def test_refs_page_lists_signature_elements(self):
+        import candidate_sheet as cs
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "r.png").write_bytes(
+                bytes.fromhex("89504e470d0a1a0a") + b"\x00" * 32)
+            man = {"subject": "pig", "refs": [{
+                "id": "r1", "file": "r.png", "source": "s",
+                "license": "CC0", "author": "a", "role": "style-target",
+                "signature_elements": ["round bean silhouette"]}]}
+            p = cs._refs_page(man, d / "out", base=d)
+            html = p.read_text()
+            self.assertIn("r1", html)
+            self.assertIn("round bean silhouette", html)
+            self.assertIn("data:image/png;base64,", html)
+
+    def test_verdict_rows_carry_refs(self):
+        import candidate_sheet as cs
+        import types
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "manifest.json").write_text(json.dumps({
+                "refs": {"manifest": "canon/refs/refs.json",
+                         "picks": ["walnutty_flying"]},
+                "variants": [{"id": "A", "params": {"pose": 0},
+                              "png": "A.png", "flags": []}]}))
+            ledger = d / "reads.jsonl"
+            ledger.write_text("")
+            args = types.SimpleNamespace(
+                verdict_dir=d, ledger=ledger, verdicts=["A=pick"])
+            cs.cmd_verdict(args)
+            row = json.loads(ledger.read_text().strip())
+            self.assertEqual(row["refs"], ["walnutty_flying"])
+            self.assertFalse(row["no_ref"])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

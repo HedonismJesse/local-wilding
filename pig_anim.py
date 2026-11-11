@@ -53,7 +53,12 @@ WING_VERTS = [  # pivot at (0,0), swept up-right; scalloped trailing edge
 
 
 def path_patch(verts, fc, z, lw=3.0, ec=OL, tr=None):
-    codes = [Path.MOVETO] + [Path.CURVE4] * (len(verts) - 2) + [Path.CLOSEPOLY]
+    # CURVE4 consumes verts in triples; leftovers -> CURVE3/LINETO or the
+    # dangling control point spikes to the frame edge (2026-11-10 stray line)
+    c4, rem = divmod(len(verts) - 2, 3)
+    codes = ([Path.MOVETO] + [Path.CURVE4] * (c4 * 3)
+             + ([Path.CURVE3] * 2 if rem == 2 else [Path.LINETO] * rem)
+             + [Path.CLOSEPOLY])
     p = mpatches.PathPatch(Path(verts, codes), fc=fc, ec=ec, lw=lw,
                            zorder=z, joinstyle="round", capstyle="round")
     if tr is not None:

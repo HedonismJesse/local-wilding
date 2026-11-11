@@ -1,0 +1,906 @@
+{
+ "builder": "pig_sheet:draw_pig",
+ "spec": "canon\\pig.json",
+ "variants": [
+  {
+   "id": "A",
+   "params": {},
+   "png": "candidates\\pig_pick_v1\\A.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\A.png",
+    "metrics": {
+     "subject_coverage": 0.1354,
+     "largest_component": 0.1266,
+     "largest_bbox_frac": 0.2615,
+     "components": 5,
+     "bboxes": [
+      [
+       128,
+       310,
+       538,
+       884
+      ],
+      [
+       166,
+       668,
+       263,
+       765
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       224,
+       194,
+       234,
+       343
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.1593443751335144,
+     "palette": 0.5304457912710363,
+     "clip_black": 0.0,
+     "clip_white": 0.86159,
+     "flat_fill": 0.55756
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 121903,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 5,
+     "components_target": 4,
+     "survival": 0.8
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.579
+     },
+     "snout": {
+      "zone": [
+       195,
+       612,
+       443,
+       883
+      ],
+      "components": 9,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.976
+     },
+     "ear": {
+      "zone": [
+       128,
+       171,
+       263,
+       883
+      ],
+      "components": 8,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.995
+     },
+     "wing": {
+      "zone": [
+       128,
+       669,
+       240,
+       883
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.974
+     }
+    }
+   }
+  },
+  {
+   "id": "B",
+   "params": {
+    "head_ratio": 1.3,
+    "ear": "flop"
+   },
+   "png": "candidates\\pig_pick_v1\\B.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\B.png",
+    "metrics": {
+     "subject_coverage": 0.1442,
+     "largest_component": 0.1393,
+     "largest_bbox_frac": 0.2615,
+     "components": 4,
+     "bboxes": [
+      [
+       128,
+       310,
+       538,
+       884
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       224,
+       194,
+       234,
+       343
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.18256735801696777,
+     "palette": 0.5063718209231991,
+     "clip_black": 0.0,
+     "clip_white": 0.8530422222222223,
+     "flat_fill": 0.5828833333333333
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 129791,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 4,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.579
+     },
+     "snout": {
+      "zone": [
+       195,
+       612,
+       443,
+       883
+      ],
+      "components": 8,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.907
+     },
+     "ear": {
+      "zone": [
+       128,
+       171,
+       263,
+       883
+      ],
+      "components": 7,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.995
+     },
+     "wing": {
+      "zone": [
+       128,
+       669,
+       240,
+       883
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.726
+     }
+    }
+   }
+  },
+  {
+   "id": "C",
+   "params": {
+    "pose": 12,
+    "wing": "swept"
+   },
+   "png": "candidates\\pig_pick_v1\\C.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\C.png",
+    "metrics": {
+     "subject_coverage": 0.1337,
+     "largest_component": 0.1265,
+     "largest_bbox_frac": 0.3101,
+     "components": 4,
+     "bboxes": [
+      [
+       135,
+       194,
+       546,
+       873
+      ],
+      [
+       153,
+       621,
+       240,
+       729
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.1664215326309204,
+     "palette": 0.5135413923445079,
+     "clip_black": 0.0,
+     "clip_white": 0.86328,
+     "flat_fill": 0.5569633333333334
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 120307,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 3,
+     "survival": 0.75
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.579
+     },
+     "snout": {
+      "zone": [
+       201,
+       605,
+       445,
+       872
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.974
+     },
+     "ear": {
+      "zone": [
+       135,
+       171,
+       268,
+       872
+      ],
+      "components": 9,
+      "distinct_keys": 4,
+      "midtone_keys": 2,
+      "solidity": 0.97
+     },
+     "wing": {
+      "zone": [
+       135,
+       661,
+       246,
+       872
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.977
+     }
+    }
+   }
+  },
+  {
+   "id": "D",
+   "params": {
+    "pose": 8,
+    "goggles": true,
+    "wing": "swept"
+   },
+   "png": "candidates\\pig_pick_v1\\D.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\D.png",
+    "metrics": {
+     "subject_coverage": 0.134,
+     "largest_component": 0.1268,
+     "largest_bbox_frac": 0.3025,
+     "components": 4,
+     "bboxes": [
+      [
+       146,
+       194,
+       544,
+       878
+      ],
+      [
+       156,
+       637,
+       247,
+       742
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.18367040157318115,
+     "palette": 0.8341208701837002,
+     "clip_black": 0.0,
+     "clip_white": 0.8629044444444445,
+     "flat_fill": 0.5546411111111111
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 120622,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 3,
+     "survival": 0.75
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.63
+     },
+     "snout": {
+      "zone": [
+       210,
+       608,
+       449,
+       877
+      ],
+      "components": 8,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.973
+     },
+     "ear": {
+      "zone": [
+       146,
+       171,
+       275,
+       877
+      ],
+      "components": 12,
+      "distinct_keys": 6,
+      "midtone_keys": 3,
+      "solidity": 1.0
+     },
+     "wing": {
+      "zone": [
+       146,
+       665,
+       254,
+       877
+      ],
+      "components": 4,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.975
+     }
+    }
+   }
+  },
+  {
+   "id": "E",
+   "params": {
+    "outline": true,
+    "ear": "flop"
+   },
+   "png": "candidates\\pig_pick_v1\\E.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\E.png",
+    "metrics": {
+     "subject_coverage": 0.1396,
+     "largest_component": 0.1347,
+     "largest_bbox_frac": 0.2637,
+     "components": 4,
+     "bboxes": [
+      [
+       126,
+       310,
+       538,
+       886
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       224,
+       194,
+       234,
+       343
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.19940251111984253,
+     "palette": 0.9053415875217539,
+     "clip_black": 0.0,
+     "clip_white": 0.8576255555555555,
+     "flat_fill": 0.5818455555555555
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 125636,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 4,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.576
+     },
+     "snout": {
+      "zone": [
+       193,
+       613,
+       443,
+       885
+      ],
+      "components": 7,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.811
+     },
+     "ear": {
+      "zone": [
+       126,
+       171,
+       261,
+       885
+      ],
+      "components": 6,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.995
+     },
+     "wing": {
+      "zone": [
+       126,
+       670,
+       239,
+       885
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.989
+     }
+    }
+   }
+  },
+  {
+   "id": "F",
+   "params": {
+    "chunk": 0.88,
+    "head_ratio": 1.28,
+    "ear": "flop",
+    "snout": 1.2
+   },
+   "png": "candidates\\pig_pick_v1\\F.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\F.png",
+    "metrics": {
+     "subject_coverage": 0.1347,
+     "largest_component": 0.1204,
+     "largest_bbox_frac": 0.2645,
+     "components": 5,
+     "bboxes": [
+      [
+       129,
+       310,
+       538,
+       892
+      ],
+      [
+       128,
+       407,
+       275,
+       534
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       224,
+       194,
+       234,
+       343
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.1820160150527954,
+     "palette": 0.5375627948729227,
+     "clip_black": 0.0,
+     "clip_white": 0.8623711111111111,
+     "flat_fill": 0.5846822222222222
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 121255,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 5,
+     "components_target": 4,
+     "survival": 0.8
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.596
+     },
+     "snout": {
+      "zone": [
+       195,
+       617,
+       443,
+       891
+      ],
+      "components": 8,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.883
+     },
+     "ear": {
+      "zone": [
+       128,
+       171,
+       263,
+       891
+      ],
+      "components": 7,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.995
+     },
+     "wing": {
+      "zone": [
+       128,
+       674,
+       240,
+       891
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.692
+     }
+    }
+   }
+  },
+  {
+   "id": "G",
+   "params": {
+    "pose": 10,
+    "wing": "delta",
+    "snout": 1.2
+   },
+   "png": "candidates\\pig_pick_v1\\G.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\G.png",
+    "metrics": {
+     "subject_coverage": 0.1322,
+     "largest_component": 0.125,
+     "largest_bbox_frac": 0.3105,
+     "components": 4,
+     "bboxes": [
+      [
+       141,
+       194,
+       546,
+       884
+      ],
+      [
+       155,
+       629,
+       244,
+       736
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.17777270078659058,
+     "palette": 0.509637749585933,
+     "clip_black": 0.0,
+     "clip_white": 0.8647611111111111,
+     "flat_fill": 0.5550688888888888
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 118988,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 3,
+     "survival": 0.75
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.626
+     },
+     "snout": {
+      "zone": [
+       206,
+       612,
+       447,
+       883
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.973
+     },
+     "ear": {
+      "zone": [
+       141,
+       171,
+       272,
+       883
+      ],
+      "components": 9,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.969
+     },
+     "wing": {
+      "zone": [
+       141,
+       669,
+       250,
+       883
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.976
+     }
+    }
+   }
+  },
+  {
+   "id": "H",
+   "params": {
+    "outline": true,
+    "goggles": true,
+    "pose": 10,
+    "wing": "swept"
+   },
+   "png": "candidates\\pig_pick_v1\\H.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "merged_blob_vs_spec"
+   ],
+   "audit": {
+    "file": "candidates\\pig_pick_v1\\H.png",
+    "metrics": {
+     "subject_coverage": 0.1402,
+     "largest_component": 0.1369,
+     "largest_bbox_frac": 0.3131,
+     "components": 3,
+     "bboxes": [
+      [
+       134,
+       194,
+       546,
+       878
+      ],
+      [
+       570,
+       194,
+       580,
+       366
+      ],
+      [
+       455,
+       171,
+       465,
+       297
+      ]
+     ],
+     "squint": 0.22671568393707275,
+     "palette": 1.146080537109428,
+     "clip_black": 0.0,
+     "clip_white": 0.8567688888888889,
+     "flat_fill": 0.5432533333333334
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions",
+     "merged_blob_vs_spec"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 126159,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 3,
+     "components_target": 3,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.587
+     },
+     "snout": {
+      "zone": [
+       200,
+       608,
+       445,
+       877
+      ],
+      "components": 9,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.823
+     },
+     "ear": {
+      "zone": [
+       134,
+       171,
+       267,
+       877
+      ],
+      "components": 8,
+      "distinct_keys": 4,
+      "midtone_keys": 2,
+      "solidity": 0.763
+     },
+     "wing": {
+      "zone": [
+       134,
+       665,
+       245,
+       877
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.661
+     }
+    }
+   }
+  }
+ ],
+ "sheet": "candidates\\pig_pick_v1\\sheet.png"
+}

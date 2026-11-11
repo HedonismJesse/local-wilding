@@ -1,0 +1,29 @@
+{
+ "subject": "lazy-flight animatic v2",
+ "fps": 15,
+ "track": {"wing_rgb": [223, 244, 238], "tol": 42},
+ "beats": [
+  {"name": "idle", "frames": [0, 39],
+   "intent": "fat lazy pig at rest - belly breathing, snore, ear twitch; long hold sells 'lazy'",
+   "checks": {"breathing": {"min_aspect_osc": 0.015, "max_drift_px": 14},
+              "hold": {"min_len": 8, "eps_px": 1.5}}},
+  {"name": "notice", "frames": [40, 59],
+   "intent": "wings tagged 'otari' fly in from right; pig head-snap accent then startle hold",
+   "checks": {"accent": {"min_delta_px": 12},
+              "hold": {"min_len": 5, "eps_px": 1.5}}},
+  {"name": "flee", "frames": [60, 99],
+   "intent": "scramble up and run LEFT away from incoming wings; leg-cycle bob; wings gain",
+   "checks": {"flee_velocity": {"min_frac": 0.6, "min_speed_px": 2.0, "direction": -1},
+              "cycle_bob": {"min_crossings": 2}}},
+  {"name": "dock", "frames": [100, 114],
+   "intent": "wings chase down the pig and attach ease-out; dust puff accent",
+   "checks": {"easeout_dock": {"dock_px": 90, "max_end_ratio": 0.6}}},
+  {"name": "liftoff", "frames": [115, 149],
+   "intent": "anticipation squash -> stretch launch, legs pedal in air, accelerating exit up-right off-frame",
+   "checks": {"squash_launch": {"window_frac": 0.4, "margin": 0.05},
+              "accelerating_exit": {"ratio": 1.25},
+              "exits_frame": {"cover_max": 0.02},
+              "flap_bob": {"min_crossings": 3}}}
+ ],
+ "global_checks": {"no_linear": {"min_len": 8, "eps_px": 0.4, "min_speed_px": 1.0}}
+}

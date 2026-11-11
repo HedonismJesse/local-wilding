@@ -1,0 +1,137 @@
+{
+ "subject": "fat lazy pig that notices wings, flees, gets docked, flies off",
+ "picked": null,
+ "refs": [
+  {
+   "id": "ab_minion",
+   "file": "canon/refs/pig_ab_minion.png",
+   "source": "https://angrybirds.fandom.com/wiki/File:Minion_Pig.png",
+   "author": "Rovio - Angry Birds",
+   "license": "copyrighted - internal reference only, never ships",
+   "role": "style-target",
+   "status": "candidate",
+   "register": "professional flat-shaded cartoon, front view",
+   "signature_elements": [
+    "capsule/pill body, vertical - head IS the body, zero neck",
+    "snout = huge central ellipse with 2 nostril dots, occupies middle third",
+    "eyes half-lidded, sit either side of the snout - lazy read",
+    "brows = thin strokes floating above eyes",
+    "mouth = dark cut into body below snout, teeth visible",
+    "legs = tiny stumps at bottom edge of the pill",
+    "ears + arms vestigial nubs - silhouette stays clean",
+    "no outline - gradient shading carries the silhouette"
+   ]
+  },
+  {
+   "id": "waddles",
+   "file": "canon/refs/pig_waddles.png",
+   "source": "https://gravityfalls.fandom.com/wiki/File:Waddles_appearance.png",
+   "author": "Disney - Gravity Falls",
+   "license": "copyrighted - internal reference only, never ships",
+   "role": "style-target",
+   "status": "candidate",
+   "register": "thin-outline flat cartoon, 3/4 loaf body",
+   "signature_elements": [
+    "horizontal loaf/potato body - lazy = low and long",
+    "floppy ear folds over the forehead",
+    "snout droops below face centerline, nostrils at droop end",
+    "small half-closed eyes - sleepy read",
+    "tiny legs mostly hidden under the body",
+    "thin dark outline + darker spot patches",
+    "curled tail"
+   ]
+  },
+  {
+   "id": "porky",
+   "file": "canon/refs/pig_porky.png",
+   "source": "https://looneytunes.fandom.com/wiki/File:Porky-pig.png",
+   "author": "Warner Bros - Looney Tunes",
+   "license": "copyrighted - internal reference only, never ships",
+   "role": "style-target",
+   "status": "candidate",
+   "register": "classic clean-outline cartoon",
+   "signature_elements": [
+    "giant head ~50% of total height - infant-proportion appeal",
+    "jowl cheeks merge into the snout area - soft continuous face",
+    "big oval eyes high on the face",
+    "small upturned snout",
+    "ears small triangles on the head",
+    "body small relative to head - clothed here (off-brief, grammar still transfers)"
+   ]
+  },
+  {
+   "id": "oksmith_lineart",
+   "file": "canon/refs/pig_oksmith.png",
+   "source": "https://openclipart.org/detail/295263/pig",
+   "author": "oksmith (via Pixabay CC0)",
+   "license": "CC0",
+   "role": "anatomy",
+   "status": "kept",
+   "register": "single-weight profile lineart, no fill",
+   "signature_elements": [
+    "long body - length ~2x height, belly line nearly straight",
+    "4 legs, short relative to body length",
+    "head continuous with body - snout forward, no neck break",
+    "pointed ear at top of head",
+    "curled tail"
+   ],
+   "operator_note": "the only v1 ref the operator approved (2026-11-10)"
+  },
+  {
+   "id": "johnny_hog",
+   "file": "canon/refs/pig_wikimedia_johnny.png",
+   "source": "https://commons.wikimedia.org/wiki/File:Pig_clipart.svg",
+   "author": "johnny_automatic (after 1889 Nils Lilja drawing)",
+   "license": "CC0",
+   "role": "anatomy",
+   "status": "candidate",
+   "register": "realistic ink - anatomy truth, NOT a style target",
+   "signature_elements": [
+    "belly hangs low, nearly to ground - fat reads as sag",
+    "legs short vs body length (~1/4 of body height)",
+    "droopy ear flops forward over the eye",
+    "bristle ridge along the back",
+    "head-down graze posture - the 'lazy' default"
+   ]
+  },
+  {
+   "id": "walnutty_flying",
+   "file": "canon/refs/pig_flying_walnutty.png",
+   "source": "https://openclipart.org/detail/357370/flying-pig",
+   "author": "Walnutty (remix of bloodsong 'Pig Round Cartoon')",
+   "license": "CC0",
+   "role": "style-target",
+   "status": "rejected",
+   "register": "clipart flat + uniform outline",
+   "signature_elements": [
+    "operator verdict 2026-11-10: clipart register, not professional cartoon quality"
+   ]
+  },
+  {
+   "id": "anarres_piglet",
+   "file": "canon/refs/pig_flying_piglet_anarres.png",
+   "source": "https://openclipart.org/detail/276881/flying-piglet",
+   "author": "anarres (remix of danjiro)",
+   "license": "CC0",
+   "role": "style-target",
+   "status": "rejected",
+   "register": "flat painterly fills, no outline",
+   "signature_elements": [
+    "operator verdict 2026-11-10: clipart register, not professional cartoon quality"
+   ]
+  },
+  {
+   "id": "freesvg_clothed",
+   "file": "canon/refs/pig_cartoon_freesvg.png",
+   "source": "https://freesvg.org/cartoon-pig",
+   "author": "OpenClipart",
+   "license": "CC0",
+   "role": "contrast",
+   "status": "rejected",
+   "register": "anthro sticker - clothed, bipedal",
+   "signature_elements": [
+    "operator verdict 2026-11-10: clipart register, not professional cartoon quality"
+   ]
+  }
+ ]
+}

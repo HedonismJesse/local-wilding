@@ -17,7 +17,8 @@ PINK = "#F5A0B5"; DPINK = "#E87E97"; DARK = "#1B2A38"
 WING = "#DFF4EE"; WING_EC = "#B9E4D8"; TEAL = "#3FD9A8"; HOOF = "#C95F7B"
 
 
-def draw_pig(ax, pose=0.0, goggles=False, head_ratio=1.0, chunk=1.0):
+def draw_pig(ax, pose=0.0, goggles=False, head_ratio=1.0, chunk=1.0,
+             ear="tri", wing="scallop", snout=1.0, outline=False):
     ax.set_xlim(0, 16); ax.set_ylim(0, 10); ax.set_aspect("equal")
     ax.axis("off")
     ax.add_patch(Ellipse((8, 5), 15, 9, fc="none"))
@@ -26,8 +27,16 @@ def draw_pig(ax, pose=0.0, goggles=False, head_ratio=1.0, chunk=1.0):
         ax.add_patch(Ellipse((x, y), w, h, angle=angle, fc=c, ec=ec,
                              lw=lw, zorder=z))
 
+    def _codes(n_movable):
+        # CURVE4 consumes verts in triples; trailing singles/pairs become
+        # LINETO/CURVE3 - a dangling CURVE4 vert spikes to the frame edge
+        c4, rem = divmod(n_movable, 3)
+        codes = [Path.CURVE4] * (c4 * 3)
+        codes += [Path.CURVE3] * 2 if rem == 2 else [Path.LINETO] * rem
+        return codes
+
     def curve(verts, c, z, ec="none", lw=0):
-        codes = [Path.MOVETO] + [Path.CURVE4] * (len(verts) - 1)
+        codes = [Path.MOVETO] + _codes(len(verts) - 1)
         verts = verts + [verts[0]]; codes = codes + [Path.CLOSEPOLY]
         ax.add_patch(mpatches.PathPatch(Path(verts, codes), fc=c, ec=ec,
                                         lw=lw, zorder=z))
@@ -40,7 +49,7 @@ def draw_pig(ax, pose=0.0, goggles=False, head_ratio=1.0, chunk=1.0):
         p.set_transform(tr); ax.add_patch(p); return p
 
     def curve2(verts, c, z, ec="none", lw=0):
-        codes = [Path.MOVETO] + [Path.CURVE4] * (len(verts) - 1)
+        codes = [Path.MOVETO] + _codes(len(verts) - 1)
         verts = verts + [verts[0]]; codes = codes + [Path.CLOSEPOLY]
         add(mpatches.PathPatch(Path(verts, codes), fc=c, ec=ec, lw=lw,
                                zorder=z))
@@ -51,37 +60,73 @@ def draw_pig(ax, pose=0.0, goggles=False, head_ratio=1.0, chunk=1.0):
     def poly2(pts, c, z, ec="none", lw=0):
         add(Polygon(pts, closed=True, fc=c, ec=ec, lw=lw, zorder=z))
 
-    # far wing
-    curve2([(6.6, 6.8), (6.2, 8.9), (5.2, 9.5), (4.4, 9.3),
-            (4.8, 8.4), (5.2, 7.6), (5.8, 7.0), (6.6, 6.8)], WING_EC, 2)
-    # near wing scalloped
-    curve2([(5.6, 6.4), (5.0, 8.8), (3.6, 9.6), (2.8, 9.2),
-            (2.7, 8.6), (3.0, 8.5), (3.3, 8.2),
-            (3.8, 7.3), (4.1, 7.2), (4.4, 6.9),
-            (4.9, 6.1), (5.2, 6.1), (5.6, 6.4)], WING, 2.5, ec=WING_EC, lw=1.5)
+    # sticker-outline register: dark edge on the main shapes (v4 look)
+    ol_ec = DARK if outline else "none"
+    ol_lw = 2.4 if outline else 0
+    wing_ec = DARK if outline else WING_EC
+    wing_lw = 2.4 if outline else 1.5
+
+    if wing == "swept":
+        # single smooth blades - max solidity, no scallop spikes
+        curve2([(6.6, 6.8), (6.3, 8.9), (5.3, 9.6), (4.5, 9.4),
+                (5.1, 8.2), (5.9, 7.0), (6.6, 6.8)], WING_EC, 2,
+               ec=ol_ec, lw=ol_lw)
+        curve2([(5.6, 6.4), (5.1, 8.9), (3.7, 9.8), (2.6, 9.4),
+                (3.4, 8.1), (4.5, 6.7), (5.6, 6.4)], WING, 2.5,
+               ec=wing_ec, lw=wing_lw)
+    elif wing == "delta":
+        # geometric paper-plane wing
+        poly2([(6.6, 6.8), (4.6, 9.5), (4.0, 9.0), (6.0, 6.6)],
+              WING_EC, 2, ec=ol_ec, lw=ol_lw)
+        poly2([(5.7, 6.3), (2.7, 9.7), (2.2, 9.0), (5.2, 5.9)],
+              WING, 2.5, ec=wing_ec, lw=wing_lw)
+    else:
+        # scallop (v3 cut): far wing tucked, near wing scalloped underside
+        curve2([(6.6, 6.8), (6.2, 8.9), (5.2, 9.5), (4.4, 9.3),
+                (4.8, 8.4), (5.2, 7.6), (5.8, 7.0), (6.6, 6.8)],
+               WING_EC, 2, ec=ol_ec, lw=ol_lw)
+        curve2([(5.6, 6.4), (5.0, 8.8), (3.6, 9.6), (2.8, 9.2),
+                (2.7, 8.6), (3.0, 8.5), (3.3, 8.2),
+                (3.8, 7.3), (4.1, 7.2), (4.4, 6.9),
+                (4.9, 6.1), (5.2, 6.1), (5.6, 6.4)], WING, 2.5,
+               ec=wing_ec, lw=wing_lw)
     # body
-    ellipse2(7.0, 4.9, 6.0 * chunk, 3.9 * chunk, PINK, 3)
+    ellipse2(7.0, 4.9, 6.0 * chunk, 3.9 * chunk, PINK, 3,
+             ec=ol_ec, lw=ol_lw)
     # legs (tucked when posed)
     def leg(x, y, w, h, ang, z=2.6):
         dx = h * 0.5 * np.sin(np.radians(ang))
         dy = -h * 0.5 * np.cos(np.radians(ang))
         poly2([(x - w/2, y), (x + w/2, y),
                (x + w*0.28 + dx, y + dy), (x - w*0.28 + dx, y + dy)],
-              DPINK, z)
+              DPINK, z, ec=ol_ec, lw=ol_lw * 0.7)
         ellipse2(x + dx, y + dy - 0.08, w*0.72, 0.5, HOOF, z + 0.1)
 
     leg(5.4, 3.6, 1.0, 1.5, 28); leg(6.4, 3.4, 1.0, 1.7, 12)
     leg(8.4, 3.4, 0.9, 1.5, -8); leg(9.2, 3.6, 0.9, 1.3, -22)
     # head
-    ellipse2(10.7, 5.9, 3.0 * head_ratio, 2.9 * head_ratio, PINK, 4)
+    ellipse2(10.7, 5.9, 3.0 * head_ratio, 2.9 * head_ratio, PINK, 4,
+             ec=ol_ec, lw=ol_lw)
     # ears paired
-    poly2([(9.6, 7.0), (8.9, 8.7), (10.6, 7.6)], DPINK, 4.5)
-    poly2([(10.8, 7.2), (10.9, 8.6), (11.8, 7.5)], DPINK, 4.5)
-    poly2([(9.75, 7.25), (9.3, 8.3), (10.3, 7.55)], PINK, 4.6)
-    # snout
-    ellipse2(11.9, 5.4, 1.5, 1.15, DPINK, 5)
-    ellipse2(11.62, 5.45, 0.24, 0.34, DARK, 6)
-    ellipse2(12.08, 5.45, 0.24, 0.34, DARK, 6)
+    if ear == "flop":
+        # droopy lobes - tip points down-out, anti-fin-ear
+        curve2([(10.3, 7.15), (9.7, 8.15), (8.9, 8.3), (8.6, 7.7),
+                (9.3, 7.0), (10.3, 7.15)], DPINK, 4.5,
+               ec=ol_ec, lw=ol_lw)
+        curve2([(11.15, 7.3), (11.75, 8.2), (12.25, 7.95), (12.0, 7.3),
+                (11.5, 7.05), (11.15, 7.3)], DPINK, 4.4,
+               ec=ol_ec, lw=ol_lw)
+    else:
+        poly2([(9.6, 7.0), (8.9, 8.7), (10.6, 7.6)], DPINK, 4.5,
+              ec=ol_ec, lw=ol_lw)
+        poly2([(10.8, 7.2), (10.9, 8.6), (11.8, 7.5)], DPINK, 4.5,
+              ec=ol_ec, lw=ol_lw)
+        poly2([(9.75, 7.25), (9.3, 8.3), (10.3, 7.55)], PINK, 4.6)
+    # snout - THE identity oval
+    ellipse2(11.9, 5.4, 1.5 * snout, 1.15 * snout, DPINK, 5,
+             ec=ol_ec, lw=ol_lw)
+    ellipse2(11.9 - 0.28 * snout, 5.45, 0.24, 0.34, DARK, 6)
+    ellipse2(11.9 + 0.18 * snout, 5.45, 0.24, 0.34, DARK, 6)
 
     if goggles:
         # aviator goggles across the face
@@ -117,6 +162,9 @@ def draw_pig(ax, pose=0.0, goggles=False, head_ratio=1.0, chunk=1.0):
         x1 = 4.1 + 0.085*t[i+1]*np.cos(t[i+1]+2.6)
         y1 = 5.6 + 0.085*t[i+1]*np.sin(t[i+1]+2.6)
         (x0, y0), (x1, y1) = tr.transform([(x0, y0), (x1, y1)])
+        if outline:
+            ax.plot([x0, x1], [y0, y1], color=DARK, lw=lws[i] + 2.4,
+                    solid_capstyle="round", zorder=3.9)
         ax.plot([x0, x1], [y0, y1], color=DPINK, lw=lws[i],
                 solid_capstyle="round", zorder=4)
     # streaks (unrotated, frame-level)

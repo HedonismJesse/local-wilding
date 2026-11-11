@@ -398,7 +398,12 @@ def _spec_checks(mask, regions, groups, spec):
     # dominant body key = key of the largest group — interior-feature
     # checks count keys OTHER than body fill
     dom_key = max(groups, key=lambda kr: kr[1].area)[0] if groups else None
-    detail, flags = {}, []
+    detail, votes, flags = {}, {}, []
+    detail["_subject"] = {"aspect": round(sw / max(sh, 1), 3)}
+    if spec.get("subject_aspect_min") and \
+            sw / max(sh, 1) < spec["subject_aspect_min"]:
+        flags.append(spec.get("aspect_named_failure",
+                              "thin_subject") + "_vs_spec")
     for name, rs in spec.get("regions", {}).items():
         f = rs["bbox_frac"]
         z0, z1 = sb[0] + int(f[0] * sh), sb[0] + int(f[2] * sh)
@@ -427,18 +432,21 @@ def _spec_checks(mask, regions, groups, spec):
                "components": len(zone),
                "distinct_keys": len(keys), "midtone_keys": len(midtone),
                "solidity": round(float(sol), 3)}
-        if "min_components" in rs and \
-                len(zone) < rs["min_components"]:
-            flags.append(f"{failure}_vs_spec")
-        if "min_distinct_color_keys" in rs and \
-                len(keys) < rs["min_distinct_color_keys"]:
-            flags.append(f"{failure}_vs_spec")
-        if "min_midtone_keys" in rs and \
-                len(midtone) < rs["min_midtone_keys"]:
-            flags.append(f"{failure}_vs_spec")
-        if "min_solidity" in rs and sol < rs["min_solidity"]:
-            flags.append(f"{failure}_vs_spec")
+        failed = (
+            ("min_components" in rs and
+             len(zone) < rs["min_components"]) or
+            ("min_distinct_color_keys" in rs and
+             len(keys) < rs["min_distinct_color_keys"]) or
+            ("min_midtone_keys" in rs and
+             len(midtone) < rs["min_midtone_keys"]) or
+            ("min_solidity" in rs and sol < rs["min_solidity"]))
+        votes.setdefault(failure, []).append(failed)
         detail[name] = rec
+    # regions sharing a named_failure OR together (facing-agnostic
+    # left/right zones): the failure fires only when EVERY zone misses
+    for failure, fails in votes.items():
+        if all(fails):
+            flags.append(f"{failure}_vs_spec")
     return detail, flags
 
 

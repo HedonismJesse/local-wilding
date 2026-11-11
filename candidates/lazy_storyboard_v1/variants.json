@@ -1,0 +1,10 @@
+[
+ {"pose": "rest"},
+ {"pose": "notice"},
+ {"pose": "flee", "facing": -1, "phase": 0.3},
+ {"pose": "fly", "wings": true},
+ {"pose": "rest", "outline": true},
+ {"pose": "notice", "outline": true},
+ {"pose": "flee", "facing": -1, "phase": 0.3, "outline": true},
+ {"pose": "fly", "wings": true, "outline": true}
+]

@@ -1,0 +1,1185 @@
+{
+ "builder": "pig_lazy:draw_lazy_pig",
+ "spec": "canon\\pig_lazy.json",
+ "variants": [
+  {
+   "id": "A",
+   "params": {
+    "pose": "rest"
+   },
+   "png": "candidates\\lazy_storyboard_v1\\A.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\A.png",
+    "metrics": {
+     "subject_coverage": 0.1268,
+     "largest_component": 0.1252,
+     "largest_bbox_frac": 0.1946,
+     "components": 3,
+     "bboxes": [
+      [
+       326,
+       266,
+       581,
+       953
+      ],
+      [
+       257,
+       981,
+       296,
+       1023
+      ],
+      [
+       325,
+       940,
+       355,
+       972
+      ]
+     ],
+     "squint": 0.2306985855102539,
+     "palette": 0.11875196956785192,
+     "clip_black": 0.0,
+     "clip_white": 0.8717088888888889,
+     "flat_fill": 0.7614444444444445
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 114121,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 3,
+     "components_target": 3,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 2.341
+     },
+     "snout_r": {
+      "zone": [
+       353,
+       810,
+       515,
+       1022
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 1.0
+     },
+     "snout_l": {
+      "zone": [
+       353,
+       266,
+       515,
+       477
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 0.907
+     },
+     "ear_r": {
+      "zone": [
+       257,
+       757,
+       370,
+       1022
+      ],
+      "components": 4,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.705
+     },
+     "ear_l": {
+      "zone": [
+       257,
+       266,
+       370,
+       530
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     },
+     "belly": {
+      "zone": [
+       434,
+       341,
+       580,
+       908
+      ],
+      "components": 6,
+      "distinct_keys": 3,
+      "midtone_keys": 2,
+      "solidity": 0.967
+     },
+     "tail_l": {
+      "zone": [
+       305,
+       266,
+       515,
+       432
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.887
+     },
+     "tail_r": {
+      "zone": [
+       305,
+       855,
+       515,
+       1022
+      ],
+      "components": 5,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.829
+     }
+    }
+   }
+  },
+  {
+   "id": "B",
+   "params": {
+    "pose": "notice"
+   },
+   "png": "candidates\\lazy_storyboard_v1\\B.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\B.png",
+    "metrics": {
+     "subject_coverage": 0.1383,
+     "largest_component": 0.1333,
+     "largest_bbox_frac": 0.2386,
+     "components": 3,
+     "bboxes": [
+      [
+       272,
+       266,
+       581,
+       961
+      ],
+      [
+       177,
+       763,
+       263,
+       846
+      ],
+      [
+       183,
+       866,
+       254,
+       918
+      ]
+     ],
+     "squint": 0.21217834949493408,
+     "palette": 0.07334917530344424,
+     "clip_black": 0.0,
+     "clip_white": 0.8618144444444444,
+     "flat_fill": 0.7275244444444444
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 124430,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 3,
+     "components_target": 3,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.722
+     },
+     "snout_r": {
+      "zone": [
+       297,
+       765,
+       499,
+       960
+      ],
+      "components": 6,
+      "distinct_keys": 3,
+      "midtone_keys": 2,
+      "solidity": 0.892
+     },
+     "snout_l": {
+      "zone": [
+       297,
+       266,
+       499,
+       460
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 0.882
+     },
+     "ear_r": {
+      "zone": [
+       177,
+       717,
+       318,
+       960
+      ],
+      "components": 4,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.989
+     },
+     "ear_l": {
+      "zone": [
+       177,
+       266,
+       318,
+       508
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     },
+     "belly": {
+      "zone": [
+       398,
+       335,
+       580,
+       855
+      ],
+      "components": 5,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.973
+     },
+     "tail_l": {
+      "zone": [
+       237,
+       266,
+       499,
+       418
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.859
+     },
+     "tail_r": {
+      "zone": [
+       237,
+       807,
+       499,
+       960
+      ],
+      "components": 7,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.959
+     }
+    }
+   }
+  },
+  {
+   "id": "C",
+   "params": {
+    "pose": "flee",
+    "facing": -1,
+    "phase": 0.3
+   },
+   "png": "candidates\\lazy_storyboard_v1\\C.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\C.png",
+    "metrics": {
+     "subject_coverage": 0.1304,
+     "largest_component": 0.1304,
+     "largest_bbox_frac": 0.2282,
+     "components": 1,
+     "bboxes": [
+      [
+       217,
+       297,
+       551,
+       912
+      ]
+     ],
+     "squint": 0.17386645078659058,
+     "palette": 0.06353003948063583,
+     "clip_black": 0.0,
+     "clip_white": 0.8698344444444445,
+     "flat_fill": 0.6999422222222222
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 117336,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.844
+     },
+     "snout_r": {
+      "zone": [
+       316,
+       739,
+       483,
+       911
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.996
+     },
+     "snout_l": {
+      "zone": [
+       316,
+       297,
+       483,
+       468
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 2,
+      "solidity": 0.913
+     },
+     "ear_r": {
+      "zone": [
+       217,
+       696,
+       333,
+       911
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.975
+     },
+     "ear_l": {
+      "zone": [
+       217,
+       297,
+       333,
+       511
+      ],
+      "components": 3,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.905
+     },
+     "belly": {
+      "zone": [
+       400,
+       358,
+       550,
+       818
+      ],
+      "components": 9,
+      "distinct_keys": 5,
+      "midtone_keys": 1,
+      "solidity": 0.864
+     },
+     "tail_l": {
+      "zone": [
+       266,
+       297,
+       483,
+       432
+      ],
+      "components": 4,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.848
+     },
+     "tail_r": {
+      "zone": [
+       266,
+       775,
+       483,
+       911
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.994
+     }
+    }
+   }
+  },
+  {
+   "id": "D",
+   "params": {
+    "pose": "fly",
+    "wings": true
+   },
+   "png": "candidates\\lazy_storyboard_v1\\D.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\D.png",
+    "metrics": {
+     "subject_coverage": 0.1565,
+     "largest_component": 0.1565,
+     "largest_bbox_frac": 0.2408,
+     "components": 1,
+     "bboxes": [
+      [
+       226,
+       324,
+       579,
+       938
+      ]
+     ],
+     "squint": 0.2093290090560913,
+     "palette": 0.31117925891001685,
+     "clip_black": 0.0,
+     "clip_white": 0.8437422222222222,
+     "flat_fill": 0.6270566666666667
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 140830,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.741
+     },
+     "snout_r": {
+      "zone": [
+       331,
+       765,
+       507,
+       937
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 2,
+      "solidity": 0.927
+     },
+     "snout_l": {
+      "zone": [
+       331,
+       324,
+       507,
+       495
+      ],
+      "components": 2,
+      "distinct_keys": 2,
+      "midtone_keys": 2,
+      "solidity": 0.9
+     },
+     "ear_r": {
+      "zone": [
+       226,
+       722,
+       349,
+       937
+      ],
+      "components": 3,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.843
+     },
+     "ear_l": {
+      "zone": [
+       226,
+       324,
+       349,
+       538
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.993
+     },
+     "belly": {
+      "zone": [
+       419,
+       385,
+       578,
+       845
+      ],
+      "components": 9,
+      "distinct_keys": 4,
+      "midtone_keys": 2,
+      "solidity": 0.874
+     },
+     "tail_l": {
+      "zone": [
+       278,
+       324,
+       507,
+       458
+      ],
+      "components": 2,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.925
+     },
+     "tail_r": {
+      "zone": [
+       278,
+       802,
+       507,
+       937
+      ],
+      "components": 8,
+      "distinct_keys": 4,
+      "midtone_keys": 2,
+      "solidity": 0.828
+     }
+    }
+   }
+  },
+  {
+   "id": "E",
+   "params": {
+    "pose": "rest",
+    "outline": true
+   },
+   "png": "candidates\\lazy_storyboard_v1\\E.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\E.png",
+    "metrics": {
+     "subject_coverage": 0.1312,
+     "largest_component": 0.1297,
+     "largest_bbox_frac": 0.1984,
+     "components": 3,
+     "bboxes": [
+      [
+       324,
+       263,
+       582,
+       955
+      ],
+      [
+       257,
+       981,
+       296,
+       1023
+      ],
+      [
+       325,
+       940,
+       355,
+       972
+      ]
+     ],
+     "squint": 0.25853240489959717,
+     "palette": 0.48347645127512273,
+     "clip_black": 0.0,
+     "clip_white": 0.8672811111111111,
+     "flat_fill": 0.7344566666666666
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 118110,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 3,
+     "components_target": 3,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 2.343
+     },
+     "snout_r": {
+      "zone": [
+       354,
+       809,
+       516,
+       1022
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 1.0
+     },
+     "snout_l": {
+      "zone": [
+       354,
+       263,
+       516,
+       475
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 0.925
+     },
+     "ear_r": {
+      "zone": [
+       257,
+       756,
+       370,
+       1022
+      ],
+      "components": 4,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.767
+     },
+     "ear_l": {
+      "zone": [
+       257,
+       263,
+       370,
+       528
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     },
+     "belly": {
+      "zone": [
+       435,
+       338,
+       581,
+       908
+      ],
+      "components": 9,
+      "distinct_keys": 5,
+      "midtone_keys": 2,
+      "solidity": 0.971
+     },
+     "tail_l": {
+      "zone": [
+       305,
+       263,
+       516,
+       429
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.91
+     },
+     "tail_r": {
+      "zone": [
+       305,
+       855,
+       516,
+       1022
+      ],
+      "components": 5,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.845
+     }
+    }
+   }
+  },
+  {
+   "id": "F",
+   "params": {
+    "pose": "notice",
+    "outline": true
+   },
+   "png": "candidates\\lazy_storyboard_v1\\F.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\F.png",
+    "metrics": {
+     "subject_coverage": 0.1443,
+     "largest_component": 0.138,
+     "largest_bbox_frac": 0.2438,
+     "components": 3,
+     "bboxes": [
+      [
+       269,
+       263,
+       582,
+       964
+      ],
+      [
+       170,
+       757,
+       266,
+       850
+      ],
+      [
+       176,
+       863,
+       258,
+       922
+      ]
+     ],
+     "squint": 0.23731613159179688,
+     "palette": 0.4719934721108536,
+     "clip_black": 0.0,
+     "clip_white": 0.8558055555555556,
+     "flat_fill": 0.6993477777777778
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 129841,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 3,
+     "components_target": 3,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.703
+     },
+     "snout_r": {
+      "zone": [
+       293,
+       767,
+       498,
+       963
+      ],
+      "components": 6,
+      "distinct_keys": 3,
+      "midtone_keys": 2,
+      "solidity": 0.904
+     },
+     "snout_l": {
+      "zone": [
+       293,
+       263,
+       498,
+       459
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 0.904
+     },
+     "ear_r": {
+      "zone": [
+       170,
+       718,
+       313,
+       963
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.988
+     },
+     "ear_l": {
+      "zone": [
+       170,
+       263,
+       313,
+       507
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     },
+     "belly": {
+      "zone": [
+       396,
+       333,
+       581,
+       858
+      ],
+      "components": 8,
+      "distinct_keys": 4,
+      "midtone_keys": 1,
+      "solidity": 0.978
+     },
+     "tail_l": {
+      "zone": [
+       231,
+       263,
+       498,
+       417
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.888
+     },
+     "tail_r": {
+      "zone": [
+       231,
+       809,
+       498,
+       963
+      ],
+      "components": 5,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.972
+     }
+    }
+   }
+  },
+  {
+   "id": "G",
+   "params": {
+    "pose": "flee",
+    "facing": -1,
+    "phase": 0.3,
+    "outline": true
+   },
+   "png": "candidates\\lazy_storyboard_v1\\G.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\G.png",
+    "metrics": {
+     "subject_coverage": 0.1344,
+     "largest_component": 0.1344,
+     "largest_bbox_frac": 0.2322,
+     "components": 1,
+     "bboxes": [
+      [
+       214,
+       295,
+       551,
+       915
+      ]
+     ],
+     "squint": 0.18808197975158691,
+     "palette": 0.43292645020475823,
+     "clip_black": 0.0,
+     "clip_white": 0.8658777777777777,
+     "flat_fill": 0.6491877777777778
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 120978,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.842
+     },
+     "snout_r": {
+      "zone": [
+       314,
+       740,
+       482,
+       914
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.996
+     },
+     "snout_l": {
+      "zone": [
+       314,
+       295,
+       482,
+       468
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 2,
+      "solidity": 0.921
+     },
+     "ear_r": {
+      "zone": [
+       214,
+       697,
+       331,
+       914
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.978
+     },
+     "ear_l": {
+      "zone": [
+       214,
+       295,
+       331,
+       511
+      ],
+      "components": 4,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.922
+     },
+     "belly": {
+      "zone": [
+       398,
+       356,
+       550,
+       821
+      ],
+      "components": 14,
+      "distinct_keys": 6,
+      "midtone_keys": 2,
+      "solidity": 0.876
+     },
+     "tail_l": {
+      "zone": [
+       264,
+       295,
+       482,
+       431
+      ],
+      "components": 5,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.859
+     },
+     "tail_r": {
+      "zone": [
+       264,
+       777,
+       482,
+       914
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.995
+     }
+    }
+   }
+  },
+  {
+   "id": "H",
+   "params": {
+    "pose": "fly",
+    "wings": true,
+    "outline": true
+   },
+   "png": "candidates\\lazy_storyboard_v1\\H.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions"
+   ],
+   "audit": {
+    "file": "candidates\\lazy_storyboard_v1\\H.png",
+    "metrics": {
+     "subject_coverage": 0.1597,
+     "largest_component": 0.1597,
+     "largest_bbox_frac": 0.2424,
+     "components": 1,
+     "bboxes": [
+      [
+       226,
+       322,
+       579,
+       940
+      ]
+     ],
+     "squint": 0.23007041215896606,
+     "palette": 0.6469702463488698,
+     "clip_black": 0.0,
+     "clip_white": 0.8405333333333334,
+     "flat_fill": 0.60763
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 143713,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.753
+     },
+     "snout_r": {
+      "zone": [
+       331,
+       766,
+       507,
+       939
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 2,
+      "solidity": 0.931
+     },
+     "snout_l": {
+      "zone": [
+       331,
+       322,
+       507,
+       494
+      ],
+      "components": 2,
+      "distinct_keys": 2,
+      "midtone_keys": 2,
+      "solidity": 0.912
+     },
+     "ear_r": {
+      "zone": [
+       226,
+       723,
+       349,
+       939
+      ],
+      "components": 3,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.861
+     },
+     "ear_l": {
+      "zone": [
+       226,
+       322,
+       349,
+       537
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.995
+     },
+     "belly": {
+      "zone": [
+       419,
+       383,
+       578,
+       846
+      ],
+      "components": 12,
+      "distinct_keys": 5,
+      "midtone_keys": 2,
+      "solidity": 0.881
+     },
+     "tail_l": {
+      "zone": [
+       278,
+       322,
+       507,
+       457
+      ],
+      "components": 2,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.934
+     },
+     "tail_r": {
+      "zone": [
+       278,
+       803,
+       507,
+       939
+      ],
+      "components": 8,
+      "distinct_keys": 4,
+      "midtone_keys": 2,
+      "solidity": 0.846
+     }
+    }
+   }
+  }
+ ],
+ "sheet": "candidates\\lazy_storyboard_v1\\sheet.png"
+}
