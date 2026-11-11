@@ -63,7 +63,7 @@ def draw_w2_pig(ax, pose="rest", belly=1.0, droop=1.0, ear="flop",
           + ax.transData) if facing < 0 else ax.transData
 
     ec = DARK if outline else "none"
-    lw = 1.8 if outline else 0          # waddles = THIN outline
+    lw = 5.0 if outline else 0          # waddles = visible line
 
     def add(p):
         p.set_transform(tr); ax.add_patch(p); return p
@@ -127,9 +127,9 @@ def draw_w2_pig(ax, pose="rest", belly=1.0, droop=1.0, ear="flop",
     def snout(sx, sy, s, z):
         """Droopy oval hung low - big like waddles, nostrils at droop end."""
         ellipse(sx, sy, 2.3*s, 1.9*s, PINK, z, e=ec, ww=lw)
-        ellipse(sx - 0.42*s, sy - 0.22*s, 0.34, 0.5, DARK, z + 1,
+        ellipse(sx - 0.42*s, sy - 0.22*s, 0.44, 0.62, DARK, z + 1,
                 angle=-12)
-        ellipse(sx + 0.42*s, sy - 0.22*s, 0.34, 0.5, DARK, z + 1,
+        ellipse(sx + 0.42*s, sy - 0.22*s, 0.44, 0.62, DARK, z + 1,
                 angle=12)
 
     def eye(ex, ey, mode, z):
@@ -146,7 +146,7 @@ def draw_w2_pig(ax, pose="rest", belly=1.0, droop=1.0, ear="flop",
                  DARK, z + 0.1, w=2.0)
         else:                    # wide - still waddles-tiny, just open
             ellipse(ex, ey, 0.4, 0.5, "#FFFFFF", z)
-            ellipse(ex + 0.02, ey - 0.02, 0.2, 0.26, DARK, z + 0.1)
+            ellipse(ex + 0.02, ey - 0.02, 0.26, 0.34, DARK, z + 0.1)
             ellipse(ex + 0.07, ey + 0.08, 0.08, 0.1, "#FFFFFF", z + 0.2)
 
     def tail_curl(tx, ty, s, z):
@@ -159,7 +159,7 @@ def draw_w2_pig(ax, pose="rest", belly=1.0, droop=1.0, ear="flop",
         for i in range(len(t) - 1):
             if outline:
                 ax.plot(pts[i:i+2, 0], pts[i:i+2, 1], color=DARK,
-                        lw=lws[i] + 1.8, solid_capstyle="round",
+                        lw=lws[i] + 3.0, solid_capstyle="round",
                         zorder=z - 0.1)
             ax.plot(pts[i:i+2, 0], pts[i:i+2, 1], color=PINK,
                     lw=lws[i], solid_capstyle="round", zorder=z)
@@ -175,7 +175,7 @@ def draw_w2_pig(ax, pose="rest", belly=1.0, droop=1.0, ear="flop",
             codes = [Path.MOVETO] + _codes(len(v) - 1)
             ax.add_patch(mpatches.PathPatch(
                 Path(v + [v[0]], codes + [Path.CLOSEPOLY]),
-                fc=c, ec=WING_EC, lw=1.6, zorder=z + dz,
+                fc=c, ec=WING_EC, lw=3.0, zorder=z + dz,
                 joinstyle="round", transform=wtr))
 
     def loaf(cx, cy, w, h, z):

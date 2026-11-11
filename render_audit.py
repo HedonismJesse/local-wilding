@@ -51,6 +51,7 @@ DEFAULTS = {
     "textline_min_glyphs": 5,   # same-color components forming a line
     "target_w": 320,            # downsample readability target
     "detail_frac_min": 0.3,     # illegibility = detail-dense subject
+    "outline_frac_min": 0.25,   # asset expects visible dark boundary
     "detail_floor_frac": 0.005, # absolute detail floor (kills speckle)
     "clip_frac_max": 0.05,
     "palette_entropy_max": 2.3,
@@ -368,6 +369,19 @@ def _detail_density(regions, mask, text_any, frame_area):
                       detail > DEFAULTS["detail_floor_frac"] * frame_area)}
 
 
+def _outline_strength(img, mask):
+    """Dark-pixel fraction on the subject's boundary band — the
+    register probe: a waddles-register cartoon is a LINE drawing
+    (dark stroke binding silhouette + features); flat outline-less
+    collages score ~0 (the storyboard_w2_v1 rejection class)."""
+    from skimage.morphology import binary_erosion, disk
+    er = binary_erosion(mask, disk(2))
+    boundary = mask & ~er
+    if not boundary.any():
+        return 0.0
+    return float((_lum(img) < 0.35)[boundary].mean())
+
+
 def _downsample_survival(img, mask):
     """Component count at full res vs after resize to target width —
     informational metric backing the detail-density flag."""
@@ -477,6 +491,7 @@ def audit_frame(path: Path, spec: dict | None = None,
         "palette": palette_entropy(img),
         "clip_black": cb, "clip_white": cw,
         "flat_fill": flat_fill_ratio(img),
+        "outline_frac": round(_outline_strength(img, mask), 3),
     }
     groups = _color_components(img, mask)
     streaks = _streak(regions, frame_area)
@@ -513,6 +528,9 @@ def audit_frame(path: Path, spec: dict | None = None,
         flags.append("blown_whites")
     if metrics["flat_fill"] > cfg["flat_fill_max"]:
         flags.append("flat_fill_regions")
+    if is_asset and metrics["outline_frac"] < \
+            cfg["outline_frac_min"]:
+        flags.append("weak_outline")
     if spec and spec.get("min_components") and \
             len(regions) < spec["min_components"]:
         flags.append("merged_blob_vs_spec")

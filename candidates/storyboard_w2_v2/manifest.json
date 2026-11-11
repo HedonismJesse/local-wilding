@@ -1,0 +1,1356 @@
+{
+ "builder": "pig_w2:draw_w2_pig",
+ "spec": "canon\\pig_w2.json",
+ "refs": {
+  "manifest": "canon\\refs\\refs.json",
+  "picks": [
+   "waddles"
+  ]
+ },
+ "no_ref": false,
+ "variants": [
+  {
+   "id": "A",
+   "params": {
+    "pose": "rest"
+   },
+   "png": "candidates\\storyboard_w2_v2\\A.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "ref_miss:ear",
+    "ref_miss:spots"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\A.png",
+    "metrics": {
+     "subject_coverage": 0.1245,
+     "largest_component": 0.1158,
+     "largest_bbox_frac": 0.1714,
+     "components": 4,
+     "bboxes": [
+      [
+       394,
+       271,
+       626,
+       936
+      ],
+      [
+       340,
+       721,
+       416,
+       858
+      ],
+      [
+       267,
+       896,
+       303,
+       935
+      ],
+      [
+       330,
+       854,
+       357,
+       884
+      ]
+     ],
+     "squint": 0.2856770157814026,
+     "palette": 0.6651802346494492,
+     "clip_black": 0.0,
+     "clip_white": 0.8737422222222222,
+     "flat_fill": 0.6526722222222222,
+     "outline_frac": 0.993
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.004,
+     "detail_px": 443,
+     "nontext_px": 112033,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 4,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.855
+     },
+     "snout_r": {
+      "zone": [
+       410,
+       735,
+       607,
+       935
+      ],
+      "components": 7,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.941
+     },
+     "snout_l": {
+      "zone": [
+       410,
+       271,
+       607,
+       470
+      ],
+      "components": 5,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.813
+     },
+     "ear_r": {
+      "zone": [
+       267,
+       669,
+       392,
+       935
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.858
+     },
+     "ear_l": {
+      "zone": [
+       267,
+       271,
+       392,
+       536
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     },
+     "belly": {
+      "zone": [
+       446,
+       337,
+       625,
+       835
+      ],
+      "components": 15,
+      "distinct_keys": 6,
+      "midtone_keys": 3,
+      "solidity": 0.817
+     },
+     "tail_l": {
+      "zone": [
+       302,
+       271,
+       553,
+       403
+      ],
+      "components": 1,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.8
+     },
+     "tail_r": {
+      "zone": [
+       302,
+       802,
+       553,
+       935
+      ],
+      "components": 5,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 0.769,
+    "parts": {
+     "snout": 0.55,
+     "ear": 0.042,
+     "eye": 0.264,
+     "legs": 0.346,
+     "tail": 0.236,
+     "spots": 0.044
+    },
+    "misses": [
+     "ear",
+     "spots"
+    ]
+   }
+  },
+  {
+   "id": "B",
+   "params": {
+    "pose": "notice"
+   },
+   "png": "candidates\\storyboard_w2_v2\\B.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "hollow_belly_vs_spec",
+    "ref_miss:ear"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\B.png",
+    "metrics": {
+     "subject_coverage": 0.1219,
+     "largest_component": 0.1156,
+     "largest_bbox_frac": 0.1688,
+     "components": 3,
+     "bboxes": [
+      [
+       394,
+       271,
+       626,
+       926
+      ],
+      [
+       314,
+       743,
+       384,
+       848
+      ],
+      [
+       329,
+       725,
+       375,
+       750
+      ]
+     ],
+     "squint": 0.2668045163154602,
+     "palette": 0.6054675758525239,
+     "clip_black": 0.0,
+     "clip_white": 0.8769455555555555,
+     "flat_fill": 0.6662077777777777,
+     "outline_frac": 0.955
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions",
+     "hollow_belly_vs_spec"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 109688,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 3,
+     "components_target": 2,
+     "survival": 0.667
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 2.103
+     },
+     "snout_r": {
+      "zone": [
+       438,
+       728,
+       609,
+       925
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.954
+     },
+     "snout_l": {
+      "zone": [
+       438,
+       271,
+       609,
+       467
+      ],
+      "components": 5,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.839
+     },
+     "ear_r": {
+      "zone": [
+       314,
+       663,
+       422,
+       925
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.969
+     },
+     "ear_l": {
+      "zone": [
+       314,
+       271,
+       422,
+       532
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.975
+     },
+     "belly": {
+      "zone": [
+       469,
+       336,
+       625,
+       826
+      ],
+      "components": 12,
+      "distinct_keys": 5,
+      "midtone_keys": 2,
+      "solidity": 0.788
+     },
+     "tail_l": {
+      "zone": [
+       345,
+       271,
+       562,
+       401
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 0.794
+     },
+     "tail_r": {
+      "zone": [
+       345,
+       794,
+       562,
+       925
+      ],
+      "components": 5,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.982
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 0.846,
+    "parts": {
+     "snout": 0.645,
+     "ear": 0.069,
+     "eye": 0.109,
+     "legs": 0.284,
+     "tail": 0.357,
+     "spots": 0.359
+    },
+    "misses": [
+     "ear"
+    ]
+   }
+  },
+  {
+   "id": "C",
+   "params": {
+    "pose": "flee",
+    "facing": -1
+   },
+   "png": "candidates\\storyboard_w2_v2\\C.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "hollow_belly_vs_spec",
+    "ref_miss:eye"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\C.png",
+    "metrics": {
+     "subject_coverage": 0.1169,
+     "largest_component": 0.1169,
+     "largest_bbox_frac": 0.1757,
+     "components": 1,
+     "bboxes": [
+      [
+       320,
+       304,
+       584,
+       903
+      ]
+     ],
+     "squint": 0.26138174533843994,
+     "palette": 0.5769616833798578,
+     "clip_black": 0.0,
+     "clip_white": 0.8821811111111111,
+     "flat_fill": 0.6591622222222222,
+     "outline_frac": 0.973
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions",
+     "hollow_belly_vs_spec"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 105178,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 2.274
+     },
+     "snout_r": {
+      "zone": [
+       425,
+       722,
+       569,
+       902
+      ],
+      "components": 5,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.85
+     },
+     "snout_l": {
+      "zone": [
+       425,
+       304,
+       569,
+       483
+      ],
+      "components": 8,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.88
+     },
+     "ear_r": {
+      "zone": [
+       320,
+       662,
+       412,
+       902
+      ],
+      "components": 1,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.993
+     },
+     "ear_l": {
+      "zone": [
+       320,
+       304,
+       412,
+       543
+      ],
+      "components": 3,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.911
+     },
+     "belly": {
+      "zone": [
+       451,
+       363,
+       583,
+       812
+      ],
+      "components": 12,
+      "distinct_keys": 5,
+      "midtone_keys": 2,
+      "solidity": 0.678
+     },
+     "tail_l": {
+      "zone": [
+       346,
+       304,
+       530,
+       423
+      ],
+      "components": 3,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.951
+     },
+     "tail_r": {
+      "zone": [
+       346,
+       782,
+       530,
+       902
+      ],
+      "components": 1,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.941
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 0.846,
+    "parts": {
+     "snout": 0.557,
+     "ear": 0.573,
+     "eye": 0.028,
+     "legs": 0.175,
+     "tail": 0.726,
+     "spots": 0.987
+    },
+    "misses": [
+     "eye"
+    ]
+   }
+  },
+  {
+   "id": "D",
+   "params": {
+    "pose": "fly",
+    "wings": true
+   },
+   "png": "candidates\\storyboard_w2_v2\\D.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "hollow_belly_vs_spec",
+    "ref_miss:ear"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\D.png",
+    "metrics": {
+     "subject_coverage": 0.1455,
+     "largest_component": 0.1455,
+     "largest_bbox_frac": 0.2394,
+     "components": 1,
+     "bboxes": [
+      [
+       245,
+       333,
+       612,
+       920
+      ]
+     ],
+     "squint": 0.28840380907058716,
+     "palette": 0.829677769325612,
+     "clip_black": 0.0,
+     "clip_white": 0.8531766666666667,
+     "flat_fill": 0.5996011111111111,
+     "outline_frac": 0.77
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions",
+     "hollow_belly_vs_spec"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 130960,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.601
+     },
+     "snout_r": {
+      "zone": [
+       391,
+       743,
+       592,
+       919
+      ],
+      "components": 7,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.914
+     },
+     "snout_l": {
+      "zone": [
+       391,
+       333,
+       592,
+       508
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.805
+     },
+     "ear_r": {
+      "zone": [
+       245,
+       684,
+       373,
+       919
+      ],
+      "components": 2,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.949
+     },
+     "ear_l": {
+      "zone": [
+       245,
+       333,
+       373,
+       567
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.994
+     },
+     "belly": {
+      "zone": [
+       428,
+       391,
+       611,
+       831
+      ],
+      "components": 16,
+      "distinct_keys": 6,
+      "midtone_keys": 3,
+      "solidity": 0.72
+     },
+     "tail_l": {
+      "zone": [
+       281,
+       333,
+       537,
+       450
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.875
+     },
+     "tail_r": {
+      "zone": [
+       281,
+       801,
+       537,
+       919
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.76
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 0.846,
+    "parts": {
+     "snout": 0.532,
+     "ear": 0.075,
+     "eye": 0.175,
+     "legs": 0.114,
+     "tail": 0.49,
+     "spots": 0.644
+    },
+    "misses": [
+     "ear"
+    ]
+   }
+  },
+  {
+   "id": "E",
+   "params": {
+    "pose": "rest",
+    "droop": 1.15,
+    "belly": 1.1
+   },
+   "png": "candidates\\storyboard_w2_v2\\E.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "ref_miss:ear",
+    "ref_miss:spots"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\E.png",
+    "metrics": {
+     "subject_coverage": 0.1316,
+     "largest_component": 0.1229,
+     "largest_bbox_frac": 0.1743,
+     "components": 4,
+     "bboxes": [
+      [
+       394,
+       271,
+       626,
+       947
+      ],
+      [
+       340,
+       721,
+       416,
+       858
+      ],
+      [
+       267,
+       896,
+       303,
+       935
+      ],
+      [
+       330,
+       854,
+       357,
+       884
+      ]
+     ],
+     "squint": 0.28569239377975464,
+     "palette": 0.651640080388907,
+     "clip_black": 0.0,
+     "clip_white": 0.8667255555555555,
+     "flat_fill": 0.6531611111111111,
+     "outline_frac": 1.0
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.004,
+     "detail_px": 443,
+     "nontext_px": 118400,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 4,
+     "components_target": 4,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.885
+     },
+     "snout_r": {
+      "zone": [
+       410,
+       743,
+       607,
+       946
+      ],
+      "components": 7,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.949
+     },
+     "snout_l": {
+      "zone": [
+       410,
+       271,
+       607,
+       473
+      ],
+      "components": 5,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.859
+     },
+     "ear_r": {
+      "zone": [
+       267,
+       676,
+       392,
+       946
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.858
+     },
+     "ear_l": {
+      "zone": [
+       267,
+       271,
+       392,
+       541
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     },
+     "belly": {
+      "zone": [
+       446,
+       338,
+       625,
+       844
+      ],
+      "components": 17,
+      "distinct_keys": 7,
+      "midtone_keys": 3,
+      "solidity": 0.818
+     },
+     "tail_l": {
+      "zone": [
+       302,
+       271,
+       553,
+       406
+      ],
+      "components": 1,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.878
+     },
+     "tail_r": {
+      "zone": [
+       302,
+       811,
+       553,
+       946
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 1.0
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 0.769,
+    "parts": {
+     "snout": 0.588,
+     "ear": 0.052,
+     "eye": 0.282,
+     "legs": 0.347,
+     "tail": 0.34,
+     "spots": 0.045
+    },
+    "misses": [
+     "ear",
+     "spots"
+    ]
+   }
+  },
+  {
+   "id": "F",
+   "params": {
+    "pose": "notice",
+    "droop": 1.15,
+    "belly": 1.1
+   },
+   "png": "candidates\\storyboard_w2_v2\\F.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "hollow_belly_vs_spec",
+    "ref_miss:ear"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\F.png",
+    "metrics": {
+     "subject_coverage": 0.1278,
+     "largest_component": 0.1216,
+     "largest_bbox_frac": 0.1714,
+     "components": 3,
+     "bboxes": [
+      [
+       394,
+       271,
+       626,
+       936
+      ],
+      [
+       314,
+       743,
+       384,
+       848
+      ],
+      [
+       329,
+       725,
+       375,
+       750
+      ]
+     ],
+     "squint": 0.2715839147567749,
+     "palette": 0.5991884870539382,
+     "clip_black": 0.0,
+     "clip_white": 0.8710588888888889,
+     "flat_fill": 0.6736111111111112,
+     "outline_frac": 0.97
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions",
+     "hollow_belly_vs_spec"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 115037,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 3,
+     "components_target": 2,
+     "survival": 0.667
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 2.135
+     },
+     "snout_r": {
+      "zone": [
+       438,
+       735,
+       609,
+       935
+      ],
+      "components": 7,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.958
+     },
+     "snout_l": {
+      "zone": [
+       438,
+       271,
+       609,
+       470
+      ],
+      "components": 5,
+      "distinct_keys": 3,
+      "midtone_keys": 1,
+      "solidity": 0.873
+     },
+     "ear_r": {
+      "zone": [
+       314,
+       669,
+       422,
+       935
+      ],
+      "components": 6,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.969
+     },
+     "ear_l": {
+      "zone": [
+       314,
+       271,
+       422,
+       536
+      ],
+      "components": 0,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.975
+     },
+     "belly": {
+      "zone": [
+       469,
+       337,
+       625,
+       835
+      ],
+      "components": 15,
+      "distinct_keys": 6,
+      "midtone_keys": 2,
+      "solidity": 0.791
+     },
+     "tail_l": {
+      "zone": [
+       345,
+       271,
+       562,
+       403
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 1,
+      "solidity": 0.868
+     },
+     "tail_r": {
+      "zone": [
+       345,
+       802,
+       562,
+       935
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.99
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 0.846,
+    "parts": {
+     "snout": 0.637,
+     "ear": 0.085,
+     "eye": 0.145,
+     "legs": 0.278,
+     "tail": 0.527,
+     "spots": 0.361
+    },
+    "misses": [
+     "ear"
+    ]
+   }
+  },
+  {
+   "id": "G",
+   "params": {
+    "pose": "flee",
+    "facing": -1,
+    "droop": 1.15,
+    "belly": 1.1
+   },
+   "png": "candidates\\storyboard_w2_v2\\G.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "hollow_belly_vs_spec"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\G.png",
+    "metrics": {
+     "subject_coverage": 0.1241,
+     "largest_component": 0.1241,
+     "largest_bbox_frac": 0.186,
+     "components": 1,
+     "bboxes": [
+      [
+       320,
+       295,
+       584,
+       929
+      ]
+     ],
+     "squint": 0.27100181579589844,
+     "palette": 0.5726944346241349,
+     "clip_black": 0.0,
+     "clip_white": 0.8748922222222222,
+     "flat_fill": 0.6586066666666667,
+     "outline_frac": 0.977
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions",
+     "hollow_belly_vs_spec"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 111733,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 2.407
+     },
+     "snout_r": {
+      "zone": [
+       425,
+       738,
+       569,
+       928
+      ],
+      "components": 4,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.856
+     },
+     "snout_l": {
+      "zone": [
+       425,
+       295,
+       569,
+       484
+      ],
+      "components": 9,
+      "distinct_keys": 2,
+      "midtone_keys": 0,
+      "solidity": 0.885
+     },
+     "ear_r": {
+      "zone": [
+       320,
+       674,
+       412,
+       928
+      ],
+      "components": 1,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.993
+     },
+     "ear_l": {
+      "zone": [
+       320,
+       295,
+       412,
+       548
+      ],
+      "components": 3,
+      "distinct_keys": 2,
+      "midtone_keys": 1,
+      "solidity": 0.942
+     },
+     "belly": {
+      "zone": [
+       451,
+       358,
+       583,
+       833
+      ],
+      "components": 15,
+      "distinct_keys": 5,
+      "midtone_keys": 1,
+      "solidity": 0.693
+     },
+     "tail_l": {
+      "zone": [
+       346,
+       295,
+       530,
+       421
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.964
+     },
+     "tail_r": {
+      "zone": [
+       346,
+       801,
+       530,
+       928
+      ],
+      "components": 1,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.951
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 1.0,
+    "parts": {
+     "snout": 0.572,
+     "ear": 0.586,
+     "eye": 0.085,
+     "legs": 0.195,
+     "tail": 0.724,
+     "spots": 0.995
+    },
+    "misses": []
+   }
+  },
+  {
+   "id": "H",
+   "params": {
+    "pose": "fly",
+    "wings": true,
+    "droop": 1.15,
+    "belly": 1.1
+   },
+   "png": "candidates\\storyboard_w2_v2\\H.png",
+   "flags": [
+    "blown_whites",
+    "flat_fill_regions",
+    "hollow_belly_vs_spec",
+    "ref_miss:ear"
+   ],
+   "audit": {
+    "file": "candidates\\storyboard_w2_v2\\H.png",
+    "metrics": {
+     "subject_coverage": 0.1527,
+     "largest_component": 0.1527,
+     "largest_bbox_frac": 0.2536,
+     "components": 1,
+     "bboxes": [
+      [
+       245,
+       308,
+       612,
+       930
+      ]
+     ],
+     "squint": 0.28481918573379517,
+     "palette": 0.8117036899286877,
+     "clip_black": 0.0,
+     "clip_white": 0.8459344444444444,
+     "flat_fill": 0.5970855555555555,
+     "outline_frac": 0.776
+    },
+    "flags": [
+     "blown_whites",
+     "flat_fill_regions",
+     "hollow_belly_vs_spec"
+    ],
+    "streaks": [],
+    "spiky": [],
+    "occlusions": [],
+    "detail": {
+     "detail_frac": 0.0,
+     "detail_px": 0,
+     "nontext_px": 137426,
+     "dense": false
+    },
+    "scale": {
+     "components_full": 1,
+     "components_target": 1,
+     "survival": 1.0
+    },
+    "spec": {
+     "_subject": {
+      "aspect": 1.697
+     },
+     "snout_r": {
+      "zone": [
+       391,
+       742,
+       592,
+       929
+      ],
+      "components": 8,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.93
+     },
+     "snout_l": {
+      "zone": [
+       391,
+       308,
+       592,
+       494
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.802
+     },
+     "ear_r": {
+      "zone": [
+       245,
+       680,
+       373,
+       929
+      ],
+      "components": 2,
+      "distinct_keys": 0,
+      "midtone_keys": 0,
+      "solidity": 0.95
+     },
+     "ear_l": {
+      "zone": [
+       245,
+       308,
+       373,
+       556
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.994
+     },
+     "belly": {
+      "zone": [
+       428,
+       370,
+       611,
+       835
+      ],
+      "components": 15,
+      "distinct_keys": 4,
+      "midtone_keys": 1,
+      "solidity": 0.726
+     },
+     "tail_l": {
+      "zone": [
+       281,
+       308,
+       537,
+       432
+      ],
+      "components": 2,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.856
+     },
+     "tail_r": {
+      "zone": [
+       281,
+       804,
+       537,
+       929
+      ],
+      "components": 4,
+      "distinct_keys": 1,
+      "midtone_keys": 0,
+      "solidity": 0.76
+     }
+    }
+   },
+   "ref_match": {
+    "ref": "waddles",
+    "score": 0.846,
+    "parts": {
+     "snout": 0.558,
+     "ear": 0.086,
+     "eye": 0.171,
+     "legs": 0.116,
+     "tail": 0.431,
+     "spots": 0.664
+    },
+    "misses": [
+     "ear"
+    ]
+   }
+  }
+ ],
+ "sheet": "candidates\\storyboard_w2_v2\\sheet.png",
+ "review": "candidates\\storyboard_w2_v2\\review.html"
+}
