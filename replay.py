@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -47,12 +48,27 @@ class Recorder:
         return path
 
 
-def replay_transport(directory: Path = EVIDENCE):
-    """A transport serving recorded responses in filename order."""
+def replay_transport(directory: Path = EVIDENCE, pace: float | None = None,
+                     match: str | None = None):
+    """A transport serving recorded responses in filename order.
+
+    ``pace`` is seconds slept per replayed call — replays otherwise dump
+    instantly, which reads broken in the console. ``LW_REPLAY_PACE``
+    overrides (default 0.8s).
+
+    ``match`` restricts to files whose name contains the string — the
+    recorded filenames carry the served model (`NN_stepK_<model>.json`),
+    so "Llama" replays the local arm and "openai" the gateway arm.
+    """
     files = sorted(p for p in directory.glob("*.json") if p.name[:2].isdigit())
+    if match:
+        files = [p for p in files if match in p.name]
     it = iter(files)
+    if pace is None:
+        pace = float(os.environ.get("LW_REPLAY_PACE", "0.8"))
 
     def _transport(url: str, payload: dict, headers: dict, timeout: int) -> CallResult:
+        time.sleep(pace)
         path = next(it, None)
         if path is None:
             return CallResult(ok=False, status=0, error="replay exhausted")

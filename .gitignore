@@ -8,3 +8,9 @@ narration/
 *.wav
 fly_frames/
 anim_frames/
+shots_v8/
+segs_v8/
+qc_v8/
+vo_clone/
+vo_final/
+vo_tmp/

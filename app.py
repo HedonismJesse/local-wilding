@@ -93,7 +93,7 @@ def mint_receipt(arm: str, endpoint: str, model_req: str, prompt: str,
         "endpoint": endpoint,
         "arm": arm,
         "model_requested": model_req,
-        "model_served": "",
+        "model_served": out.get("served", ""),
         "tools_declared": tools_decl,
         "tools_ran": [t["tool"] for t in (out.get("trace") or [])],
         "prompt": prompt,
@@ -170,13 +170,21 @@ def _send_one(jid: str, arm: str, client: OtariClient, prompt: str,
               tools: list[str], cap: float | None) -> dict:
     """One run_task with recorder + receipt minting."""
     if REPLAY:
-        client._post = replay_transport()
+        client._post = replay_transport(
+            match="Llama" if arm == "local" else "openai")
     rec = Recorder(directory=RAW_DIR)
     ledger = (SpendLedger(cap_usd=cap, path=LEDGER_PATH)
               if cap is not None else None)
     decl = [{"type": t} for t in tools] or None
+    served: list[str] = []
+
+    class _Sink:
+        def record(self, r): served.append(r.served_model)
+
     out = run_task(client, prompt, tools=decl, ledger=ledger,
-                   on_event=_emit(jid, arm), recorder=rec)
+                   on_event=_emit(jid, arm), recorder=rec,
+                   receipts=_Sink())
+    out["served"] = next((s for s in reversed(served) if s), "")
     raw = ""
     if rec.seq:
         raw = str(RAW_DIR / f"{rec.seq:02d}_*.json")
@@ -190,7 +198,7 @@ def run_send(jid: str, prompt: str, model: str, cap: float,
              tools: list[str], arm: str) -> None:
     try:
         if arm == "local":
-            if not local_arm.available():
+            if not local_arm.available() and not REPLAY:
                 _finish(jid, {"ok": False, "error":
                               "LOCAL_BASE_URL unset — start llamafile/LM "
                               "Studio and set it for the free local arm."})
@@ -216,7 +224,7 @@ def run_send(jid: str, prompt: str, model: str, cap: float,
 def run_demo(jid: str, cap: float) -> None:
     try:
         arms: dict = {"local": None, "gateway": None, "cap": None}
-        if local_arm.available():
+        if local_arm.available() or REPLAY:
             _note(jid, "local", "beat", label="local arm — no tools")
             arms["local"] = _send_one(jid, "local",
                                       local_arm.local_client(),
@@ -332,7 +340,7 @@ gap:14px;padding:14px;flex:1;min-height:0;overflow:hidden}
 .card{background:var(--panel);border:1px solid #1E3A47;border-radius:8px;
 padding:12px}
 h3{margin:0;color:var(--amber);font-size:13px;letter-spacing:.5px}
-.step{display:inline-block;background:#123a2e;color:var(--teal);
+.nstep{display:inline-block;background:#123a2e;color:var(--teal);
 border-radius:50%;width:18px;height:18px;text-align:center;
 line-height:18px;font-size:11px;margin-right:6px}
 .secsub{color:var(--dim);font-size:11.5px;font-weight:400}
@@ -396,7 +404,7 @@ a{color:var(--teal)}
  onclick="demo()">run devs-wilding demo</button></header>
 <main>
 <div class=colL>
-<div class=card><h3><span class=step>1</span>dispatch
+<div class=card><h3><span class=nstep>1</span>dispatch
 <span class=secsub>— any prompt, any endpoint</span></h3>
 <textarea id=prompt placeholder="prompt…"></textarea>
 <label>model</label><select id=model></select>
@@ -412,7 +420,7 @@ a{color:var(--teal)}
 <div class=card style="padding:0">
 <div id=lbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
  cursor:pointer;user-select:none" onclick="toggleLedger()">
-<span style="color:var(--amber)"><span class=step>4</span>spend ledger
+<span style="color:var(--amber)"><span class=nstep>4</span>spend ledger
 <span class=secsub>— enforcement record</span></span>
 <span id=lsum style="color:var(--dim);font-size:11.5px">…</span>
 <span id=lcaret style="margin-left:auto;color:var(--dim)">▸</span></div>
@@ -422,7 +430,7 @@ a{color:var(--teal)}
 <tbody id=ledger></tbody></table></div></div>
 </div>
 <div class=colR>
-<div class="card feedcard"><h3><span class=step>2</span>live feed
+<div class="card feedcard"><h3><span class=nstep>2</span>live feed
 <span class=secsub>— events stream as they happen</span></h3>
 <div id=feed class=feed></div>
 <div id=demoPane><h3>demo — same task, two arms
@@ -436,7 +444,7 @@ a{color:var(--teal)}
 <div class="card rboxcard" style="padding:0">
 <div id=rbar style="display:flex;gap:14px;align-items:center;padding:10px 14px;
  cursor:pointer;user-select:none" onclick="toggleRbox()">
-<span style="color:var(--amber)"><span class=step>3</span>receipt box
+<span style="color:var(--amber)"><span class=nstep>3</span>receipt box
 <span class=secsub>— one per dispatch, hash-verifiable</span></span>
 <span id=rcount style="color:var(--dim)"></span>
 <span style="margin-left:auto" onclick="event.stopPropagation()">
