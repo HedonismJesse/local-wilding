@@ -26,6 +26,10 @@ from PIL import Image
 N = 256
 
 
+NON_PIG = [(223, 244, 238), (185, 228, 216)]   # wing mint shades -
+# attachments don't count toward the pig's silhouette score
+
+
 def _mask(png: Path) -> np.ndarray:
     a = np.asarray(Image.open(png).convert("RGBA")).astype(np.int16)
     m = a[..., 3] > 40
@@ -36,6 +40,31 @@ def _mask(png: Path) -> np.ndarray:
                             a[:, 0, :3], a[:, -1, :3]])
         bg = np.median(b, axis=0)
         m = np.abs(a[..., :3] - bg).sum(-1) > 60
+    for nc in NON_PIG:                      # exclude attached props
+        m &= np.abs(a[..., :3] - np.array(nc)).sum(-1) > 60
+    if not m.any():
+        return m
+    ys, xs = np.where(m)
+    return m[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+
+
+def pig_mask(png: Path) -> np.ndarray:
+    """Subject mask with attached props (wings) removed - the wing
+    region is defined by color proximity to the wing palette,
+    dilated to catch antialiased edges. Attachments don't count
+    toward the pig's silhouette score."""
+    from skimage.morphology import dilation, disk
+    a = np.asarray(Image.open(png).convert("RGBA")).astype(np.int16)
+    m = a[..., 3] > 40
+    if m.mean() > 0.95:
+        b = np.concatenate([a[0, :, :3], a[-1, :, :3],
+                            a[:, 0, :3], a[:, -1, :3]])
+        bg = np.median(b, axis=0)
+        m = np.abs(a[..., :3] - bg).sum(-1) > 60
+    # wing mint is GREEN-dominant; the pig is R-dominant - distance
+    # thresholds mix them (pink sits ~122 from mint), hue sign doesn't
+    wing = (a[..., 1] > a[..., 0] + 15) & (a[..., 1] > a[..., 2] - 10)
+    m &= ~dilation(wing, disk(8))
     if not m.any():
         return m
     ys, xs = np.where(m)
@@ -86,7 +115,7 @@ def part_score(ref: dict, ref_m: np.ndarray, cand_m: np.ndarray) -> dict:
 
 
 def score(ref_png: Path, ref: dict, cand_png: Path) -> dict:
-    rm = _mask(ref_png); cm = _mask(cand_png)
+    rm = _mask(ref_png); cm = pig_mask(cand_png)
     iou = silhouette_iou(rm, cm)
     ps = part_score(ref, rm, cm)
     return {"iou": round(iou, 3), "part": ps,

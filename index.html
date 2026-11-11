@@ -14,11 +14,17 @@ waddles_rest + waddles_scene inside, porky/ab_minion boundary).
 <b>Oracle rebuilt:</b> resemblance = silhouette IoU + per-part shape
 vs the anchor's own mask — the old zone-coverage "1.00" was proven
 false by operator verdict.</p>
-<h2>CURRENT DECISION: storyboard w3 — silhouette-rebuilt candidates</h2>
-<p><a href="candidates/storyboard_w3_v2/review.html">storyboard w3 review</a>
-— converged against resemblance (0.74–0.86; old torpedo scored 0.70/IoU
-0.56). Each pose jitter-converged vs the anchor, then audited.</p>
-<iframe src="candidates/storyboard_w3_v2/review.html"></iframe>
+<h2>CURRENT DECISION: storyboard w4 — silhouette-TRACED candidates</h2>
+<p><a href="candidates/storyboard_w4_v5/review.html">storyboard w4 review</a>
+— the contour IS the model-sheet reference's own (trace IoU ~0.96);
+resemblance scored vs 6 silhouette anchors (model-sheet
+profile/front/back + appearance + rembg-isolated walk/sleep),
+props excluded by pig_mask. Converged 0.87–0.92 — below the 0.97
+operator bar; interior drafting is the named remaining gap.</p>
+<iframe src="candidates/storyboard_w4_v5/review.html"></iframe>
+<h2>side-by-side (pig vs model-sheet view)</h2>
+<p><a href="candidates/storyboard_w4_v5/_side_by_side.png">_side_by_side.png</a>
+— ref left, candidate right</p>
 <h2>reference library</h2>
 <p><a href="canon/refs_review/refs_review.html">reference pick page</a>
 — anchor, family, boundary, contrast</p>

@@ -38,12 +38,68 @@
    "status": "picked",
    "register": "thin-outline flat cartoon, 3/4 loaf body",
    "parts": {
-    "snout":  {"bbox_frac": [0.40, 0.72, 0.78, 1.00], "color": "#F4A8A0", "min_coverage": 0.30, "weight": 2.0},
-    "ear":    {"bbox_frac": [0.00, 0.52, 0.32, 0.80], "color": "#F4A8A0", "min_coverage": 0.15},
-    "eye":    {"bbox_frac": [0.30, 0.62, 0.50, 0.78], "color": "#2E2E38", "min_coverage": 0.03},
-    "legs":   {"bbox_frac": [0.82, 0.15, 1.00, 0.90], "color": "#46464F", "min_coverage": 0.03},
-    "tail":   {"bbox_frac": [0.30, 0.00, 0.62, 0.15], "color": "#F4A8A0", "min_coverage": 0.10},
-    "spots":  {"bbox_frac": [0.10, 0.28, 0.40, 0.60], "color": "#E08F86", "min_coverage": 0.10, "weight": 0.5}
+    "snout": {
+     "bbox_frac": [
+      0.4,
+      0.72,
+      0.78,
+      1.0
+     ],
+     "color": "#F4A8A0",
+     "min_coverage": 0.3,
+     "weight": 2.0
+    },
+    "ear": {
+     "bbox_frac": [
+      0.0,
+      0.52,
+      0.32,
+      0.8
+     ],
+     "color": "#F4A8A0",
+     "min_coverage": 0.15
+    },
+    "eye": {
+     "bbox_frac": [
+      0.3,
+      0.62,
+      0.5,
+      0.78
+     ],
+     "color": "#2E2E38",
+     "min_coverage": 0.03
+    },
+    "legs": {
+     "bbox_frac": [
+      0.82,
+      0.15,
+      1.0,
+      0.9
+     ],
+     "color": "#46464F",
+     "min_coverage": 0.03
+    },
+    "tail": {
+     "bbox_frac": [
+      0.3,
+      0.0,
+      0.62,
+      0.15
+     ],
+     "color": "#F4A8A0",
+     "min_coverage": 0.1
+    },
+    "spots": {
+     "bbox_frac": [
+      0.1,
+      0.28,
+      0.4,
+      0.6
+     ],
+     "color": "#E08F86",
+     "min_coverage": 0.1,
+     "weight": 0.5
+    }
    },
    "signature_elements": [
     "horizontal loaf/potato body - lazy = low and long",
@@ -199,6 +255,146 @@
    "signature_elements": [
     "operator verdict 2026-11-10: clipart register, not professional cartoon quality"
    ]
+  },
+  {
+   "id": "waddles_ms_profile",
+   "file": "canon/refs/waddles_sil_profile.png",
+   "source": "gravityfalls.fandom.com/wiki/File:Waddles_model_sheet.png (Disney pasteup Rev.1)",
+   "license": "copyrighted - INTERNAL REFERENCE ONLY",
+   "role": "silhouette-truth",
+   "silhouette_anchor": true,
+   "view": "profile",
+   "signature_elements": [
+    "wedge-loaf",
+    "ear_flop silhouette bump",
+    "leg nubs",
+    "curl tail"
+   ],
+   "parts": {
+    "snout": {
+     "bbox_frac": [
+      0.26,
+      0.1,
+      0.59,
+      0.31
+     ],
+     "weight": 1.5
+    },
+    "eyes": {
+     "bbox_frac": [
+      0.2,
+      0.1,
+      0.32,
+      0.38
+     ],
+     "weight": 1.0
+    },
+    "ear_v": {
+     "bbox_frac": [
+      0.1,
+      0.4,
+      0.42,
+      0.58
+     ],
+     "weight": 1.0
+    },
+    "ear_flop": {
+     "bbox_frac": [
+      0.0,
+      0.02,
+      0.28,
+      0.22
+     ],
+     "weight": 1.0
+    },
+    "legs": {
+     "bbox_frac": [
+      0.82,
+      0.15,
+      1.0,
+      0.92
+     ],
+     "weight": 1.0
+    },
+    "tail": {
+     "bbox_frac": [
+      0.0,
+      0.86,
+      0.18,
+      1.0
+     ],
+     "weight": 0.5
+    },
+    "spots": {
+     "bbox_frac": [
+      0.15,
+      0.58,
+      0.55,
+      0.88
+     ],
+     "weight": 1.0
+    }
+   }
+  },
+  {
+   "id": "waddles_ms_front",
+   "file": "canon/refs/waddles_sil_front.png",
+   "source": "same model sheet - front view",
+   "license": "copyrighted - INTERNAL REFERENCE ONLY",
+   "role": "silhouette-truth",
+   "silhouette_anchor": true,
+   "view": "front",
+   "signature_elements": [
+    "sitting sack",
+    "ear bumps top",
+    "tapered nubs"
+   ],
+   "parts": {}
+  },
+  {
+   "id": "waddles_ms_back",
+   "file": "canon/refs/waddles_sil_back.png",
+   "source": "same model sheet - back view",
+   "license": "copyrighted - INTERNAL REFERENCE ONLY",
+   "role": "silhouette-truth",
+   "silhouette_anchor": true,
+   "view": "back",
+   "signature_elements": [
+    "rear loaf",
+    "dual ear bumps",
+    "curl tail"
+   ],
+   "parts": {}
+  },
+  {
+   "id": "waddles_walk",
+   "file": "canon/refs/sil_waddles_walk.png",
+   "source": "gravityfalls.fandom.com S2 still via rembg isolate",
+   "license": "copyrighted - INTERNAL REFERENCE ONLY",
+   "role": "silhouette-truth",
+   "silhouette_anchor": true,
+   "view": "walk-crouch",
+   "signature_elements": [
+    "head-lowered loaf",
+    "ear bump",
+    "leg notches"
+   ],
+   "parts": {}
+  },
+  {
+   "id": "waddles_sleep",
+   "file": "canon/refs/sil_waddles_rest.png",
+   "source": "gravityfalls.fandom.com rest still via rembg isolate",
+   "license": "copyrighted - INTERNAL REFERENCE ONLY",
+   "role": "silhouette-truth",
+   "silhouette_anchor": true,
+   "view": "sleep-front",
+   "signature_elements": [
+    "sleeping loaf",
+    "flopped-ear hook",
+    "tucked legs"
+   ],
+   "parts": {}
   }
  ]
 }

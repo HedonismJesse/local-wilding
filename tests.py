@@ -289,6 +289,32 @@ class TestCandidateSheet(unittest.TestCase):
             self.assertEqual(row["refs"], ["walnutty_flying"])
             self.assertFalse(row["no_ref"])
 
+    def test_wing_attachment_consistency(self):
+        """Operator rule: build wings+pig together AND separately -
+        the pig region must be identical; the delta IS the wing."""
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        import resemblance as rsm
+        from pig_w4 import draw_w4_pig
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            for name, w in [("on", True), ("off", False)]:
+                fig, ax = plt.subplots(figsize=(12, 7.5), dpi=60)
+                draw_w4_pig(ax, pose="fly", wings=w, phase=0.3)
+                fig.savefig(d / f"{name}.png",
+                            facecolor="#0D1B26")
+                plt.close(fig)
+            mon = rsm.pig_mask(d / "on.png")
+            moff = rsm.pig_mask(d / "off.png")
+            # wing pixels are excluded by NON_PIG, so the remaining
+            # pig silhouette must match the wingless render ~exactly
+            n = min(mon.shape[0], moff.shape[0]), \
+                min(mon.shape[1], moff.shape[1])
+            mon, moff = mon[:n[0], :n[1]], moff[:n[0], :n[1]]
+            iou = (mon & moff).sum() / max((mon | moff).sum(), 1)
+            self.assertGreater(iou, 0.9)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

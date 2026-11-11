@@ -265,14 +265,20 @@ def cmd_sheet(a) -> int:
         tag = (f" ref={v['ref_match']['score']:.2f}"
                if "ref_match" in v else "")
         print(f"{vid} {ps} -> {rep['flags'] or 'clean'}{tag}")
-    if a.converge and anchor and anchor.get("parts"):
+    if a.converge and anchor:
         import random
         import resemblance as rsm
         rng = random.Random(0)
-        ref_png = Path(anchor["file"])
+        # multi-anchor: score vs every silhouette_anchor ref, max wins
+        anchors = [r for r in refs_man["refs"]
+                   if r.get("silhouette_anchor")] or [anchor]
+
+        def rescore(png: Path) -> float:
+            return max(
+                rsm.score(Path(r["file"]), r, png)["score"]
+                for r in anchors)
         for v in variants:
-            best = rsm.score(ref_png, anchor,
-                             Path(v["png"]))["score"]
+            best = rescore(Path(v["png"]))
             for _ in range(a.converge):
                 ps2 = dict(v["params"])
                 for k, val in ps2.items():
@@ -281,7 +287,7 @@ def cmd_sheet(a) -> int:
                         ps2[k] = round(val * rng.uniform(0.75, 1.25), 3)
                 tmp = a.out_dir / f"_{v['id']}_try.png"
                 _render(builder, ps2, tmp)
-                s2 = rsm.score(ref_png, anchor, tmp)["score"]
+                s2 = rescore(tmp)
                 if s2 > best:
                     best, v["params"] = s2, ps2
                     tmp.replace(v["png"])
