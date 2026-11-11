@@ -1,0 +1,76 @@
+{
+ "subject": "fat lazy pig that notices wings, flees, gets docked, flies off",
+ "hull_target": {
+  "parts": {
+   "snout": {
+    "bbox_frac": [
+     0.4,
+     0.72,
+     0.78,
+     1.0
+    ],
+    "color": "#F4A8A0",
+    "min_coverage": 0.3,
+    "weight": 2.0
+   },
+   "ear": {
+    "bbox_frac": [
+     0.0,
+     0.52,
+     0.32,
+     0.8
+    ],
+    "color": "#F4A8A0",
+    "min_coverage": 0.15
+   },
+   "eye": {
+    "bbox_frac": [
+     0.3,
+     0.62,
+     0.5,
+     0.78
+    ],
+    "color": "#2E2E38",
+    "min_coverage": 0.03
+   },
+   "legs": {
+    "bbox_frac": [
+     0.82,
+     0.15,
+     1.0,
+     0.9
+    ],
+    "color": "#46464F",
+    "min_coverage": 0.03
+   },
+   "tail": {
+    "bbox_frac": [
+     0.3,
+     0.0,
+     0.62,
+     0.15
+    ],
+    "color": "#F4A8A0",
+    "min_coverage": 0.1
+   },
+   "spots": {
+    "bbox_frac": [
+     0.1,
+     0.28,
+     0.4,
+     0.6
+    ],
+    "color": "#E08F86",
+    "min_coverage": 0.1,
+    "weight": 0.5
+   }
+  },
+  "shared_elements": []
+ },
+ "family": [
+  "waddles_rest",
+  "waddles_scene",
+  "waddles_motion_icon"
+ ],
+ "anchor": "waddles"
+}
